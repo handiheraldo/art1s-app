@@ -1,35 +1,73 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ART1S App</title>
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="./art1s-bg.svg">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+        crossorigin="anonymous"></script>
 
     <style>
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
-        .prose p { margin-bottom: 1rem; line-height: 1.7; color: #4b5563; }
-        .prose h3 { font-weight: bold; font-size: 1.25rem; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #1f2937; }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .prose p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+            color: #4b5563;
+        }
+
+        .prose h3 {
+            font-weight: bold;
+            font-size: 1.25rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: #1f2937;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
+
 <body class="bg-gray-50 text-gray-800 font-sans antialiased">
     <div id="root"></div>
 
@@ -57,17 +95,17 @@
 
         const initialJadwalRabu = {
             title: "Ibadah Permintaan Doa (Rabu)", time: "19:00 WIB - selesai",
-            petugas: [ { tugas: "Pemimpin Acara", nama: "Bpk. Budi Santoso" }, { tugas: "Renungan", nama: "Pdt. Samuel" }, { tugas: "Doa Syafaat", nama: "Ibu Maria" }, { tugas: "Diakon", nama: "Sdr. Joshua" } ]
+            petugas: [{ tugas: "Pemimpin Acara", nama: "Bpk. Budi Santoso" }, { tugas: "Renungan", nama: "Pdt. Samuel" }, { tugas: "Doa Syafaat", nama: "Ibu Maria" }, { tugas: "Diakon", nama: "Sdr. Joshua" }]
         };
 
         const initialJadwalSabat = {
             title: "Ibadah Sabat (Sabtu)", time: "09:00 - 12:00 WIB",
             sekolahSabatTime: "09:00 - 10:30 WIB",
-            sekolahSabat: [ { tugas: "Pianist", nama: "Sdri. Grace" }, { tugas: "Pembawa Acara", nama: "Bpk. Andi" }, { tugas: "Ayat Inti & Doa Buka", nama: "Bpk. Yohanes" }, { tugas: "Berita Misi", nama: "Ibu Lina" }, { tugas: "Pelayanan Perorangan", nama: "Bpk. Sitorus" } ],
+            sekolahSabat: [{ tugas: "Pianist", nama: "Sdri. Grace" }, { tugas: "Pembawa Acara", nama: "Bpk. Andi" }, { tugas: "Ayat Inti & Doa Buka", nama: "Bpk. Yohanes" }, { tugas: "Berita Misi", nama: "Ibu Lina" }, { tugas: "Pelayanan Perorangan", nama: "Bpk. Sitorus" }],
             khotbahTime: "10:30 - 12:00 WIB",
-            khotbah: [ { tugas: "Khotbah", nama: "Pdt. David Siregar" }, { tugas: "Pendamping 1", nama: "Bpk. Daniel" }, { tugas: "Pendamping 2", nama: "Sdr. Kevin" }, { tugas: "Cerita Anak-anak", nama: "Ibu Sarah" }, { tugas: "Song Leader", nama: "Sdr. Joshua" }, { tugas: "Lagu Pujian", nama: "Koor Pemuda" } ],
-            diakon: [ { tugas: "Diakon 1", nama: "Bpk. Sitorus" }, { tugas: "Diakon 2", nama: "Bpk. Tambunan" }, { tugas: "Diakones 1", nama: "Ibu Sitorus" }, { tugas: "Diakones 2", nama: "Ibu Tambunan" } ],
-            musik: [ { tugas: "Pianis", nama: "Sdri. Grace" }, { tugas: "Keyboardis", nama: "Sdr. Kevin" }, { tugas: "Gitaris", nama: "Sdr. Alex" }, { tugas: "Bassist", nama: "Sdr. Brian" }, { tugas: "Saxophonist", nama: "Bpk. Anton" }, { tugas: "Violinist", nama: "Sdri. Clara" } ],
+            khotbah: [{ tugas: "Khotbah", nama: "Pdt. David Siregar" }, { tugas: "Pendamping 1", nama: "Bpk. Daniel" }, { tugas: "Pendamping 2", nama: "Sdr. Kevin" }, { tugas: "Cerita Anak-anak", nama: "Ibu Sarah" }, { tugas: "Song Leader", nama: "Sdr. Joshua" }, { tugas: "Lagu Pujian", nama: "Koor Pemuda" }],
+            diakon: [{ tugas: "Diakon 1", nama: "Bpk. Sitorus" }, { tugas: "Diakon 2", nama: "Bpk. Tambunan" }, { tugas: "Diakones 1", nama: "Ibu Sitorus" }, { tugas: "Diakones 2", nama: "Ibu Tambunan" }],
+            musik: [{ tugas: "Pianis", nama: "Sdri. Grace" }, { tugas: "Keyboardis", nama: "Sdr. Kevin" }, { tugas: "Gitaris", nama: "Sdr. Alex" }, { tugas: "Bassist", nama: "Sdr. Brian" }, { tugas: "Saxophonist", nama: "Bpk. Anton" }, { tugas: "Violinist", nama: "Sdri. Clara" }],
             susunan: defaultSusunan,
             perjamuan: [
                 { tugas: "P. Roti & Anggur 1", nama: "" }, { tugas: "P. Roti & Anggur 2", nama: "" }, { tugas: "P. Roti & Anggur 3", nama: "" }, { tugas: "P. Roti & Anggur 4", nama: "" }, { tugas: "P. Roti & Anggur 5", nama: "" },
@@ -96,30 +134,30 @@
         // --- ICONS (SVG MAPPING) ---
         const Icon = ({ name, className }) => {
             const icons = {
-                Home: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
-                BookOpen: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
-                Video: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>,
-                Calendar: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>,
-                Gift: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="20 12 20 22 4 22 4 12"/><rect width="20" height="5" x="2" y="7"/><line x1="12" x2="12" y1="22" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>,
-                LogIn: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" x2="3" y1="12" y2="12"/></svg>,
-                LogOut: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>,
-                Download: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>,
-                Headphones: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3"/></svg>,
-                Users: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
-                MessageCircle: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>,
-                Phone: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
-                ChevronLeft: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="15 18 9 12 15 6"/></svg>,
-                ChevronRight: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="9 18 15 12 9 6"/></svg>,
-                ChevronDown: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="6 9 12 15 18 9"/></svg>,
-                Check: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="20 6 9 17 4 12"/></svg>,
-                X: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
-                Edit: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
-                Trash: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>,
-                Settings: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
-                Eye: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>,
-                EyeOff: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>,
-                Music: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>,
-                List: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                Home: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>,
+                BookOpen: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg>,
+                Video: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m22 8-6 4 6 4V8Z" /><rect width="14" height="12" x="2" y="6" rx="2" ry="2" /></svg>,
+                Calendar: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="18" height="18" x="3" y="4" rx="2" ry="2" /><line x1="16" x2="16" y1="2" y2="6" /><line x1="8" x2="8" y1="2" y2="6" /><line x1="3" x2="21" y1="10" y2="10" /></svg>,
+                Gift: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="20 12 20 22 4 22 4 12" /><rect width="20" height="5" x="2" y="7" /><line x1="12" x2="12" y1="22" y2="7" /><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" /><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" /></svg>,
+                LogIn: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" /><polyline points="10 17 15 12 10 7" /><line x1="15" x2="3" y1="12" y2="12" /></svg>,
+                LogOut: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" /></svg>,
+                Download: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" /></svg>,
+                Headphones: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" /></svg>,
+                Users: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>,
+                MessageCircle: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></svg>,
+                Phone: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>,
+                ChevronLeft: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="15 18 9 12 15 6" /></svg>,
+                ChevronRight: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="9 18 15 12 9 6" /></svg>,
+                ChevronDown: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="6 9 12 15 18 9" /></svg>,
+                Check: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="20 6 9 17 4 12" /></svg>,
+                X: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>,
+                Edit: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>,
+                Trash: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" x2="10" y1="11" y2="17" /><line x1="14" x2="14" y1="11" y2="17" /></svg>,
+                Settings: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>,
+                Eye: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>,
+                EyeOff: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" /><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" /><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" /><line x1="2" x2="22" y1="2" y2="22" /></svg>,
+                Music: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>,
+                List: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
             };
             return icons[name] || null;
         };
@@ -132,7 +170,7 @@
 
         const formatIndoDateShort = (dateString) => {
             if (!dateString) return '';
-            const d = new Date(dateString + 'T00:00:00'); 
+            const d = new Date(dateString + 'T00:00:00');
             if (isNaN(d.getTime())) return dateString;
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
             return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
@@ -140,7 +178,7 @@
 
         const formatIndoDate = (dateString) => {
             if (!dateString) return '';
-            const d = new Date(dateString + 'T00:00:00'); 
+            const d = new Date(dateString + 'T00:00:00');
             if (isNaN(d.getTime())) return dateString;
             const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
@@ -163,28 +201,28 @@
                 <div className="grid grid-cols-3 gap-2 md:gap-4">
                     <a href="https://sabbath-school.adventech.io/in" target="_blank" rel="noopener noreferrer" className="bg-white p-3 md:p-6 rounded-xl shadow-sm flex flex-col items-center text-center justify-center hover:bg-blue-50 transition border border-gray-100">
                         <Icon name="BookOpen" className="w-6 h-6 md:w-8 md:h-8 text-blue-600 mb-1 md:mb-2" />
-                        <h3 className="font-bold text-[11px] md:text-sm leading-tight text-gray-800">Sekolah<br/>Sabat</h3>
+                        <h3 className="font-bold text-[11px] md:text-sm leading-tight text-gray-800">Sekolah<br />Sabat</h3>
                     </a>
                     <div onClick={() => setActiveTab('keanggotaan')} className="bg-white p-3 md:p-6 rounded-xl shadow-sm flex flex-col items-center text-center justify-center cursor-pointer hover:bg-green-50 transition border border-gray-100">
                         <Icon name="Users" className="w-6 h-6 md:w-8 md:h-8 text-green-600 mb-1 md:mb-2" />
-                        <h3 className="font-bold text-[11px] md:text-sm leading-tight text-gray-800">Layanan<br/>Anggota</h3>
+                        <h3 className="font-bold text-[11px] md:text-sm leading-tight text-gray-800">Layanan<br />Anggota</h3>
                     </div>
                     <div onClick={() => setActiveTab('hubungi')} className="bg-white p-3 md:p-6 rounded-xl shadow-sm flex flex-col items-center text-center justify-center cursor-pointer hover:bg-orange-50 transition border border-gray-100">
                         <Icon name="Phone" className="w-6 h-6 md:w-8 md:h-8 text-orange-600 mb-1 md:mb-2" />
-                        <h3 className="font-bold text-[11px] md:text-sm leading-tight text-gray-800">Hubungi<br/>Kami</h3>
+                        <h3 className="font-bold text-[11px] md:text-sm leading-tight text-gray-800">Hubungi<br />Kami</h3>
                     </div>
 
                     <a href="https://play.lagusion.org/" target="_blank" rel="noopener noreferrer" className="bg-white p-3 md:p-6 rounded-xl shadow-sm flex flex-col items-center text-center justify-center hover:bg-yellow-50 transition border border-gray-100">
                         <Icon name="Music" className="w-6 h-6 md:w-8 md:h-8 text-yellow-500 mb-1 md:mb-2" />
-                        <h3 className="font-bold text-[11px] md:text-sm leading-tight text-gray-800">Lagu<br/>Sion</h3>
+                        <h3 className="font-bold text-[11px] md:text-sm leading-tight text-gray-800">Lagu<br />Sion</h3>
                     </a>
                     <div onClick={() => setActiveTab('susunan_ibadah')} className="bg-white p-3 md:p-6 rounded-xl shadow-sm flex flex-col items-center text-center justify-center cursor-pointer hover:bg-indigo-50 transition border border-gray-100">
                         <Icon name="List" className="w-6 h-6 md:w-8 md:h-8 text-indigo-600 mb-1 md:mb-2" />
-                        <h3 className="font-bold text-[11px] md:text-sm leading-tight text-gray-800">Susunan<br/>Ibadah</h3>
+                        <h3 className="font-bold text-[11px] md:text-sm leading-tight text-gray-800">Susunan<br />Ibadah</h3>
                     </div>
                     <div onClick={() => setActiveTab('persembahan')} className="bg-white p-3 md:p-6 rounded-xl shadow-sm flex flex-col items-center text-center justify-center cursor-pointer hover:bg-teal-50 transition border border-gray-100">
                         <Icon name="Gift" className="w-6 h-6 md:w-8 md:h-8 text-teal-600 mb-1 md:mb-2" />
-                        <h3 className="font-bold text-[11px] md:text-sm leading-tight text-gray-800">Persembahan<br/>& Perpuluhan</h3>
+                        <h3 className="font-bold text-[11px] md:text-sm leading-tight text-gray-800">Persembahan<br />& Perpuluhan</h3>
                     </div>
                 </div>
 
@@ -193,12 +231,12 @@
                         <Icon name="Video" className="w-5 h-5 mr-2 text-red-600" /> Video Terbaru ART1STV
                     </h2>
                     <div className="relative w-full overflow-hidden rounded-lg" style={{ paddingTop: '56.25%' }}>
-                        <iframe 
+                        <iframe
                             className="absolute top-0 left-0 w-full h-full"
-                            src={youtubeUrl} 
-                            title="YouTube video player" 
-                            frameBorder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            src={youtubeUrl}
+                            title="YouTube video player"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen>
                         </iframe>
                     </div>
@@ -222,115 +260,102 @@
 
         const SusunanIbadah = ({ setActiveTab, activeSabat, sabatYMD }) => {
             const [openSection, setOpenSection] = React.useState('khotbah');
-            
+
             const getOfficer = (arr, role) => arr?.find(p => p.tugas === role)?.nama || "-";
             const susunan = activeSabat.susunan || defaultSusunan;
 
             const renderItem = (title, desc, isHighlight = false) => (
-                <div className={`flex flex-col sm:flex-row sm:items-center py-2.5 border-b border-gray-100 last:border-0 ${isHighlight ? 'bg-blue-50/50 rounded-lg px-3 -mx-3' : ''}`}>
-                    <span className="text-sm text-gray-500 w-full sm:w-1/3 mb-0.5 sm:mb-0 font-medium">{title}</span>
-                    <span className={`text-sm sm:w-2/3 ${isHighlight ? 'font-bold text-blue-700' : 'font-bold text-gray-800'}`}>{desc}</span>
+                <div className={`flex justify-between items-center py-2.5 px-3 border-b border-gray-100 last:border-0 transition-colors rounded ${isHighlight ? 'bg-blue-50' : 'hover:bg-gray-50'}`}>
+                    <span className="text-sm text-gray-500 font-medium w-1/2 shrink-0">{title}</span>
+                    <span className={`text-sm text-right w-1/2 break-words ${isHighlight ? 'font-bold text-blue-700' : 'font-bold text-gray-800'}`}>{desc}</span>
                 </div>
             );
 
-            const AccordionHeader = ({ id, title, icon, colorTheme }) => {
-                const themes = {
-                    blue: { bg: 'bg-blue-50', hover: 'hover:bg-blue-100', border: 'border-blue-200', text: 'text-blue-800', icon: 'text-blue-700' },
-                    green: { bg: 'bg-green-50', hover: 'hover:bg-green-100', border: 'border-green-200', text: 'text-green-800', icon: 'text-green-700' },
-                    purple: { bg: 'bg-purple-50', hover: 'hover:bg-purple-100', border: 'border-purple-200', text: 'text-purple-800', icon: 'text-purple-700' },
-                    orange: { bg: 'bg-orange-50', hover: 'hover:bg-orange-100', border: 'border-orange-200', text: 'text-orange-800', icon: 'text-orange-700' },
-                };
-                const theme = themes[colorTheme];
-                return (
-                    <button 
-                        onClick={() => setOpenSection(openSection === id ? null : id)} 
-                        className={`w-full flex justify-between items-center p-4 md:p-5 ${theme.bg} ${theme.hover} transition-colors border-b border-gray-100`}
-                    >
-                        <div className={`flex items-center text-base md:text-lg font-bold ${theme.text}`}>
-                            <Icon name={icon} className="w-5 h-5 mr-3" /> {title}
-                        </div>
-                        <Icon name="ChevronDown" className={`w-5 h-5 ${theme.icon} transition-transform duration-300 ${openSection === id ? 'rotate-180' : ''}`} />
-                    </button>
-                );
-            };
+            const susunanTabs = [
+                { id: 'ss', label: 'Sekolah Sabat', icon: 'BookOpen', activeColor: 'text-blue-600' },
+                { id: 'khotbah', label: 'Khotbah / Umum', icon: 'List', activeColor: 'text-green-600' },
+                { id: 'diakon', label: 'Diakon & Diakones', icon: 'Users', activeColor: 'text-purple-600' },
+                { id: 'musik', label: 'Pelayanan Musik', icon: 'Music', activeColor: 'text-orange-600' }
+            ];
 
             return (
                 <div className="space-y-6 animate-fade-in">
                     <button onClick={() => setActiveTab('home')} className="text-blue-600 font-medium flex items-center hover:underline mb-2">&larr; Kembali ke Home</button>
-                    
+
                     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                         <div className="text-center p-6 md:p-8 border-b border-gray-100 bg-gray-50">
-                            <h2 className="text-2xl font-black text-gray-800 uppercase tracking-wide">Susunan Ibadah</h2>
-                            <p className="text-gray-500 font-bold mt-1">{formatIndoDate(sabatYMD)}</p>
+                            <h2 className="text-xl md:text-2xl font-black text-gray-800 uppercase tracking-wide">Susunan Ibadah</h2>
+                            <p className="text-gray-500 font-bold mt-1 text-sm md:text-base">{formatIndoDate(sabatYMD)}</p>
                         </div>
 
-                        <div className="divide-y divide-gray-100 flex flex-col">
-                            {/* SEKOLAH SABAT */}
-                            <div className="border-b border-gray-100">
-                                <AccordionHeader id="ss" title="Sekolah Sabat" icon="BookOpen" colorTheme="blue" />
-                                {openSection === 'ss' && (
-                                    <div className="p-4 md:p-6 animate-fade-in">
-                                        {renderItem("Lagu Pengantar", "LS 205")}
-                                        {renderItem("Pemimpin Acara", getOfficer(activeSabat.sekolahSabat, "Pembawa Acara"))}
-                                        {renderItem("Lagu Buka", susunan.ssLaguBuka)}
-                                        {renderItem("Ayat Inti & Doa Buka", getOfficer(activeSabat.sekolahSabat, "Ayat Inti & Doa Buka"))}
-                                        {renderItem("Berita Misi", getOfficer(activeSabat.sekolahSabat, "Berita Misi"))}
-                                        {renderItem("Diskusi Sekolah Sabat", "Kelas Pemuda 1, Kelas Dewasa, Kelas Pemuda 2, Kelas Anak-anak")}
-                                        {renderItem("Pelayanan Perorangan", getOfficer(activeSabat.sekolahSabat, "Pelayanan Perorangan"))}
-                                        {renderItem("Lagu Tutup", susunan.ssLaguTutup)}
-                                        {renderItem("Doa Tutup", getOfficer(activeSabat.sekolahSabat, "Pelayanan Perorangan"))}
-                                    </div>
-                                )}
+                        <div className="flex flex-col">
+                            {/* TABS SCROLLABLE */}
+                            <div className="flex items-center gap-2 p-3 md:p-5 border-b border-gray-100 bg-white overflow-hidden">
+                                <div className="bg-[#eef2f6] rounded-xl flex-1 flex overflow-x-auto border border-gray-200 p-2 gap-2 hide-scrollbar scroll-smooth">
+                                    {susunanTabs.map(tab => (
+                                        <button
+                                            key={tab.id}
+                                            onClick={() => setOpenSection(tab.id)}
+                                            className={`px-4 py-2.5 rounded-lg text-sm whitespace-nowrap transition-colors flex items-center font-bold shrink-0 ${openSection === tab.id ? 'bg-white shadow-sm border border-gray-200 text-slate-800' : 'text-slate-500 hover:bg-slate-200'}`}
+                                        >
+                                            <Icon name={tab.icon} className={`w-4 h-4 mr-2 ${openSection === tab.id ? tab.activeColor : 'text-slate-400'}`} />
+                                            {tab.label}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
 
-                            {/* KHOTBAH */}
-                            <div className="border-b border-gray-100">
-                                <AccordionHeader id="khotbah" title="Khotbah / Ibadah Umum" icon="List" colorTheme="green" />
-                                {openSection === 'khotbah' && (
-                                    <div className="p-4 md:p-6 animate-fade-in">
-                                        {renderItem("Lagu Pengantar", "LS 515")}
-                                        {renderItem("Lagu Sambutan", "LS 1")}
-                                        {renderItem("Doa Buka", getOfficer(activeSabat.khotbah, "Khotbah"))}
-                                        {renderItem("Ayat Bersahutan", susunan.kAyatBersahutan)}
-                                        {renderItem("Lagu Buka", susunan.kLaguBuka)}
-                                        {renderItem("Doa Syafaat", getOfficer(activeSabat.khotbah, "Pendamping 1"))}
-                                        {susunan.kLaguPujian1_show && renderItem("Lagu Pujian", susunan.kLaguPujian1_judul, true)}
-                                        {renderItem("Bacaan Persembahan", getOfficer(activeSabat.khotbah, "Pendamping 2"))}
-                                        {renderItem("Lagu Persembahan", "LS 260")}
-                                        {renderItem("Doa Persembahan", getOfficer(activeSabat.khotbah, "Pendamping 2"))}
-                                        {susunan.kLaguPujian2_show && renderItem("Lagu Pujian", susunan.kLaguPujian2_judul, true)}
-                                        {renderItem("Cerita Anak-anak", getOfficer(activeSabat.khotbah, "Cerita Anak-anak"))}
-                                        {susunan.kLaguPujian3_show && renderItem("Lagu Pujian", susunan.kLaguPujian3_judul, true)}
-                                        {renderItem("Ayat Inti", susunan.kAyatInti)}
-                                        {renderItem("Lagu Tema", "Misi Kita")}
-                                        {renderItem("Khotbah", getOfficer(activeSabat.khotbah, "Khotbah"), true)}
-                                        {renderItem("Lagu Tutup", susunan.kLaguTutup)}
-                                        {renderItem("Doa Berkat", "Pdt. David Indra Utomo")}
-                                        {renderItem("Lagu Berkat", "LS 60")}
-                                        {renderItem("Pengumuman", "Dept. Komunikasi")}
-                                    </div>
-                                )}
-                            </div>
+                            {/* TAB CONTENT */}
+                            {openSection === 'ss' && (
+                                <div className="p-4 md:p-6 animate-fade-in bg-white">
+                                    {renderItem("Lagu Pengantar", "LS 205")}
+                                    {renderItem("Pemimpin Acara", getOfficer(activeSabat.sekolahSabat, "Pembawa Acara"))}
+                                    {renderItem("Lagu Buka", susunan.ssLaguBuka)}
+                                    {renderItem("Ayat Inti & Doa Buka", getOfficer(activeSabat.sekolahSabat, "Ayat Inti & Doa Buka"))}
+                                    {renderItem("Berita Misi", getOfficer(activeSabat.sekolahSabat, "Berita Misi"))}
+                                    {renderItem("Diskusi Sekolah Sabat", "Kelas Pemuda 1, Kelas Dewasa, Kelas Pemuda 2, Kelas Anak-anak")}
+                                    {renderItem("Pelayanan Perorangan", getOfficer(activeSabat.sekolahSabat, "Pelayanan Perorangan"))}
+                                    {renderItem("Lagu Tutup", susunan.ssLaguTutup)}
+                                    {renderItem("Doa Tutup", getOfficer(activeSabat.sekolahSabat, "Pelayanan Perorangan"))}
+                                </div>
+                            )}
 
-                            {/* DIAKON & DIAKONES */}
-                            <div className="border-b border-gray-100">
-                                <AccordionHeader id="diakon" title="Diakon & Diakones" icon="Users" colorTheme="purple" />
-                                {openSection === 'diakon' && (
-                                    <div className="p-4 md:p-6 animate-fade-in">
-                                        {activeSabat.diakon.map((p, idx) => <div key={idx}>{renderItem(p.tugas, p.nama)}</div>)}
-                                    </div>
-                                )}
-                            </div>
+                            {openSection === 'khotbah' && (
+                                <div className="p-4 md:p-6 animate-fade-in bg-white">
+                                    {renderItem("Lagu Pengantar", "LS 515")}
+                                    {renderItem("Lagu Sambutan", "LS 1")}
+                                    {renderItem("Doa Buka", getOfficer(activeSabat.khotbah, "Khotbah"))}
+                                    {renderItem("Ayat Bersahutan", susunan.kAyatBersahutan)}
+                                    {renderItem("Lagu Buka", susunan.kLaguBuka)}
+                                    {renderItem("Doa Syafaat", getOfficer(activeSabat.khotbah, "Pendamping 1"))}
+                                    {susunan.kLaguPujian1_show && renderItem("Lagu Pujian", susunan.kLaguPujian1_judul, true)}
+                                    {renderItem("Bacaan Persembahan", getOfficer(activeSabat.khotbah, "Pendamping 2"))}
+                                    {renderItem("Lagu Persembahan", "LS 260")}
+                                    {renderItem("Doa Persembahan", getOfficer(activeSabat.khotbah, "Pendamping 2"))}
+                                    {susunan.kLaguPujian2_show && renderItem("Lagu Pujian", susunan.kLaguPujian2_judul, true)}
+                                    {renderItem("Cerita Anak-anak", getOfficer(activeSabat.khotbah, "Cerita Anak-anak"))}
+                                    {susunan.kLaguPujian3_show && renderItem("Lagu Pujian", susunan.kLaguPujian3_judul, true)}
+                                    {renderItem("Ayat Inti", susunan.kAyatInti)}
+                                    {renderItem("Lagu Tema", "Misi Kita")}
+                                    {renderItem("Khotbah", getOfficer(activeSabat.khotbah, "Khotbah"), true)}
+                                    {renderItem("Lagu Tutup", susunan.kLaguTutup)}
+                                    {renderItem("Doa Berkat", "Pdt. David Indra Utomo")}
+                                    {renderItem("Lagu Berkat", "LS 60")}
+                                    {renderItem("Pengumuman", "Dept. Komunikasi")}
+                                </div>
+                            )}
 
-                            {/* PELAYANAN MUSIK */}
-                            <div>
-                                <AccordionHeader id="musik" title="Pelayanan Musik" icon="Music" colorTheme="orange" />
-                                {openSection === 'musik' && (
-                                    <div className="p-4 md:p-6 animate-fade-in">
-                                        {activeSabat.musik.map((p, idx) => <div key={idx}>{renderItem(p.tugas, p.nama)}</div>)}
-                                    </div>
-                                )}
-                            </div>
+                            {openSection === 'diakon' && (
+                                <div className="p-4 md:p-6 animate-fade-in bg-white">
+                                    {activeSabat.diakon.map((p, idx) => <div key={idx}>{renderItem(p.tugas, p.nama)}</div>)}
+                                </div>
+                            )}
+
+                            {openSection === 'musik' && (
+                                <div className="p-4 md:p-6 animate-fade-in bg-white">
+                                    {activeSabat.musik.map((p, idx) => <div key={idx}>{renderItem(p.tugas, p.nama)}</div>)}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -418,12 +443,12 @@
         const Detail28Dasar = ({ setActiveTab, dataPejabat }) => {
             const [openIndex, setOpenIndex] = React.useState(null);
             const doktrinData = [
-                { category: "Doktrin tentang Allah", emoji: "✝️", items: [ { title: "Kitab Suci", desc: "Firman Allah yang diilhami.", ref: "2 Timotius 3:16-17; 2 Petrus 1:20-21" }, { title: "Tritunggal / Trinitas", desc: "Allah yang Esa dalam tiga Pribadi.", ref: "Matius 28:19; 2 Korintus 13:14" }, { title: "Bapa", desc: "Allah sebagai Pencipta dan Pemelihara.", ref: "Yohanes 3:16; 1 Yohanes 4:8" }, { title: "Anak", desc: "Yesus Kristus sebagai Penebus.", ref: "Yohanes 1:1-3,14; Kolose 2:9" }, { title: "Roh Kudus", desc: "Pribadi Ilahi yang membimbing umat.", ref: "Yohanes 14:16-17; Kisah 1:8" } ] },
-                { category: "Doktrin tentang Manusia", emoji: "😁", items: [ { title: "Penciptaan", desc: "Dunia diciptakan dalam enam hari literal.", ref: "Kejadian 1:1; Keluaran 20:11" }, { title: "Sifat Manusia", desc: "Manusia diciptakan dalam rupa Allah tetapi jatuh dalam dosa.", ref: "Kejadian 1:26-27; Roma 3:23" } ] },
-                { category: "Doktrin tentang Keselamatan", emoji: "🙏", items: [ { title: "Perjuangan Besar", desc: "Pertentangan antara Kristus dan Setan.", ref: "Wahyu 12:7-9; 1 Petrus 5:8" }, { title: "Kehidupan, Kematian, dan Kebangkitan Kristus", desc: "Yesus mati dan bangkit untuk keselamatan manusia.", ref: "Roma 6:23; 1 Korintus 15:3-4" }, { title: "Pengalaman Keselamatan", desc: "Keselamatan oleh kasih karunia melalui iman.", ref: "Efesus 2:8-9; Roma 10:9" }, { title: "Berkembang dalam Kristus", desc: "Hidup dalam pertumbuhan rohani.", ref: "Kolose 2:6-7; 2 Petrus 3:18" } ] },
-                { category: "Doktrin tentang Gereja", emoji: "⛪", items: [ { title: "Gereja", desc: "Tubuh Kristus yang terdiri dari umat percaya.", ref: "Efesus 1:22-23; 1 Korintus 12:12-14" }, { title: "Sisa Umat Tuhan dan Misinya", desc: "Umat sisa yang menaati hukum Allah dan memiliki iman Yesus.", ref: "Wahyu 12:17; Wahyu 14:6-12" }, { title: "Kesatuan dalam Tubuh Kristus", desc: "Kesatuan gereja dalam Kristus.", ref: "Yohanes 17:20-23; Efesus 4:3-6" }, { title: "Baptisan", desc: "Baptisan oleh pencelupan sebagai tanda komitmen.", ref: "Matius 28:19-20; Roma 6:3-4" }, { title: "Perjamuan Kudus (Komuni)", desc: "Perjamuan Tuhan sebagai peringatan pengorbanan Kristus.", ref: "1 Korintus 11:23-26; Yohanes 13:14-17" } ] },
-                { category: "Doktrin tentang Kehidupan Kristen", emoji: "👨‍👩‍👦", items: [ { title: "Karunia Rohani dan Pelayanan", desc: "Karunia Rohani diberikan untuk membangun gereja.", ref: "Efesus 4:11-16; 1 Korintus 12:7-11" }, { title: "Karunia Nubuat", desc: "Kami percaya karunia ini diwujudkan dalam pelayanan Ellen G. White.", ref: "2 Tim. 3:16, 17; Ibr. 1:1-3" }, { title: "Hukum Allah", desc: "Sepuluh Perintah tetap berlaku.", ref: "Keluaran 20:1-17; Matius 5:17-19" }, { title: "Hari Sabat", desc: "Sabat hari ketujuh sebagai hari perhentian.", ref: "Kejadian 2:2-3; Keluaran 20:8-11" }, { title: "Penatalayanan Kristen", desc: "Mengelola sumber daya untuk kemuliaan Tuhan.", ref: "Maleakhi 3:10; 2 Korintus 9:6-7" }, { title: "Perilaku Kristen", desc: "Hidup dalam kekudusan dan sesuai Firman Tuhan.", ref: "1 Korintus 10:31; Filipi 4:8" }, { title: "Pernikahan dan Keluarga", desc: "Pernikahan kudus antara pria dan wanita.", ref: "Kejadian 2:24; Efesus 5:22-25" } ] },
-                { category: "Doktrin tentang Peristiwa Akhir Zaman", emoji: "🕘", items: [ { title: "Pelayanan Kristus di Tempat Kudus Surgawi", desc: "Kristus sebagai Imam Besar.", ref: "Ibrani 8:1-2; Daniel 7:9-10" }, { title: "Kedatangan Kedua Kristus", desc: "Kedatangan Kristus yang kedua kali.", ref: "Yohanes 14:1-3; 1 Tesalonika 4:16-17" }, { title: "Kematian dan Kebangkitan", desc: "Kematian adalah tidur sampai kebangkitan.", ref: "Pengkhotbah 9:5-6; 1 Korintus 15:51-54" }, { title: "Seribu Tahun dan Akhir Dosa", desc: "Masa seribu tahun sebelum penghakiman terakhir.", ref: "Wahyu 20:1-10" }, { title: "Bumi Baru", desc: "Dunia yang baru sebagai tempat tinggal kekal.", ref: "Wahyu 21:1-5; Yesaya 65:17" } ] }
+                { category: "Doktrin tentang Allah", emoji: "✝️", items: [{ title: "Kitab Suci", desc: "Firman Allah yang diilhami.", ref: "2 Timotius 3:16-17; 2 Petrus 1:20-21" }, { title: "Tritunggal / Trinitas", desc: "Allah yang Esa dalam tiga Pribadi.", ref: "Matius 28:19; 2 Korintus 13:14" }, { title: "Bapa", desc: "Allah sebagai Pencipta dan Pemelihara.", ref: "Yohanes 3:16; 1 Yohanes 4:8" }, { title: "Anak", desc: "Yesus Kristus sebagai Penebus.", ref: "Yohanes 1:1-3,14; Kolose 2:9" }, { title: "Roh Kudus", desc: "Pribadi Ilahi yang membimbing umat.", ref: "Yohanes 14:16-17; Kisah 1:8" }] },
+                { category: "Doktrin tentang Manusia", emoji: "😁", items: [{ title: "Penciptaan", desc: "Dunia diciptakan dalam enam hari literal.", ref: "Kejadian 1:1; Keluaran 20:11" }, { title: "Sifat Manusia", desc: "Manusia diciptakan dalam rupa Allah tetapi jatuh dalam dosa.", ref: "Kejadian 1:26-27; Roma 3:23" }] },
+                { category: "Doktrin tentang Keselamatan", emoji: "🙏", items: [{ title: "Perjuangan Besar", desc: "Pertentangan antara Kristus dan Setan.", ref: "Wahyu 12:7-9; 1 Petrus 5:8" }, { title: "Kehidupan, Kematian, dan Kebangkitan Kristus", desc: "Yesus mati dan bangkit untuk keselamatan manusia.", ref: "Roma 6:23; 1 Korintus 15:3-4" }, { title: "Pengalaman Keselamatan", desc: "Keselamatan oleh kasih karunia melalui iman.", ref: "Efesus 2:8-9; Roma 10:9" }, { title: "Berkembang dalam Kristus", desc: "Hidup dalam pertumbuhan rohani.", ref: "Kolose 2:6-7; 2 Petrus 3:18" }] },
+                { category: "Doktrin tentang Gereja", emoji: "⛪", items: [{ title: "Gereja", desc: "Tubuh Kristus yang terdiri dari umat percaya.", ref: "Efesus 1:22-23; 1 Korintus 12:12-14" }, { title: "Sisa Umat Tuhan dan Misinya", desc: "Umat sisa yang menaati hukum Allah dan memiliki iman Yesus.", ref: "Wahyu 12:17; Wahyu 14:6-12" }, { title: "Kesatuan dalam Tubuh Kristus", desc: "Kesatuan gereja dalam Kristus.", ref: "Yohanes 17:20-23; Efesus 4:3-6" }, { title: "Baptisan", desc: "Baptisan oleh pencelupan sebagai tanda komitmen.", ref: "Matius 28:19-20; Roma 6:3-4" }, { title: "Perjamuan Kudus (Komuni)", desc: "Perjamuan Tuhan sebagai peringatan pengorbanan Kristus.", ref: "1 Korintus 11:23-26; Yohanes 13:14-17" }] },
+                { category: "Doktrin tentang Kehidupan Kristen", emoji: "👨‍👩‍👦", items: [{ title: "Karunia Rohani dan Pelayanan", desc: "Karunia Rohani diberikan untuk membangun gereja.", ref: "Efesus 4:11-16; 1 Korintus 12:7-11" }, { title: "Karunia Nubuat", desc: "Kami percaya karunia ini diwujudkan dalam pelayanan Ellen G. White.", ref: "2 Tim. 3:16, 17; Ibr. 1:1-3" }, { title: "Hukum Allah", desc: "Sepuluh Perintah tetap berlaku.", ref: "Keluaran 20:1-17; Matius 5:17-19" }, { title: "Hari Sabat", desc: "Sabat hari ketujuh sebagai hari perhentian.", ref: "Kejadian 2:2-3; Keluaran 20:8-11" }, { title: "Penatalayanan Kristen", desc: "Mengelola sumber daya untuk kemuliaan Tuhan.", ref: "Maleakhi 3:10; 2 Korintus 9:6-7" }, { title: "Perilaku Kristen", desc: "Hidup dalam kekudusan dan sesuai Firman Tuhan.", ref: "1 Korintus 10:31; Filipi 4:8" }, { title: "Pernikahan dan Keluarga", desc: "Pernikahan kudus antara pria dan wanita.", ref: "Kejadian 2:24; Efesus 5:22-25" }] },
+                { category: "Doktrin tentang Peristiwa Akhir Zaman", emoji: "🕘", items: [{ title: "Pelayanan Kristus di Tempat Kudus Surgawi", desc: "Kristus sebagai Imam Besar.", ref: "Ibrani 8:1-2; Daniel 7:9-10" }, { title: "Kedatangan Kedua Kristus", desc: "Kedatangan Kristus yang kedua kali.", ref: "Yohanes 14:1-3; 1 Tesalonika 4:16-17" }, { title: "Kematian dan Kebangkitan", desc: "Kematian adalah tidur sampai kebangkitan.", ref: "Pengkhotbah 9:5-6; 1 Korintus 15:51-54" }, { title: "Seribu Tahun dan Akhir Dosa", desc: "Masa seribu tahun sebelum penghakiman terakhir.", ref: "Wahyu 20:1-10" }, { title: "Bumi Baru", desc: "Dunia yang baru sebagai tempat tinggal kekal.", ref: "Wahyu 21:1-5; Yesaya 65:17" }] }
             ];
 
             return (
@@ -580,14 +605,14 @@
         const Live = ({ setActiveTab, activeRabu, activeSabat, rabuYMD, sabatYMD, showPerjamuan, perjamuanYMD, activePerjamuan, youtubeUrl }) => {
             const today = new Date();
             const todayDay = today.getDay();
-            
+
             let isToday = false;
             let targetJadwal = null;
             let targetDateStr = '';
-            
-            if (todayDay === 3) { targetJadwal = activeRabu; targetDateStr = rabuYMD; isToday = true; } 
-            else if (todayDay === 6) { targetJadwal = activeSabat; targetDateStr = sabatYMD; isToday = true; } 
-            else if (todayDay < 3) { targetJadwal = activeRabu; targetDateStr = rabuYMD; } 
+
+            if (todayDay === 3) { targetJadwal = activeRabu; targetDateStr = rabuYMD; isToday = true; }
+            else if (todayDay === 6) { targetJadwal = activeSabat; targetDateStr = sabatYMD; isToday = true; }
+            else if (todayDay < 3) { targetJadwal = activeRabu; targetDateStr = rabuYMD; }
             else { targetJadwal = activeSabat; targetDateStr = sabatYMD; }
 
             const isRabu = new Date(targetDateStr + 'T00:00:00').getDay() === 3;
@@ -762,12 +787,12 @@
             return (
                 <div className="space-y-6 animate-fade-in">
                     <button onClick={() => setActiveTab('home')} className="text-blue-600 font-medium flex items-center hover:underline mb-2">&larr; Kembali ke Home</button>
-                    
+
                     <div className="space-y-6">
                         {categories.map((cat, idx) => {
                             const items = dataPejabat.filter(cat.filter);
                             if (items.length === 0) return null; // Jika kategori kosong
-                            
+
                             return (
                                 <div key={idx} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                                     <h2 className="text-lg font-bold mb-4 text-gray-800 border-b pb-2">{cat.title}</h2>
@@ -835,7 +860,7 @@
                         )}
                         <div className="flex justify-between items-center"><button onClick={() => setStep('fill')} className="text-gray-600 font-medium flex items-center hover:text-gray-900">&larr; Edit Kembali Formulir</button><button onClick={handleKirimClick} disabled={isGenerating} className={`${isGenerating ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700'} text-white px-6 py-2 rounded-lg font-medium transition flex items-center shadow-md`}>{isGenerating ? 'Memproses PDF...' : 'Kirim Formulir (Unduh PDF)'}</button></div>
                         <div className="bg-gray-200 shadow-inner overflow-x-auto border border-gray-300 rounded-lg p-4 sm:p-8">
-                            <div className="w-max mx-auto shadow-xl bg-white"><div id="pdf-content" className="p-10 bg-white text-black text-sm relative" style={{ width: '210mm', minHeight: '297mm', fontFamily: '"Open Sans", sans-serif', boxSizing: 'border-box' }}><p className="text-[10px] text-gray-500 absolute top-4 right-10">Form ACMS-03</p><div className="flex justify-between items-center mb-10 mt-6"><div className="w-[180px] flex justify-start"><img src="https://i.postimg.cc/dQhq2HGf/png-acms-new-logo.png" alt="ACMS Logo" crossOrigin="anonymous" className="h-[60px] object-contain" /></div><div className="flex-1 text-center px-4"><h2 className="font-bold text-[16px] leading-tight">PERMOHONAN PERPINDAHAN ANGGOTA</h2><h2 className="font-bold text-[16px] leading-tight mt-1">GMAHK KONFERENS JAWA KAWASAN TIMUR</h2><h2 className="font-bold text-[16px] leading-tight mt-1">JEMAAT TIDAR 1 SURABAYA</h2></div><div className="w-[180px] flex flex-col items-center"><div className="border border-black bg-[#dce6f1] font-bold py-1 w-full text-center text-[12px]">DIISI OLEH PEMOHON</div><p className="italic text-center mt-1 text-[12px] leading-snug">Bagi Pemohon yang namanya <br/><span className="font-bold not-italic">SUDAH</span> ada di ACMS</p></div></div><div className="mb-6"><p className="font-bold mb-2">A. PROFIL PEMOHON <span className="font-normal text-xs">(Mohon diisi sesuai dengan KTP/Akte Kelahiran / identitas lainnya menggunakan huruf besar)</span></p><table className="w-full ml-4"><tbody><tr><td className="w-1/4 py-1">1. Nama Lengkap</td><td className="w-3/4 py-1">: <span className="uppercase">{formData.namaLengkap}</span></td></tr><tr><td className="w-1/4 py-1">2. Jenis Kelamin</td><td className="w-3/4 py-1">: {formData.jenisKelamin}</td></tr><tr><td className="w-1/4 py-1">3. Tanggal Lahir</td><td className="w-3/4 py-1">: {formatDate(formData.tanggalLahir)}</td></tr><tr><td className="w-1/4 py-1">4. Nama Ibu</td><td className="w-3/4 py-1">: <span className="uppercase">{formData.namaIbu}</span></td></tr><tr><td className="w-1/4 py-1">5. Baptisan</td><td className="w-3/4 py-1"></td></tr><tr><td className="w-1/4 py-1 pl-4">- tanggal</td><td className="w-3/4 py-1">: {formatDate(formData.baptisanTanggal)}</td></tr><tr><td className="w-1/4 py-1 pl-4">- tempat</td><td className="w-3/4 py-1">: {formData.baptisanTempat}</td></tr><tr><td className="w-1/4 py-1 pl-4">- pendeta</td><td className="w-3/4 py-1">: {formData.baptisanPendeta}</td></tr></tbody></table></div><div className="mb-8"><p className="font-bold mb-2">B. PERNYATAAN PEMOHON</p><table className="w-full ml-4 mb-4"><tbody><tr><td className="w-[80%] py-1">1. Apakah Anda dalam masa disiplin Gereja?</td><td className="w-[20%] py-1 font-bold">: {formData.masaDisiplin}</td></tr><tr><td className="w-[80%] py-1">2. Apakah Anda sudah pernah mengajukan permohonan perpindahan keanggotaan?</td><td className="w-[20%] py-1 font-bold">: {formData.pernahPindah}</td></tr></tbody></table><p className="mb-2">Dengan ini saya memohon agar memindahkan keanggotaan saya dari:</p><table className="w-full ml-4 mb-4"><tbody><tr><td className="w-1/4 py-1">1. Nama Jemaat Asal</td><td className="w-3/4 py-1">: <span className="uppercase">{formData.jemaatAsalNama}</span></td></tr><tr><td className="w-1/4 py-1 align-top">2. Alamat Jemaat Asal</td><td className="w-3/4 py-1">: {formData.jemaatAsalAlamat}</td></tr><tr><td className="w-1/4 py-1">3. Nama Sekretaris</td><td className="w-3/4 py-1">: <span className="uppercase">{formData.jemaatAsalSekretaris}</span></td></tr><tr><td className="w-1/4 py-1">4. Telp/Email Aktif</td><td className="w-3/4 py-1">: {formData.jemaatAsalKontak}</td></tr></tbody></table><p className="mb-6">Demikian permohonan ini saya ajukan tanpa ada paksaan dari pihak manapun.</p><div className="flex justify-end pr-10"><div className="text-center w-64"><p>Tempat/Tanggal diajukan:</p><p className="mb-16">Surabaya, {formatDate(new Date())}</p><p className="border-t border-black pt-1 uppercase">( {formData.namaLengkap || '..........................'} )</p><p>Nama dan Tanda Tangan Pemohon</p></div></div></div><div className="mb-6 mt-12 pt-8 border-t-2 border-dashed border-gray-400"><p className="font-bold text-center mb-6">DIISI OLEH SEKRETARIS JEMAAT</p><p className="font-bold mb-2">C. DATA KEPUTUSAN MAJELIS</p><table className="w-full ml-4"><tbody><tr><td className="w-1/3 py-2">1. Keputusan Majelis Tanggal</td><td className="w-2/3 py-2 border-b border-dotted border-gray-400">: </td></tr><tr><td className="w-1/3 py-2">Nomor Keputusan</td><td className="w-2/3 py-2 border-b border-dotted border-gray-400">: </td></tr><tr><td className="w-1/3 py-2">2. Di proses tanggal</td><td className="w-2/3 py-2 border-b border-dotted border-gray-400">: </td></tr><tr><td className="w-1/3 py-2">3. Ketua Jemaat</td><td className="w-2/3 py-2 border-b border-dotted border-gray-400">: </td></tr><tr><td className="w-1/3 py-2">4. Gembala Jemaat</td><td className="w-2/3 py-2 border-b border-dotted border-gray-400">: </td></tr></tbody></table><div className="flex justify-end pr-10 mt-8"><div className="text-center w-64"><p className="mb-16">20........</p><p className="border-t border-black pt-1">( ........................................ )</p><p>Nama dan Tanda Tangan Sekretaris Jemaat</p></div></div></div><div className="mt-8 pt-4 border-t border-gray-100 flex justify-between items-center text-[11px] text-gray-400 font-sans"><p>ACMS v.3.03</p><p>&copy; Copyright by ART1S Tech Team 2026</p></div></div></div>
+                            <div className="w-max mx-auto shadow-xl bg-white"><div id="pdf-content" className="p-10 bg-white text-black text-sm relative" style={{ width: '210mm', minHeight: '297mm', fontFamily: '"Open Sans", sans-serif', boxSizing: 'border-box' }}><p className="text-[10px] text-gray-500 absolute top-4 right-10">Form ACMS-03</p><div className="flex justify-between items-center mb-10 mt-6"><div className="w-[180px] flex justify-start"><img src="https://i.postimg.cc/dQhq2HGf/png-acms-new-logo.png" alt="ACMS Logo" crossOrigin="anonymous" className="h-[60px] object-contain" /></div><div className="flex-1 text-center px-4"><h2 className="font-bold text-[16px] leading-tight">PERMOHONAN PERPINDAHAN ANGGOTA</h2><h2 className="font-bold text-[16px] leading-tight mt-1">GMAHK KONFERENS JAWA KAWASAN TIMUR</h2><h2 className="font-bold text-[16px] leading-tight mt-1">JEMAAT TIDAR 1 SURABAYA</h2></div><div className="w-[180px] flex flex-col items-center"><div className="border border-black bg-[#dce6f1] font-bold py-1 w-full text-center text-[12px]">DIISI OLEH PEMOHON</div><p className="italic text-center mt-1 text-[12px] leading-snug">Bagi Pemohon yang namanya <br /><span className="font-bold not-italic">SUDAH</span> ada di ACMS</p></div></div><div className="mb-6"><p className="font-bold mb-2">A. PROFIL PEMOHON <span className="font-normal text-xs">(Mohon diisi sesuai dengan KTP/Akte Kelahiran / identitas lainnya menggunakan huruf besar)</span></p><table className="w-full ml-4"><tbody><tr><td className="w-1/4 py-1">1. Nama Lengkap</td><td className="w-3/4 py-1">: <span className="uppercase">{formData.namaLengkap}</span></td></tr><tr><td className="w-1/4 py-1">2. Jenis Kelamin</td><td className="w-3/4 py-1">: {formData.jenisKelamin}</td></tr><tr><td className="w-1/4 py-1">3. Tanggal Lahir</td><td className="w-3/4 py-1">: {formatDate(formData.tanggalLahir)}</td></tr><tr><td className="w-1/4 py-1">4. Nama Ibu</td><td className="w-3/4 py-1">: <span className="uppercase">{formData.namaIbu}</span></td></tr><tr><td className="w-1/4 py-1">5. Baptisan</td><td className="w-3/4 py-1"></td></tr><tr><td className="w-1/4 py-1 pl-4">- tanggal</td><td className="w-3/4 py-1">: {formatDate(formData.baptisanTanggal)}</td></tr><tr><td className="w-1/4 py-1 pl-4">- tempat</td><td className="w-3/4 py-1">: {formData.baptisanTempat}</td></tr><tr><td className="w-1/4 py-1 pl-4">- pendeta</td><td className="w-3/4 py-1">: {formData.baptisanPendeta}</td></tr></tbody></table></div><div className="mb-8"><p className="font-bold mb-2">B. PERNYATAAN PEMOHON</p><table className="w-full ml-4 mb-4"><tbody><tr><td className="w-[80%] py-1">1. Apakah Anda dalam masa disiplin Gereja?</td><td className="w-[20%] py-1 font-bold">: {formData.masaDisiplin}</td></tr><tr><td className="w-[80%] py-1">2. Apakah Anda sudah pernah mengajukan permohonan perpindahan keanggotaan?</td><td className="w-[20%] py-1 font-bold">: {formData.pernahPindah}</td></tr></tbody></table><p className="mb-2">Dengan ini saya memohon agar memindahkan keanggotaan saya dari:</p><table className="w-full ml-4 mb-4"><tbody><tr><td className="w-1/4 py-1">1. Nama Jemaat Asal</td><td className="w-3/4 py-1">: <span className="uppercase">{formData.jemaatAsalNama}</span></td></tr><tr><td className="w-1/4 py-1 align-top">2. Alamat Jemaat Asal</td><td className="w-3/4 py-1">: {formData.jemaatAsalAlamat}</td></tr><tr><td className="w-1/4 py-1">3. Nama Sekretaris</td><td className="w-3/4 py-1">: <span className="uppercase">{formData.jemaatAsalSekretaris}</span></td></tr><tr><td className="w-1/4 py-1">4. Telp/Email Aktif</td><td className="w-3/4 py-1">: {formData.jemaatAsalKontak}</td></tr></tbody></table><p className="mb-6">Demikian permohonan ini saya ajukan tanpa ada paksaan dari pihak manapun.</p><div className="flex justify-end pr-10"><div className="text-center w-64"><p>Tempat/Tanggal diajukan:</p><p className="mb-16">Surabaya, {formatDate(new Date())}</p><p className="border-t border-black pt-1 uppercase">( {formData.namaLengkap || '..........................'} )</p><p>Nama dan Tanda Tangan Pemohon</p></div></div></div><div className="mb-6 mt-12 pt-8 border-t-2 border-dashed border-gray-400"><p className="font-bold text-center mb-6">DIISI OLEH SEKRETARIS JEMAAT</p><p className="font-bold mb-2">C. DATA KEPUTUSAN MAJELIS</p><table className="w-full ml-4"><tbody><tr><td className="w-1/3 py-2">1. Keputusan Majelis Tanggal</td><td className="w-2/3 py-2 border-b border-dotted border-gray-400">: </td></tr><tr><td className="w-1/3 py-2">Nomor Keputusan</td><td className="w-2/3 py-2 border-b border-dotted border-gray-400">: </td></tr><tr><td className="w-1/3 py-2">2. Di proses tanggal</td><td className="w-2/3 py-2 border-b border-dotted border-gray-400">: </td></tr><tr><td className="w-1/3 py-2">3. Ketua Jemaat</td><td className="w-2/3 py-2 border-b border-dotted border-gray-400">: </td></tr><tr><td className="w-1/3 py-2">4. Gembala Jemaat</td><td className="w-2/3 py-2 border-b border-dotted border-gray-400">: </td></tr></tbody></table><div className="flex justify-end pr-10 mt-8"><div className="text-center w-64"><p className="mb-16">20........</p><p className="border-t border-black pt-1">( ........................................ )</p><p>Nama dan Tanda Tangan Sekretaris Jemaat</p></div></div></div><div className="mt-8 pt-4 border-t border-gray-100 flex justify-between items-center text-[11px] text-gray-400 font-sans"><p>ACMS v.3.03</p><p>&copy; Copyright by ART1S Tech Team 2026</p></div></div></div>
                         </div>
                     </div>
                 );
@@ -906,19 +931,19 @@
                 e.preventDefault();
                 setIsLoading(true);
                 setError(false);
-                
+
                 try {
                     const response = await fetch(GAS_API_URL, {
                         method: 'POST',
                         body: JSON.stringify({ action: 'verifyPassword', password: password })
                     });
-                    
+
                     if (!response.ok) {
                         throw new Error("Gagal mengambil data dari server");
                     }
-                    
+
                     const result = await response.json();
-                    
+
                     if (result.success) {
                         setPassword('');
                         onSuccess(password);
@@ -963,7 +988,7 @@
             const [adminTab, setAdminTab] = React.useState('jadwal'); // jadwal, pelayan, pengaturan
             const [viewMonth, setViewMonth] = React.useState(new Date().getMonth());
             const [viewYear, setViewYear] = React.useState(new Date().getFullYear());
-            const [subTab, setSubTab] = React.useState('rabu'); 
+            const [subTab, setSubTab] = React.useState('rabu');
             const [editingDate, setEditingDate] = React.useState(null);
             const [editForm, setEditForm] = React.useState([]);
             const [isSavingJadwal, setIsSavingJadwal] = React.useState(false);
@@ -990,7 +1015,7 @@
             };
 
             const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-            
+
             const getTriwulan = (m) => {
                 if (m < 3) return "JANUARI - MARET";
                 if (m < 6) return "APRIL - JUNI";
@@ -1065,9 +1090,9 @@
                 else if (subTab === 'diakon') baseData.diakon = editForm;
                 else if (subTab === 'musik') baseData.musik = editForm;
                 else if (subTab === 'perjamuan') baseData.perjamuan = editForm;
-                
+
                 setIsSavingJadwal(true);
-                
+
                 fetch(GAS_API_URL, {
                     method: 'POST',
                     body: JSON.stringify({
@@ -1077,21 +1102,21 @@
                         data: baseData
                     })
                 })
-                .then(res => res.json())
-                .then(result => {
-                    setIsSavingJadwal(false);
-                    if (result.success) {
-                        setJadwalDB({...jadwalDB, [date]: baseData});
-                        setEditingDate(null);
-                    } else { alert("Gagal menyimpan: " + (result.message || "Akses ditolak.")); }
-                })
-                .catch(err => { alert("Gagal terhubung ke server."); setIsSavingJadwal(false); });
+                    .then(res => res.json())
+                    .then(result => {
+                        setIsSavingJadwal(false);
+                        if (result.success) {
+                            setJadwalDB({ ...jadwalDB, [date]: baseData });
+                            setEditingDate(null);
+                        } else { alert("Gagal menyimpan: " + (result.message || "Akses ditolak.")); }
+                    })
+                    .catch(err => { alert("Gagal terhubung ke server."); setIsSavingJadwal(false); });
             };
 
             // HAPUS (RESET) JADWAL
             const handleDeleteRow = (date) => {
-                if(!jadwalDB[date]) return; 
-                if(window.confirm(`Kembalikan jadwal ${formatIndoDateShort(date)} ke default?`)) {
+                if (!jadwalDB[date]) return;
+                if (window.confirm(`Kembalikan jadwal ${formatIndoDateShort(date)} ke default?`)) {
                     setIsSavingJadwal(true);
                     const defaultData = JSON.parse(JSON.stringify(isRabu ? initialJadwalRabu : initialJadwalSabat));
 
@@ -1104,16 +1129,16 @@
                             data: defaultData
                         })
                     })
-                    .then(res => res.json())
-                    .then(result => {
-                        setIsSavingJadwal(false);
-                        if (result.success) {
-                            const newDB = {...jadwalDB};
-                            delete newDB[date];
-                            setJadwalDB(newDB);
-                        } else { alert("Gagal mereset: " + (result.message || "Akses ditolak.")); }
-                    })
-                    .catch(err => { alert("Gagal mereset data."); setIsSavingJadwal(false); });
+                        .then(res => res.json())
+                        .then(result => {
+                            setIsSavingJadwal(false);
+                            if (result.success) {
+                                const newDB = { ...jadwalDB };
+                                delete newDB[date];
+                                setJadwalDB(newDB);
+                            } else { alert("Gagal mereset: " + (result.message || "Akses ditolak.")); }
+                        })
+                        .catch(err => { alert("Gagal mereset data."); setIsSavingJadwal(false); });
                 }
             };
 
@@ -1128,14 +1153,14 @@
                         data: dataPejabat
                     })
                 })
-                .then(res => res.json())
-                .then(result => {
-                    setIsSavingPejabat(false);
-                    if (result.success) {
-                        alert("Berhasil! Data Pelayan Jemaat tersimpan di Google Sheets.");
-                    } else { alert("Gagal menyimpan: " + (result.message || "Akses ditolak.")); }
-                })
-                .catch(err => { alert("Gagal menyimpan data Pejabat."); setIsSavingPejabat(false); });
+                    .then(res => res.json())
+                    .then(result => {
+                        setIsSavingPejabat(false);
+                        if (result.success) {
+                            alert("Berhasil! Data Pelayan Jemaat tersimpan di Google Sheets.");
+                        } else { alert("Gagal menyimpan: " + (result.message || "Akses ditolak.")); }
+                    })
+                    .catch(err => { alert("Gagal menyimpan data Pejabat."); setIsSavingPejabat(false); });
             };
 
             // GANTI PASSWORD
@@ -1156,7 +1181,7 @@
                     } else {
                         alert("Gagal merubah password: " + (result.message || "Password lama salah."));
                     }
-                } catch(err) {
+                } catch (err) {
                     alert("Gagal terhubung ke server.");
                 }
                 setIsChangingPass(false);
@@ -1178,7 +1203,7 @@
                     } else {
                         alert("Gagal merubah URL: " + (result.message || "Akses ditolak."));
                     }
-                } catch(err) {
+                } catch (err) {
                     alert("Gagal terhubung ke server.");
                 }
                 setIsSavingUrl(false);
@@ -1187,7 +1212,7 @@
             const handleFileChange = (e, id) => {
                 const file = e.target.files[0];
                 if (!file) return;
-                
+
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onload = (event) => {
@@ -1212,7 +1237,7 @@
                         ctx.drawImage(img, 0, 0, width, height);
 
                         const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
-                        
+
                         const updated = dataPejabat.map(p => p.id === id ? { ...p, img: dataUrl } : p);
                         setDataPejabat(updated);
                     };
@@ -1220,7 +1245,7 @@
             };
 
             const handleUbahText = (id, field, value) => { const updated = dataPejabat.map(p => p.id === id ? { ...p, [field]: value } : p); setDataPejabat(updated); };
-            const handleHapusPejabat = (id) => { if(window.confirm("Yakin ingin menghapus data pelayan ini?")) { setDataPejabat(dataPejabat.filter(p => p.id !== id)); } };
+            const handleHapusPejabat = (id) => { if (window.confirm("Yakin ingin menghapus data pelayan ini?")) { setDataPejabat(dataPejabat.filter(p => p.id !== id)); } };
 
             return (
                 <div className="space-y-6 animate-fade-in">
@@ -1238,7 +1263,7 @@
                                         <button onClick={() => scrollTabs('left')} className="hidden md:flex p-2.5 bg-white border border-gray-200 rounded-lg shadow-sm text-gray-500 hover:text-gray-800 hover:bg-gray-50 shrink-0 transition" title="Scroll Kiri">
                                             <Icon name="ChevronLeft" className="w-5 h-5" />
                                         </button>
-                                        
+
                                         <div ref={scrollContainerRef} className="bg-[#eef2f6] rounded-xl flex-1 flex overflow-x-auto border border-gray-200 p-2 gap-2 hide-scrollbar scroll-smooth">
                                             {subTabs.map(tab => (
                                                 <button key={tab.id} onClick={() => { setSubTab(tab.id); setEditingDate(null); }} className={`px-4 py-2.5 rounded-lg text-sm whitespace-nowrap transition-colors ${subTab === tab.id ? 'bg-white shadow-sm font-bold border border-gray-200 text-slate-800' : 'font-medium text-slate-500 hover:bg-slate-200'}`}>
@@ -1251,7 +1276,7 @@
                                             <Icon name="ChevronRight" className="w-5 h-5" />
                                         </button>
                                     </div>
-                                    
+
                                     {subTab === 'perjamuan' && (
                                         <div className="bg-purple-50 border border-purple-200 p-4 rounded-xl text-purple-800 text-sm flex items-start shadow-sm">
                                             <Icon name="Gift" className="w-5 h-5 mr-3 shrink-0" />
@@ -1291,14 +1316,14 @@
                                                         } else {
                                                             isSaved = !!jadwalDB[date] && (subTab === 'rabu' ? !!jadwalDB[date].petugas : !!jadwalDB[date][subTab]);
                                                         }
-                                                        
+
                                                         return (
                                                             <tr key={date} className="hover:bg-slate-50 transition group">
                                                                 <td className="p-4 text-center align-middle border-r border-gray-50 bg-slate-50/30">
                                                                     <div className="font-bold text-slate-500 text-xs mb-0.5">{isRabu ? 'RABU' : 'SABTU'}</div>
                                                                     <div className="text-sm font-extrabold text-slate-800">{formatIndoDateShort(date)}</div>
                                                                 </td>
-                                                                
+
                                                                 {subTab === 'susunanAcara' ? (
                                                                     isEditing ? (
                                                                         <td colSpan="2" className="p-4 bg-blue-50/30">
@@ -1312,7 +1337,7 @@
                                                                                     <h4 className="font-bold text-sm text-green-800 border-b pb-1">Khotbah Umum</h4>
                                                                                     <div><label className="text-xs text-gray-500 block mb-1">Ayat Bersahutan</label><input type="text" value={editForm.kAyatBersahutan || ''} onChange={(e) => handleEditFormChangeSusunan('kAyatBersahutan', e.target.value)} placeholder="Contoh: No. 12" className="w-full p-2 border rounded text-sm outline-none focus:border-green-500 bg-gray-50" /></div>
                                                                                     <div><label className="text-xs text-gray-500 block mb-1">Lagu Buka</label><input type="text" value={editForm.kLaguBuka || ''} onChange={(e) => handleEditFormChangeSusunan('kLaguBuka', e.target.value)} placeholder="Contoh: LS 15" className="w-full p-2 border rounded text-sm outline-none focus:border-green-500 bg-gray-50" /></div>
-                                                                                    
+
                                                                                     <div className="flex items-center space-x-2 border border-gray-100 p-2 rounded bg-gray-50">
                                                                                         <input type="checkbox" checked={editForm.kLaguPujian1_show || false} onChange={(e) => handleEditFormChangeSusunan('kLaguPujian1_show', e.target.checked)} className="w-4 h-4 text-green-600 rounded" />
                                                                                         <div className="flex-1">
@@ -1481,7 +1506,7 @@
 
         const App = () => {
             const [isAppLoading, setIsAppLoading] = React.useState(true);
-            
+
             // --- HISTORY API (TOMBOL BACK ANDROID) ---
             const getInitialTab = () => {
                 const hash = window.location.hash.replace('#', '');
@@ -1503,7 +1528,7 @@
             React.useEffect(() => {
                 // Inisialisasi state pertama agar tombol back pertama tidak langsung keluar web
                 window.history.replaceState({ tab: activeTab }, '', `#${activeTab}`);
-                
+
                 const handlePopState = (event) => {
                     if (event.state && event.state.tab) {
                         setRawActiveTab(event.state.tab);
@@ -1525,12 +1550,12 @@
             const [adminToken, setAdminToken] = React.useState('');
 
             const today = new Date();
-            today.setHours(0,0,0,0);
-            
+            today.setHours(0, 0, 0, 0);
+
             let nextRabu = new Date(today);
             nextRabu.setDate(today.getDate() + ((3 - today.getDay() + 7) % 7));
             const rabuYMD = toYMD(nextRabu);
-            
+
             let nextSabat = new Date(today);
             nextSabat.setDate(today.getDate() + ((6 - today.getDay() + 7) % 7));
             const sabatYMD = toYMD(nextSabat);
@@ -1552,7 +1577,7 @@
 
             const nextPerjamuanObj = getNextPerjamuan();
             const perjamuanYMD = toYMD(nextPerjamuanObj);
-            
+
             const diffTime = nextPerjamuanObj - today;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             const showPerjamuan = diffDays <= 8 && diffDays >= 0;
@@ -1563,13 +1588,13 @@
 
             // --- LOGIKA KHUSUS HALAMAN JADWAL (HARI-H LOMPAT KE MINGGU DEPAN) ---
             let displayRabuYMD = rabuYMD;
-            if (today.getDay() === 3) { 
+            if (today.getDay() === 3) {
                 let nextW = new Date(today); nextW.setDate(today.getDate() + 7);
                 displayRabuYMD = toYMD(nextW);
             }
-            
+
             let displaySabatYMD = sabatYMD;
-            if (today.getDay() === 6) { 
+            if (today.getDay() === 6) {
                 let nextS = new Date(today); nextS.setDate(today.getDate() + 7);
                 displaySabatYMD = toYMD(nextS);
             }
@@ -1595,7 +1620,7 @@
                     })
                     .catch(error => {
                         console.error('Error fetching data, menggunakan data default:', error);
-                        setIsAppLoading(false); 
+                        setIsAppLoading(false);
                     });
             }, []);
 
@@ -1615,7 +1640,7 @@
             const handleLogout = () => { setIsAdminLoggedIn(false); setAdminToken(''); setActiveTab('home'); };
 
             const renderContent = () => {
-                switch(activeTab) {
+                switch (activeTab) {
                     case 'home': return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} />;
                     case 'belajar': return <Belajar setActiveTab={setActiveTab} />;
                     case 'belajar_alkitab': return <DetailAlkitab setActiveTab={setActiveTab} dataPejabat={dataPejabat} />;
@@ -1699,7 +1724,7 @@
 
                     {/* Floating Action Button (Hubungi / WA) */}
                     {activeTab !== 'admin_dashboard' && activeTab !== 'hubungi' && (
-                        <button 
+                        <button
                             onClick={() => setActiveTab('hubungi')}
                             className="fixed bottom-20 md:bottom-8 right-4 md:right-8 z-40 bg-[#25D366] hover:bg-[#20bd5a] text-white p-3.5 md:p-4 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:scale-110 flex items-center justify-center animate-fade-in"
                             aria-label="Hubungi Kami"
@@ -1716,4 +1741,5 @@
         root.render(<App />);
     </script>
 </body>
+
 </html>
