@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ART1S</title>
+    <title>ART1S App</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="./art1s-bg.svg">
@@ -37,7 +37,7 @@
         // ========================================================
         // URL WEB APP MILIKMU
         // ========================================================
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbw-gjmAlFA09OJb7uJAO5YLBy4Hy1fkOP9Fi_TCOsnvfK91-xfJv-IGJQaAY98_Il2-Bg/exec";
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwI5T1i2ylq6h1vXM7P94sawNyBuc7m7JSurUZAxz4PVl08Y2Rk9V0Rc0nKp6tA2i4ATg/exec";
 
         // --- INITIAL DATA ---
         const defaultSusunan = {
@@ -810,7 +810,7 @@
                 setIsGenerating(true);
                 const element = document.getElementById('pdf-content');
                 const filename = `ACMS_03_${formData.namaLengkap.replace(/\s+/g, '_')}.pdf`;
-                const opt = { margin: [15, 15, 15, 15], filename: filename, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+                const opt = { margin: [0, 0, 30, 0], filename: filename, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
                 html2pdf().set(opt).from(element).save().then(() => {
                     setIsGenerating(false); setStep('success');
                     const subject = encodeURIComponent(`Permohonan Pindah Masuk ACMS - ${formData.namaLengkap}`);
@@ -1481,7 +1481,42 @@
 
         const App = () => {
             const [isAppLoading, setIsAppLoading] = React.useState(true);
-            const [activeTab, setActiveTab] = React.useState('home');
+            
+            // --- HISTORY API (TOMBOL BACK ANDROID) ---
+            const getInitialTab = () => {
+                const hash = window.location.hash.replace('#', '');
+                return hash || 'home';
+            };
+            const [activeTab, setRawActiveTab] = React.useState(getInitialTab());
+
+            const setActiveTab = React.useCallback((tabId) => {
+                setRawActiveTab((prevTab) => {
+                    if (prevTab !== tabId) {
+                        // Menambahkan riwayat ke browser setiap pindah tab
+                        window.history.pushState({ tab: tabId }, '', `#${tabId}`);
+                        return tabId;
+                    }
+                    return prevTab;
+                });
+            }, []);
+
+            React.useEffect(() => {
+                // Inisialisasi state pertama agar tombol back pertama tidak langsung keluar web
+                window.history.replaceState({ tab: activeTab }, '', `#${activeTab}`);
+                
+                const handlePopState = (event) => {
+                    if (event.state && event.state.tab) {
+                        setRawActiveTab(event.state.tab);
+                    } else {
+                        const hash = window.location.hash.replace('#', '');
+                        setRawActiveTab(hash || 'home');
+                    }
+                };
+                window.addEventListener('popstate', handlePopState);
+                return () => window.removeEventListener('popstate', handlePopState);
+            }, []);
+            // -----------------------------------------
+
             const [jadwalDB, setJadwalDB] = React.useState({});
             const [dataPejabat, setDataPejabat] = React.useState(initialDataPejabat);
             const [youtubeUrl, setYoutubeUrl] = React.useState("https://www.youtube-nocookie.com/embed?listType=playlist&list=UUz6rQ_5zP0Y0c8V7aKx2jLQ");
@@ -1564,6 +1599,7 @@
                     });
             }, []);
 
+            // FIX TYPO: Memperbaiki penulisan state yang sebelumnya kurang kurung siku
             const [isAdminLoggedIn, setIsAdminLoggedIn] = React.useState(false);
             const [showLoginModal, setShowLoginModal] = React.useState(false);
 
