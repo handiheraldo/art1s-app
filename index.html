@@ -147,7 +147,7 @@
                 { tugas: "P. Roti & Anggur 1", nama: "" }, { tugas: "P. Roti & Anggur 2", nama: "" }, { tugas: "P. Roti & Anggur 3", nama: "" }, { tugas: "P. Roti & Anggur 4", nama: "" }, { tugas: "P. Roti & Anggur 5", nama: "" },
                 { tugas: "P. Basuh Kaki 1", nama: "" }, { tugas: "P. Basuh Kaki 2", nama: "" }, { tugas: "P. Basuh Kaki 3", nama: "" },
                 { tugas: "Pelayan Basuh Kaki 1", nama: "" }, { tugas: "Pelayan Basuh Kaki 2", nama: "" }, { tugas: "Pelayan Basuh Kaki 3", nama: "" },
-                { tugas: "Pelayan Perjamuan (L1)", nama: "" }, { tugas: "Pelayan Perjamuan (L2)", nama: "" }, { tugas: "Pelayan Perjamuan (P1)", nama: "" }, { tugas: "Pelayan Perjamuan (P2)", nama: "" },
+                { tugas: "Pelayan Perjamuan (L1)", nama: "" }, { tugas: "Pelayan Perjamuan (P1)", nama: "" }, { tugas: "Pelayan Perjamuan (L2)", nama: "" }, { tugas: "Pelayan Perjamuan (P2)", nama: "" },
                 { tugas: "Cuci Baskom 1", nama: "" }, { tugas: "Cuci Baskom 2", nama: "" }, { tugas: "Cuci Baskom 3", nama: "" }, { tugas: "Cuci Baskom 4", nama: "" },
                 { tugas: "Cuci Alat Perjamuan", nama: "Diatur oleh Diakones" }
             ]
@@ -374,15 +374,15 @@
 
                             {openSection === 'khotbah' && (
                                 <div className="p-4 md:p-6 animate-fade-in bg-white">
-                                    {renderItem("Lagu Pengantar", "LS 515")}
-                                    {renderItem("Lagu Sambutan", "LS 1")}
+                                    {renderItem("Lagu Pengantar", "LS 515 - Tuhan Ada Dalam Bait Allah")}
+                                    {renderItem("Lagu Sambutan", "LS 1 - Di Hadapan Hadirat-Mu")}
                                     {renderItem("Doa Buka", getOfficer(activeSabat.khotbah, "Khotbah"))}
                                     {renderItem("Ayat Bersahutan", susunan.kAyatBersahutan)}
                                     {renderItem("Lagu Buka", susunan.kLaguBuka)}
                                     {renderItem("Doa Syafaat", getOfficer(activeSabat.khotbah, "Pendamping 1"))}
                                     {susunan.kLaguPujian1_show && renderItem("Lagu Pujian", susunan.kLaguPujian1_judul, true)}
                                     {renderItem("Bacaan Persembahan", getOfficer(activeSabat.khotbah, "Pendamping 2"))}
-                                    {renderItem("Lagu Persembahan", "LS 260")}
+                                    {renderItem("Lagu Persembahan", "LS 260 - Bawa Persembahanmu")}
                                     {renderItem("Doa Persembahan", getOfficer(activeSabat.khotbah, "Pendamping 2"))}
                                     {susunan.kLaguPujian2_show && renderItem("Lagu Pujian", susunan.kLaguPujian2_judul, true)}
                                     {renderItem("Cerita Anak-anak", getOfficer(activeSabat.khotbah, "Cerita Anak-anak"))}
@@ -392,7 +392,7 @@
                                     {renderItem("Khotbah", getOfficer(activeSabat.khotbah, "Khotbah"), true)}
                                     {renderItem("Lagu Tutup", susunan.kLaguTutup)}
                                     {renderItem("Doa Berkat", "Pdt. David Indra Utomo")}
-                                    {renderItem("Lagu Berkat", "LS 60")}
+                                    {renderItem("Lagu Berkat", "LS 60 - Pada Akhir Kebaktian")}
                                     {renderItem("Pengumuman", "Dept. Komunikasi")}
                                 </div>
                             )}
