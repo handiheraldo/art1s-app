@@ -90,8 +90,15 @@ function doGet(e) {
   var sPengaturan = ss.getSheetByName("Pengaturan");
   var pengData = sPengaturan.getDataRange().getValues();
   var youtubeUrl = "https://www.youtube-nocookie.com/embed?listType=playlist&list=UUz6rQ_5zP0Y0c8V7aKx2jLQ";
+  var kategoriPejabat = ["Kepemimpinan", "Keuangan", "Departemen & Pelayanan", "Lainnya"];
+  
   for (var i = 1; i < pengData.length; i++) {
     if (pengData[i][0] === "YOUTUBE_URL") youtubeUrl = pengData[i][1].toString();
+    if (pengData[i][0] === "KATEGORI_PEJABAT") {
+      try {
+        kategoriPejabat = JSON.parse(pengData[i][1].toString());
+      } catch (e) {}
+    }
   }
   
   // --- Baca Data Pejabat ---
@@ -105,7 +112,8 @@ function doGet(e) {
         jabatan: pData[i][1].toString(),
         nama: pData[i][2].toString(),
         wa: pData[i][3].toString().replace(/'/g, ''),
-        img: pData[i][4].toString()
+        img: pData[i][4].toString(),
+        kategori: pData[i][5] ? pData[i][5].toString() : 'Umum'
       });
     }
   }
@@ -188,7 +196,8 @@ function doGet(e) {
   return ContentService.createTextOutput(JSON.stringify({
     dataPejabat: dataPejabat,
     jadwalDB: jadwalDB,
-    youtubeUrl: youtubeUrl
+    youtubeUrl: youtubeUrl,
+    kategoriPejabat: kategoriPejabat
   })).setMimeType(ContentService.MimeType.JSON);
 }
 
@@ -313,19 +322,33 @@ function doPost(e) {
     
     var sPejabat = ss.getSheetByName("Pejabat");
     
-    // Bersihkan isi sheet Pejabat kecuali Header
+    // Bersihkan isi sheet Pejabat kecuali Header (Ubah sampai kolom ke-6)
     if (sPejabat.getLastRow() > 1) {
-      sPejabat.getRange(2, 1, sPejabat.getLastRow() - 1, 5).clearContent();
+      sPejabat.getRange(2, 1, sPejabat.getLastRow() - 1, 6).clearContent();
     }
     
     var newRows = [];
     for (var i = 0; i < payload.data.length; i++) {
       var p = payload.data[i];
-      newRows.push([p.id, p.jabatan, p.nama, "'" + p.wa, p.img]);
+      newRows.push([p.id, p.jabatan, p.nama, "'" + p.wa, p.img, p.kategori || 'Umum']);
     }
     
     if (newRows.length > 0) {
-      sPejabat.getRange(2, 1, newRows.length, 5).setValues(newRows);
+      sPejabat.getRange(2, 1, newRows.length, 6).setValues(newRows);
+    }
+
+    // Simpan Kategori Pejabat jika disertakan
+    if (payload.kategoriPejabat) {
+      var pengData = sPengaturan.getDataRange().getValues();
+      var foundKat = false;
+      for (var i = 1; i < pengData.length; i++) {
+        if (pengData[i][0] === "KATEGORI_PEJABAT") {
+          sPengaturan.getRange(i + 1, 2).setValue(JSON.stringify(payload.kategoriPejabat));
+          foundKat = true;
+          break;
+        }
+      }
+      if (!foundKat) { sPengaturan.appendRow(["KATEGORI_PEJABAT", JSON.stringify(payload.kategoriPejabat)]); }
     }
     
     return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
