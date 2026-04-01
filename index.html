@@ -1381,12 +1381,18 @@
                                             </div>
                                         </div>
                                         <div className="overflow-x-auto">
-                                            <table className={`w-full text-left border-collapse ${subTab === 'perjamuan' ? 'min-w-[2800px]' : subTab === 'susunanAcara' ? 'min-w-[400px]' : 'min-w-[800px]'}`}>
+                                            <table className={`text-left border-collapse ${
+                                                    subTab === 'perjamuan' ? 'w-full min-w-[800px] mx-auto' : 
+                                                    subTab === 'susunanAcara' ? 'w-full min-w-[300px] mx-auto' : 
+                                                    subTab === 'diakon' ? 'w-full min:w-[400px] mx-auto' :
+                                                    subTab === 'musik' ? 'w-full min:w-[400px] mx-auto' :
+                                                    'w-full min-w-[800px] mx-auto'
+                                                    }`}>
                                                 <thead className="bg-navy-50/50 border-b border-navy-100/60">
                                                     <tr>
-                                                        <th className="p-4 text-[10px] md:text-xs font-black text-navy-500 uppercase tracking-widest text-center w-36">Tanggal</th>
-                                                        {columns.map((col, i) => <th key={i} className="p-4 text-[10px] md:text-xs font-black text-navy-500 uppercase tracking-widest text-center">{col}</th>)}
-                                                        <th className="p-4 text-[10px] md:text-xs font-black text-navy-500 uppercase tracking-widest text-center w-1">Ubah</th>
+                                                        <th className="p-2 text-[10px] md:text-xs font-black text-navy-500 uppercase tracking-widest text-center w-36">Tanggal</th>
+                                                        {columns.map((col, i) => <th key={i} className="p-2 text-[10px] md:text-xs font-black text-navy-500 uppercase tracking-widest text-center">{col}</th>)}
+                                                        <th className="p-2 text-[10px] md:text-xs font-black text-navy-500 uppercase tracking-widest text-center w-1">Ubah</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody className="divide-y divide-navy-50 bg-white">
