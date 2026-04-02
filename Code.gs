@@ -19,7 +19,7 @@ var SCHEDULE_CONFIGS = [
 // =========================================================================
 function checkAndInitSheets() {
   // Mengarahkan database langsung ke ID Google Sheet spesifik milikmu
-  var ss = SpreadsheetApp.openById("1-dT9JhlAm41ZxQMzkdGBD3Mhv1Hzd0qDiRMV59zjdxw");
+  var ss = SpreadsheetApp.openById("1FbdIMEHbY5PY61kx3SFTLjq2CZUISmeQObuO_qPJ5MM");
   
   // 1. Sheet Pengaturan
   var sPengaturan = ss.getSheetByName("Pengaturan");
