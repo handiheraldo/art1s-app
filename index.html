@@ -106,7 +106,6 @@
             scrollbar-width: none;
         }
 
-        /* PERBAIKAN: Memaksa tag <b> dan <i> bekerja mengabaikan reset Tailwind */
         .pengumuman-text b, .pengumuman-text strong {
             font-weight: 800 !important;
             color: #0b1a30;
@@ -262,10 +261,12 @@
                 {pengumuman && pengumuman.isi && (
                     <div className="bg-gradient-to-r from-gold-50 to-gold-100 p-5 md:p-6 rounded-[1.5rem] shadow-sm border border-gold-200 hover:shadow-md transition-shadow relative overflow-hidden">
                         <div className="absolute top-0 right-0 bg-gold-500 text-white text-[10px] font-bold px-4 py-1.5 rounded-bl-xl uppercase tracking-widest shadow-sm flex items-center"><Icon name="Info" className="w-3 h-3 mr-1" /> Info</div>
-                        <h2 className="text-[1.15rem] font-bold mb-3 text-navy-900 flex items-center">
-                            <Icon name="Megaphone" className="w-[1.25rem] h-[1.25rem] mr-2 text-gold-600" /> {pengumuman.header || "Pengumuman Jemaat"}
-                        </h2>
-                        {/* PERBAIKAN: Memaksa tag <b> dan <i> bekerja mengabaikan reset Tailwind */}
+                    <h2 className="text-[1.15rem] font-bold mb-4 text-navy-900 flex items-center">
+                        <Icon name="Megaphone" className="w-[1.5rem] h-[1.5rem] mr-2 text-gold-500" /> PENGUMUMAN JEMAAT
+                    </h2>
+                    <h3 className="text-[1rem] font-bold mb-3 text-navy-900 flex items-center">
+                     {pengumuman.header || "Pengumuman Jemaat"}
+                    </h3>
                         <div className="pengumuman-text text-navy-800 text-sm whitespace-pre-wrap font-medium leading-relaxed" dangerouslySetInnerHTML={{ __html: pengumuman.isi }}>
                         </div>
                     </div>
@@ -315,11 +316,9 @@
                     </div>
                 </div>
 
-
-
                 <div className="bg-white p-5 md:p-7 rounded-[1.5rem] shadow-sm border border-navy-100/60 hover:shadow-md transition-shadow">
                     <h2 className="text-[1.15rem] font-bold mb-4 text-navy-900 flex items-center">
-                        <Icon name="Video" className="w-[1.15rem] h-[1.15rem] mr-2 text-gold-500" /> Video Terbaru
+                        <Icon name="Video" className="w-[1.5rem] h-[1.1rem] mr-2 text-gold-500" /> Video Terbaru
                     </h2>
                     <div className="relative w-full overflow-hidden rounded-[1rem] shadow-sm border border-navy-50" style={{ paddingTop: '56.25%' }}>
                         <iframe
@@ -335,7 +334,7 @@
 
                 <div className="bg-white p-5 md:p-7 rounded-[1.5rem] shadow-sm border border-navy-100/60 hover:shadow-md transition-shadow">
                     <div className="flex items-center space-x-2 mb-4">
-                        <Icon name="Headphones" className="w-[1.15rem] h-[1.15rem] text-gold-500" />
+                        <Icon name="Headphones" className="w-[1.5rem] h-[1.5rem] text-gold-500" />
                         <h3 className="font-bold text-[1.15rem] text-navy-900">SDA Tithing System</h3>
                     </div>
                     <div className="w-full flex justify-center">
@@ -345,7 +344,7 @@
 
                 <footer className="mt-8 pt-6 pb-2 border-t border-navy-200 text-center text-navy-500 font-medium tracking-wide text-[10px] md:text-xs">
                     <p>Copyright &copy; by PISGAH BISDAC Team 2026</p>
-                    <p>Thanks to ART1SAN tech Team for Code</p>
+                    <p>Thanks to ART1SAN tech Team for CodeSources</p>
                     <p>GOD BLESS US</p>
                 </footer>
             </div>
@@ -640,7 +639,6 @@
                 )}
 
                 {/* Rabu */}
-                {/* pada bagian Jadwal */}
                 <div className="bg-white p-5 md:p-7 rounded-[1.5rem] shadow-sm border-t-[6px] border-navy-800 border-x border-b border-navy-100/60 relative">
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-5 border-b pb-4 border-navy-50">
                         <div className="flex items-center space-x-3">
@@ -1182,8 +1180,9 @@
                 return dates;
             }, [viewYear, viewMonth, isRabu, subTab]);
 
-            const columns = subTab === 'susunanAcara' ? ['Detail'] : ['Tugas', 'Nama / Keterangan'];
-
+            // ===============================================
+            // FIX: JUDUL KOLOM DINAMIS BERDASARKAN TUGAS
+            // ===============================================
             const getActiveArray = (row, tab) => {
                 if (tab === 'rabu') return row.petugas || [];
                 if (tab === 'ss') return row.sekolahSabat || [];
@@ -1193,6 +1192,11 @@
                 if (tab === 'perjamuan') return row.perjamuan || [];
                 return [];
             };
+
+            const defaultRowData = isRabu ? initialJadwalRabu : initialJadwalSabat;
+            const defaultDataArray = getActiveArray(defaultRowData, subTab);
+            const columns = subTab === 'susunanAcara' ? ['Detail'] : defaultDataArray.map(p => p.tugas);
+
 
             const [editForm, setEditForm] = React.useState({});
             const [isSavingJadwal, setIsSavingJadwal] = React.useState(false);
@@ -1947,7 +1951,6 @@
                     });
             }, []);
 
-            // FIX TYPO: Memperbaiki penulisan state
             const [isAdminLoggedIn, setIsAdminLoggedIn] = React.useState(false);
             const [showLoginModal, setShowLoginModal] = React.useState(false);
 
