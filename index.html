@@ -4,10 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ART1S App</title>
+    
+    <meta name="description" content="Sistem Informasi dan Layanan Jemaat PISGAH-BISDAC">
+    <meta name="theme-color" content="#0b1a30">
+    <title>PISGAH-BISDAC | Layanan Jemaat</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="./art1s-bg.svg">
+    <link rel="icon" type="image/png" href="./Pisgahpavicon.png">
+    <link rel="apple-touch-icon" href="./Pisgahpavicon.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -101,6 +105,35 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+        .pengumuman-text b, .pengumuman-text strong {
+            font-weight: 800 !important;
+            color: #0b1a30;
+        }
+
+        .pengumuman-text i, .pengumuman-text em {
+            font-weight: 800 !important;
+            color: #0b1a30;
+        }
+
+        .warta-content b, .warta-content strong {
+            font-weight: 800 !important;
+            color: #0b1a30;
+        }
+        .warta-content i, .warta-content em {
+            font-style: italic !important;
+            color: #0b1a30;
+        }
+
+        .pengumuman-text a {
+            color: #9c851e;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+        .pengumuman-text a:hover {
+            color: #9c851e;
+        }
+
     </style>
 </head>
 
@@ -111,7 +144,29 @@
         // ========================================================
         // URL WEB APP MILIKMU
         // ========================================================
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwI5T1i2ylq6h1vXM7P94sawNyBuc7m7JSurUZAxz4PVl08Y2Rk9V0Rc0nKp6tA2i4ATg/exec";
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbykhljKHJHVf9DsGtxUxWkD5BMAffI1j01P3-HmxzSwYRg9jdWWvxn8ifwPmN6TrhU6/exec";
+
+        // ========== HELPER UNTUK WARTA PANJANG ==========
+const stripHtml = (html) => {
+  if (!html) return '';
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+};
+
+const truncateText = (text, maxLength = 500) => {
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + '...';
+};
+// ================================================
+
+        // --- HELPER UNTUK MENGUBAH HTML ENTITIES DARI SPREADSHEET ---
+        const decodeHTML = (htmlStr) => {
+            if (!htmlStr) return '';
+            const txt = document.createElement("textarea");
+            txt.innerHTML = htmlStr;
+            return txt.value;
+        };
 
         // --- INITIAL DATA ---
         const defaultSusunan = {
@@ -130,48 +185,42 @@
         };
 
         const initialJadwalRabu = {
-            title: "Ibadah Permintaan Doa (Rabu)", time: "19:00 WIB - selesai",
-            petugas: [{ tugas: "Pemimpin Acara", nama: "Bpk. Budi Santoso" }, { tugas: "Renungan", nama: "Pdt. Samuel" }, { tugas: "Doa Syafaat", nama: "Ibu Maria" }, { tugas: "Diakon", nama: "Sdr. Joshua" }]
+            title: "Ibadah Permintaan Doa (Rabu)", time: "19:30 WIB - selesai",
+            petugas: [{ tugas: "Pemimpin Acara", nama: "Pemimpin" }, { tugas: "Renungan", nama: "Renungan" }, { tugas: "Tempat", nama: "Tempat" }, { tugas: "Lagu Pujian", nama: "Lagu Pujian" }, { tugas: "Persembahan Kas", nama: "Diakon" }]
         };
 
         const initialJadwalSabat = {
-            title: "Ibadah Sabat (Sabtu)", time: "09:00 - 12:00 WIB",
-            sekolahSabatTime: "09:00 - 10:30 WIB",
-            sekolahSabat: [{ tugas: "Pianist", nama: "Sdri. Grace" }, { tugas: "Pembawa Acara", nama: "Bpk. Andi" }, { tugas: "Ayat Inti & Doa Buka", nama: "Bpk. Yohanes" }, { tugas: "Berita Misi", nama: "Ibu Lina" }, { tugas: "Pelayanan Perorangan", nama: "Bpk. Sitorus" }],
-            khotbahTime: "10:30 - 12:00 WIB",
-            khotbah: [{ tugas: "Khotbah", nama: "Pdt. David Siregar" }, { tugas: "Pendamping 1", nama: "Bpk. Daniel" }, { tugas: "Pendamping 2", nama: "Sdr. Kevin" }, { tugas: "Cerita Anak-anak", nama: "Ibu Sarah" }, { tugas: "Song Leader", nama: "Sdr. Joshua" }, { tugas: "Lagu Pujian", nama: "Koor Pemuda" }],
-            diakon: [{ tugas: "Diakon 1", nama: "Bpk. Sitorus" }, { tugas: "Diakon 2", nama: "Bpk. Tambunan" }, { tugas: "Diakones 1", nama: "Ibu Sitorus" }, { tugas: "Diakones 2", nama: "Ibu Tambunan" }],
-            musik: [{ tugas: "Pianis", nama: "Sdri. Grace" }, { tugas: "Keyboardis", nama: "Sdr. Kevin" }, { tugas: "Gitaris", nama: "Sdr. Alex" }, { tugas: "Bassist", nama: "Sdr. Brian" }, { tugas: "Saxophonist", nama: "Bpk. Anton" }, { tugas: "Violinist", nama: "Sdri. Clara" }],
+            title: "Ibadah Sabat (Sabtu)", time: "10:00 - 13:00 WIB",
+            sekolahSabatTime: "11:45 - 12:40 WIB",
+            sekolahSabat: [{ tugas: "Pianis", nama: "Pianis" }, { tugas: "Presider", nama: "Presider" }, { tugas: "Ayat Inti & Doa Buka", nama: "Presider" }, { tugas: "Berita Misi", nama: "Video" }, { tugas: "Doa Tutup", nama: "Doa Tutup" }],
+            khotbahTime: "10:00 - 11:45 WIB",
+            khotbah: [{ tugas: "Pianis", nama: "Pianis" }, { tugas: "Khotbah", nama: "Sermon" }, { tugas: "Doa Syafaat", nama: "Syafaat" }, { tugas: "Presider", nama: "Presider" }, { tugas: "Song Leader", nama: "Presider" }, { tugas: "Cerita Anak-anak", nama: "Sermonette" }, { tugas: "Lagu Pujian", nama: "SpesialSong" }],
+            diakon: [{ tugas: "Diakon", nama: "Diakon" }],
+            musik: [{ tugas: "Pianis SS", nama: "Pianis SS" }, { tugas: "Pianis Khotbah", nama: "Pianis Khotbah" }],
             susunan: defaultSusunan,
             perjamuan: [
-                { tugas: "P. Roti & Anggur 1", nama: "" }, { tugas: "P. Roti & Anggur 2", nama: "" }, { tugas: "P. Roti & Anggur 3", nama: "" }, { tugas: "P. Roti & Anggur 4", nama: "" }, { tugas: "P. Roti & Anggur 5", nama: "" },
-                { tugas: "P. Basuh Kaki 1", nama: "" }, { tugas: "P. Basuh Kaki 2", nama: "" }, { tugas: "P. Basuh Kaki 3", nama: "" },
-                { tugas: "Pelayan Basuh Kaki 1", nama: "" }, { tugas: "Pelayan Basuh Kaki 2", nama: "" }, { tugas: "Pelayan Basuh Kaki 3", nama: "" },
                 { tugas: "Pelayan Perjamuan (L1)", nama: "" }, { tugas: "Pelayan Perjamuan (P1)", nama: "" }, { tugas: "Pelayan Perjamuan (L2)", nama: "" }, { tugas: "Pelayan Perjamuan (P2)", nama: "" },
-                { tugas: "Cuci Baskom 1", nama: "" }, { tugas: "Cuci Baskom 2", nama: "" }, { tugas: "Cuci Baskom 3", nama: "" }, { tugas: "Cuci Baskom 4", nama: "" },
-                { tugas: "Cuci Alat Perjamuan", nama: "Diatur oleh Diakones" }
-            ]
+                ]
         };
 
         const initialDataPejabat = [
-            { id: 'gembala', jabatan: "Gembala Jemaat", nama: "Pdt. [Nama Gembala]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Gembala+Jemaat&background=eff6ff&color=1e3a8a&size=128", kategori: "Kepemimpinan" },
-            { id: 'ketua1', jabatan: "Ketua Jemaat 1", nama: "Bpk. [Nama Ketua 1]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Ketua+1&background=eff6ff&color=1e3a8a&size=128", kategori: "Kepemimpinan" },
-            { id: 'ketua2', jabatan: "Ketua Jemaat 2", nama: "Bpk. [Nama Ketua 2]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Ketua+2&background=eff6ff&color=1e3a8a&size=128", kategori: "Kepemimpinan" },
-            { id: 'sekretaris1', jabatan: "Sekretaris 1", nama: "Ibu [Nama Sekretaris 1]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Sekretaris+1&background=f0fdf4&color=14532d&size=128", kategori: "Kepemimpinan" },
-            { id: 'sekretaris2', jabatan: "Sekretaris 2", nama: "Bpk. [Nama Sekretaris 2]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Sekretaris+2&background=f0fdf4&color=14532d&size=128", kategori: "Kepemimpinan" },
-            { id: 'bendahara1', jabatan: "Bendahara 1", nama: "Ibu Ari Pahlawani", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Ari+Pahlawani&background=fffbeb&color=78350f&size=128", kategori: "Keuangan" },
-            { id: 'bendahara2', jabatan: "Bendahara 2", nama: "Ibu Kasfia Naibaho", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Kasfia+Naibaho&background=fffbeb&color=78350f&size=128", kategori: "Keuangan" },
-            { id: 'multimedia', jabatan: "Multimedia", nama: "Sdr. [Nama Multimedia]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Multimedia&background=e0e7ff&color=3730a3&size=128", kategori: "Departemen & Pelayanan" },
-            { id: 'sound_system', jabatan: "Sound System", nama: "Sdr. [Nama Sound System]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Sound+System&background=e0e7ff&color=3730a3&size=128", kategori: "Departemen & Pelayanan" },
-            { id: 'diakon', jabatan: "Ketua Diakon & Diakones", nama: "Bpk. [Nama Ketua Diakon]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Diakon+Diakones&background=f3f4f6&color=1f2937&size=128", kategori: "Departemen & Pelayanan" },
-            { id: 'pemuda', jabatan: "Ketua Pemuda", nama: "Sdr. [Nama Ketua Pemuda]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Ketua+Pemuda&background=faf5ff&color=581c87&size=128", kategori: "Departemen & Pelayanan" }
-        ];
-
-        // --- ICONS (SVG MAPPING) ---
+            { id: 'gembala', jabatan: "Gembala Jemaat", nama: "Pdt. [Nama Gembala]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Gembala+Jemaat&background=eff6ff&color=1e3a8a&size=128", kategori: "Gembala" },
+            { id: 'ketua', jabatan: "Ketua Jemaat", nama: "Bpk. [Nama Ketua]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Ketua+Jemaat&background=eff6ff&color=1e3a8a&size=128", kategori: "Officers" },
+            { id: 'sekertaris', jabatan: "Sekertaris", nama: "Bpk. [Nama Sekertaris]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Sekertaris&background=eff6ff&color=1e3a8a&size=128", kategori: "Officers" },
+            { id: 'bendahara', jabatan: "Bendahara", nama: "Ibu [Nama Bendahara]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Bendahara+Jemaat&background=f0fdf4&color=14532d&size=128", kategori: "Officers" },
+            { id: 'penginjilan', jabatan: "Penginjilan", nama: "Bpk. [Nama Penginjilan]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Penginjilan&background=f0fdf4&color=14532d&size=128", kategori: "Departemen & Pelayanann" },
+            { id: 'ss', jabatan: "Sekolah Sabat", nama: "Ibu. [Nama Sekolah Sabat]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Sekolah+Sabat&background=fffbeb&color=78350f&size=128", kategori: "Departemen & Pelayanan" },
+            { id: 'diakon', jabatan: "Ketua Diakon", nama: "Ibu. [Nama Ketua Diakon", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Ketua+Diakon&background=fffbeb&color=78350f&size=128", kategori: "Departemen & Pelayanan" },
+            { id: 'rumah', jabatan: "Rumah Tangga", nama: "Sdr. [Nama Rumah Tangga]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Rumah+Tangga&background=e0e7ff&color=3730a3&size=128", kategori: "Departemen & Pelayanan" },
+            { id: 'pemuda', jabatan: "Pemuda", nama: "Sdr. [Nama Pemuda]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Pemuda&background=e0e7ff&color=3730a3&size=128", kategori: "Departemen & Pelayanan" },
+            { id: 'hotline', jabatan: "Hotline", nama: "Bpk. [Nama Hotline]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Hotline&background=f3f4f6&color=1f2937&size=128", kategori: "Lainnya" },
+            { id: 'komunikasi', jabatan: "komunikasi", nama: "Sdr. [Nama Komunikasi]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Kominikasi&background=faf5ff&color=581c87&size=128", kategori: "Lainnya" }
+        ];// --- ICONS (SVG MAPPING) ---
         const Icon = ({ name, className }) => {
             const icons = {
                 Home: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>,
                 BookOpen: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg>,
+                Warta: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokewidth="2" strokelinecap="round" strokelinejoin="round" className={className}><path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/><path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"/><path d="M8 6v8"/></svg>,
                 Video: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m22 8-6 4 6 4V8Z" /><rect width="14" height="12" x="2" y="6" rx="2" ry="2" /></svg>,
                 Calendar: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="18" height="18" x="3" y="4" rx="2" ry="2" /><line x1="16" x2="16" y1="2" y2="6" /><line x1="8" x2="8" y1="2" y2="6" /><line x1="3" x2="21" y1="10" y2="10" /></svg>,
                 Gift: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="20 12 20 22 4 22 4 12" /><rect width="20" height="5" x="2" y="7" /><line x1="12" x2="12" y1="22" y2="7" /><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" /><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" /></svg>,
@@ -193,7 +242,14 @@
                 Eye: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>,
                 EyeOff: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" /><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" /><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" /><line x1="2" x2="22" y1="2" y2="22" /></svg>,
                 Music: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" /></svg>,
-                List: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>
+                List: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" /><line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" /></svg>,
+                Megaphone: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m3 11 18-5v12L3 14v-3z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg>,
+                Info: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>,
+                PlusCircle: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10" /><path d="M12 8v8" /><path d="M8 12h8" /></svg>,
+                Save: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>,
+                Plus: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>,
+                Trash2: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /></svg>,
+                Camera: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
             };
             return icons[name] || null;
         };
@@ -232,8 +288,23 @@
         };
 
         // --- COMPONENTS ---
-        const Home = ({ setActiveTab, youtubeUrl }) => (
+        const Home = ({ setActiveTab, youtubeUrl, pengumuman }) => (
             <div className="space-y-6 md:space-y-8 animate-fade-in relative z-10">
+                
+                {pengumuman && pengumuman.isi && (
+                    <div className="bg-gradient-to-r from-gold-50 to-gold-100 p-5 md:p-6 rounded-[1.5rem] shadow-sm border border-gold-200 hover:shadow-md transition-shadow relative overflow-hidden">
+                        <div className="absolute top-0 right-0 bg-gold-500 text-white text-[10px] font-bold px-4 py-1.5 rounded-bl-xl uppercase tracking-widest shadow-sm flex items-center"><Icon name="Info" className="w-3 h-3 mr-1" /> Info</div>
+                    <h2 className="text-[1.15rem] font-bold mb-4 text-navy-900 flex items-center">
+                        <Icon name="Megaphone" className="w-[1.5rem] h-[1.5rem] mr-2 text-gold-500" /> PENGUMUMAN JEMAAT
+                    </h2>
+                    <h3 className="text-[1rem] font-bold mb-3 text-navy-900 flex items-center">
+                     {pengumuman.header || "Pengumuman Jemaat"}
+                    </h3>
+                        <div className="pengumuman-text text-navy-800 text-sm whitespace-pre-wrap font-medium leading-relaxed" dangerouslySetInnerHTML={{ __html: pengumuman.isi }}>
+                        </div>
+                    </div>
+                )}
+
                 <div className="grid grid-cols-3 gap-3 md:gap-5">
                     <a href="https://sabbath-school.adventech.io/in" target="_blank" rel="noopener noreferrer" className="bg-white p-4 md:p-6 rounded-[1.25rem] shadow-sm flex flex-col items-center text-center justify-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-navy-100/60 group">
                         <div className="w-12 h-12 md:w-16 md:h-16 rounded-[1rem] bg-navy-50 group-hover:bg-gold-50 transition-colors flex items-center justify-center mb-2.5 md:mb-3">
@@ -280,7 +351,7 @@
 
                 <div className="bg-white p-5 md:p-7 rounded-[1.5rem] shadow-sm border border-navy-100/60 hover:shadow-md transition-shadow">
                     <h2 className="text-[1.15rem] font-bold mb-4 text-navy-900 flex items-center">
-                        <Icon name="Video" className="w-[1.15rem] h-[1.15rem] mr-2 text-gold-500" /> Video Terbaru
+                        <Icon name="Video" className="w-[1.5rem] h-[1.5rem] mr-2 text-gold-500" /> Video Terbaru
                     </h2>
                     <div className="relative w-full overflow-hidden rounded-[1rem] shadow-sm border border-navy-50" style={{ paddingTop: '56.25%' }}>
                         <iframe
@@ -296,16 +367,18 @@
 
                 <div className="bg-white p-5 md:p-7 rounded-[1.5rem] shadow-sm border border-navy-100/60 hover:shadow-md transition-shadow">
                     <div className="flex items-center space-x-2 mb-4">
-                        <Icon name="Headphones" className="w-[1.15rem] h-[1.15rem] text-gold-500" />
-                        <h3 className="font-bold text-[1.15rem] text-navy-900">Podcast Kita</h3>
+                        <Icon name="Headphones" className="w-[1.5rem] h-[1.5rem] text-gold-500" />
+                        <h3 className="font-bold text-[1.15rem] text-navy-900">SDA Tithing System</h3>
                     </div>
                     <div className="w-full flex justify-center">
-                        <iframe data-testid="embed-iframe" style={{ borderRadius: '1rem' }} src="https://open.spotify.com/embed/show/6PcT9H7ksbbJjsnl1qUfKB/video?utm_source=generator" width="100%" height="152" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        <iframe data-testid="embed-iframe" style={{ borderRadius: '1rem' }} src="https://www.youtube.com/embed/EAO55pnNsgs" width="100%" height="200" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                     </div>
                 </div>
 
                 <footer className="mt-8 pt-6 pb-2 border-t border-navy-200 text-center text-navy-500 font-medium tracking-wide text-[10px] md:text-xs">
-                    Copyright &copy; by ART1S Tech Team 2026
+                    <p>Copyright &copy; by PISGAH BISDAC Team 2026</p>
+                    <p>Thanks to ART1SAN tech Team for CodeSources</p>
+                    <p>GOD BLESS US</p>
                 </footer>
             </div>
         );
@@ -324,15 +397,15 @@
             );
 
             const susunanTabs = [
-                { id: 'ss', label: 'Sekolah Sabat', icon: 'BookOpen', activeColor: 'text-navy-900' },
                 { id: 'khotbah', label: 'Khotbah / Umum', icon: 'List', activeColor: 'text-navy-900' },
+                { id: 'ss', label: 'Sekolah Sabat', icon: 'BookOpen', activeColor: 'text-navy-900' },
                 { id: 'diakon', label: 'Diakon & Diakones', icon: 'Users', activeColor: 'text-navy-900' },
                 { id: 'musik', label: 'Pelayanan Musik', icon: 'Music', activeColor: 'text-navy-900' }
             ];
 
             return (
                 <div className="space-y-6 animate-fade-in">
-                    <button onClick={() => setActiveTab('home')} className="text-navy-600 font-bold flex items-center hover:text-gold-600 transition-colors mb-2">&larr; Kembali ke Home</button>
+                    
 
                     <div className="bg-white rounded-[1.5rem] shadow-sm border border-navy-100/60 overflow-hidden relative">
                         <div className="text-center p-6 md:p-8 border-b border-navy-50 bg-navy-50/30">
@@ -358,20 +431,6 @@
                             </div>
 
                             {/* TAB CONTENT */}
-                            {openSection === 'ss' && (
-                                <div className="p-4 md:p-6 animate-fade-in bg-white">
-                                    {renderItem("Lagu Pengantar", "LS 205")}
-                                    {renderItem("Pemimpin Acara", getOfficer(activeSabat.sekolahSabat, "Pembawa Acara"))}
-                                    {renderItem("Lagu Buka", susunan.ssLaguBuka)}
-                                    {renderItem("Ayat Inti & Doa Buka", getOfficer(activeSabat.sekolahSabat, "Ayat Inti & Doa Buka"))}
-                                    {renderItem("Berita Misi", getOfficer(activeSabat.sekolahSabat, "Berita Misi"))}
-                                    {renderItem("Diskusi Sekolah Sabat", "Kelas Pemuda 1, Kelas Dewasa, Kelas Pemuda 2, Kelas Anak-anak")}
-                                    {renderItem("Pelayanan Perorangan", getOfficer(activeSabat.sekolahSabat, "Pelayanan Perorangan"))}
-                                    {renderItem("Lagu Tutup", susunan.ssLaguTutup)}
-                                    {renderItem("Doa Tutup", getOfficer(activeSabat.sekolahSabat, "Pelayanan Perorangan"))}
-                                </div>
-                            )}
-
                             {openSection === 'khotbah' && (
                                 <div className="p-4 md:p-6 animate-fade-in bg-white">
                                     {renderItem("Lagu Pengantar", "LS 515 - Tuhan Ada Dalam Bait Allah")}
@@ -379,11 +438,10 @@
                                     {renderItem("Doa Buka", getOfficer(activeSabat.khotbah, "Khotbah"))}
                                     {renderItem("Ayat Bersahutan", susunan.kAyatBersahutan)}
                                     {renderItem("Lagu Buka", susunan.kLaguBuka)}
-                                    {renderItem("Doa Syafaat", getOfficer(activeSabat.khotbah, "Pendamping 1"))}
-                                    {susunan.kLaguPujian1_show && renderItem("Lagu Pujian", susunan.kLaguPujian1_judul, true)}
-                                    {renderItem("Bacaan Persembahan", getOfficer(activeSabat.khotbah, "Pendamping 2"))}
-                                    {renderItem("Lagu Persembahan", "LS 260 - Bawa Persembahanmu")}
-                                    {renderItem("Doa Persembahan", getOfficer(activeSabat.khotbah, "Pendamping 2"))}
+                                    {renderItem("Doa Syafaat", getOfficer(activeSabat.khotbah, "Doa Syafaat"))}
+                                    {renderItem("Bacaan Persembahan", getOfficer(activeSabat.khotbah, "Presider"))}
+                                    {renderItem("Lagu Persembahan - Special ", susunan.kLaguPujian1_judul || "Judul Lagu Belum Diisi", true)}
+                                    {renderItem("Doa Persembahan", getOfficer(activeSabat.khotbah, "Presider"))}
                                     {susunan.kLaguPujian2_show && renderItem("Lagu Pujian", susunan.kLaguPujian2_judul, true)}
                                     {renderItem("Cerita Anak-anak", getOfficer(activeSabat.khotbah, "Cerita Anak-anak"))}
                                     {susunan.kLaguPujian3_show && renderItem("Lagu Pujian", susunan.kLaguPujian3_judul, true)}
@@ -391,9 +449,21 @@
                                     {renderItem("Lagu Tema", "Misi Kita")}
                                     {renderItem("Khotbah", getOfficer(activeSabat.khotbah, "Khotbah"), true)}
                                     {renderItem("Lagu Tutup", susunan.kLaguTutup)}
-                                    {renderItem("Doa Berkat", "Pdt. David Indra Utomo")}
-                                    {renderItem("Lagu Berkat", "LS 60 - Pada Akhir Kebaktian")}
+                                    {renderItem("Doa Berkat", getOfficer(activeSabat.khotbah, "Khotbah"))}
                                     {renderItem("Pengumuman", "Dept. Komunikasi")}
+                                </div>
+                            )}
+
+                            {openSection === 'ss' && (
+                                <div className="p-4 md:p-6 animate-fade-in bg-white">
+                                    {renderItem("Lagu Pengantar", "LS 205")}
+                                    {renderItem("Pemimpin Acara", getOfficer(activeSabat.sekolahSabat, "Presider"))}
+                                    {renderItem("Lagu Buka", susunan.ssLaguBuka)}
+                                    {renderItem("Ayat Inti & Doa Buka", getOfficer(activeSabat.sekolahSabat, "Ayat Inti & Doa Buka"))}
+                                    {renderItem("Berita Misi", getOfficer(activeSabat.sekolahSabat, "Berita Misi"))}
+                                    {renderItem("Diskusi Sekolah Sabat", "Kelas Dewasa, Kelas Pendalaman Alkitab, Kelas Anak-anak")}
+                                    {renderItem("Lagu Tutup", susunan.ssLaguTutup)}
+                                    {renderItem("Doa Tutup", getOfficer(activeSabat.sekolahSabat, "Doa Tutup"))}
                                 </div>
                             )}
 
@@ -416,13 +486,14 @@
 
         const Belajar = ({ setActiveTab }) => {
             const items = [
-                { id: 'sekolah_sabat', title: 'Sekolah Sabat', desc: 'Akses pelajaran harian Sekolah Sabat secara online untuk pedalaman rohani Anda.', img: 'https://images.spr.so/cdn-cgi/imagedelivery/j42No7y-dcokJuNgXeA0ig/ecfa0085-8c09-46ef-97df-6be05cd44019/1000129545/w=800,quality=80,fit=scale-down', color: 'blue', isExternal: true, link: 'https://sabbath-school.adventech.io/in' },
+                { id: 'sekolah_sabat', title: 'Sekolah Sabat', desc: 'Akses pelajaran harian Sekolah Sabat secara online untuk pedalaman rohani Anda.', img: 'https://images.spr.so/cdn-cgi/imagedelivery/j42No7y-dcokJuNgXeA0ig/ecfa0085-8c09-46ef-97df-6be05cd44019/1000129545/w=800,quality=80,fit=scale-down', color: 'navy', isExternal: true, link: 'https://sabbath-school.adventech.io/in' },
                 { id: 'alkitab', title: 'Alkitab', desc: 'Alkitab adalah firman Allah yang diilhamkan, satu-satunya aturan iman dan praktik.', img: 'https://images.hopesoftware.org/resize/L3c6MTkyMCxxOjgwL2hvcGUtaW1hZ2VzLzY3MDU0MDEzYTYwOTE5YzkyZDkyYzk1OS9DZnExNzQ5MTg3MDg1NjE3LmpwZw/w:1920,q:80/hope-images/67054013a60919c92d92c959/Cfq1749187085617.jpg', color: 'orange' },
                 { id: '28dasar', title: '28 Dasar Kepercayaan', desc: 'Gereja Advent memegang keyakinan dasar tertentu sebagai ajaran Kitab Suci.', img: 'https://images.hopesoftware.org/resize/L3c6MTkyMCxxOjc1L2hvcGUtaW1hZ2VzLzY3MDU0MDEzYTYwOTE5YzkyZDkyYzk1OS9mcEUxNzQ5NDcxNDI3NTExLmpwZw/w:1920,q:75/hope-images/67054013a60919c92d92c959/fpE1749471427511.jpg', color: 'green' },
                 { id: 'egw', title: 'Ellen G. White', desc: 'Mengenal tulisan-tulisan yang diilhami untuk menuntun gereja pada akhir zaman.', img: 'https://images.hopesoftware.org/resize/L3c6MTkyMCxxOjgwL2hvcGUtaW1hZ2VzLzY3MDU0MDEzYTYwOTE5YzkyZDkyYzk1OS9ISVMxNzQ3NzM1NjEyMzE5LmpwZw/w:1920,q:80/hope-images/67054013a60919c92d92c959/HIS1747735612319.jpg', color: 'purple' }
             ];
 
             return (
+                        
                 <div className="space-y-6 animate-fade-in">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {items.map((item) => (
@@ -546,9 +617,9 @@
                         <p>Sebagai utusan Tuhan, tulisan-tulisannya adalah sumber kebenaran yang terus menerus dan berwibawa yang memberikan hiburan, bimbingan, instruksi, dan koreksi kepada gereja.</p>
                         <h3 className="text-navy-900 font-bold text-xl pt-2">Menunjuk ke Alkitab</h3>
                         <p>Tulisan-tulisannya juga memperjelas bahwa Alkitab adalah standar di mana semua pengajaran dan pengalaman harus diuji. Beliau menyebut tulisan-tulisannya sebagai "terang yang lebih kecil untuk menuntun pria dan wanita kepada terang yang lebih besar" yaitu Alkitab.</p>
-                        <div className="bg-navy-900 p-6 rounded-2xl border-l-[6px] border-gold-400 my-8 shadow-md">
+                        <div className="bg-navy-200 p-6 rounded-2xl border-l-[6px] border-gold-400 my-8 shadow-md">
                             <h4 className="font-bold text-gold-400 mb-2 flex items-center"><Icon name="Info" className="w-5 h-5 mr-2" />Tahukah Anda?</h4>
-                            <p className="text-sm font-medium text-navy-100 leading-relaxed">Ellen G. White adalah salah satu penulis wanita yang karyanya paling banyak diterjemahkan dalam sejarah kesusastraan dunia, dengan fokus utama pada pendidikan, kesehatan, dan kehidupan rohani.</p>
+                            <p className="text-sm font-medium text-navy-900 leading-relaxed">Ellen G. White adalah salah satu penulis wanita yang karyanya paling banyak diterjemahkan dalam sejarah kesusastraan dunia, dengan fokus utama pada pendidikan, kesehatan, dan kehidupan rohani.</p>
                         </div>
                         <ContactGembala dataPejabat={dataPejabat} />
                     </div>
@@ -564,7 +635,7 @@
                     {items.map((p, i) => (
                         <div key={i} className="flex justify-between items-center px-3 py-2 border-b border-purple-50 last:border-0 hover:bg-purple-50/50 transition">
                             <span className="text-xs text-purple-600 font-semibold w-1/2">{p.tugas}</span>
-                            <span className="text-sm font-bold text-gray-800 text-right w-1/2">{p.nama}</span>
+                            <span className="text-sm font-bold text-navy-800 text-right w-1/2">{p.nama}</span>
                         </div>
                     ))}
                 </div>
@@ -575,12 +646,12 @@
             <div className="space-y-6 md:space-y-8 animate-fade-in relative z-10">
                 {/* Tombol GDrive Jadwal Lengkap */}
                 <div className="bg-white p-5 md:p-6 rounded-[1.25rem] shadow-sm border border-navy-100/60 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div>
+                    <center><div>
                         <h3 className="font-bold text-navy-900 text-[1.15rem]">Jadwal Lengkap</h3>
-                        <p className="text-sm text-navy-500 mt-1">Lihat dan unduh file PDF jadwal pelayanan bulanan / triwulan di Google Drive.</p>
-                    </div>
-                    <a href="https://drive.google.com/drive/folders/1Gcbhvg_63xKe7jAOg-ZPs8tH-f9e1m5m?usp=drive_link" target="_blank" rel="noopener noreferrer" className="bg-navy-900 hover:bg-navy-800 text-gold-400 px-6 py-3 rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition flex items-center shrink-0 w-full sm:w-auto justify-center">
-                        <Icon name="BookOpen" className="w-[1.15rem] h-[1.15rem] mr-2 text-gold-500" /> Buka Google Drive
+                        <p className="text-sm text-navy-500 mt-1">Lihat dan unduh file PDF jadwal pelayanan bulanan / triwulan</p>
+                    </div></center>
+                    <a href="./TW2-2026.pdf" target="_blank" rel="noopener noreferrer" className="bg-navy-900 hover:bg-navy-800 text-gold-400 px-6 py-3 rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition flex items-center shrink-0 w-full sm:w-auto justify-center">
+                        <Icon name="BookOpen" className="w-[1.15rem] h-[1.15rem] mr-2 text-gold-500" /> Download
                     </a>
                 </div>
 
@@ -595,23 +666,20 @@
                                 <p className="text-sm font-bold text-gold-600 mt-0.5">{formatIndoDate(perjamuanYMD)}</p>
                             </div>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {renderPerjamuanGroup("Persiapan Roti & Anggur", activePerjamuan.slice(0, 5))}
-                            {renderPerjamuanGroup("Persiapan & Basuh Kaki", activePerjamuan.slice(5, 11))}
-                            {renderPerjamuanGroup("Pelayan Perjamuan", activePerjamuan.slice(11, 15))}
-                            {renderPerjamuanGroup("Pembersihan Alat", activePerjamuan.slice(15, 20))}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+                            {renderPerjamuanGroup("Pelayan Perjamuan", activePerjamuan.slice(0, 5))}
                         </div>
                     </div>
                 )}
 
                 {/* Rabu */}
-                <div className="bg-white p-5 md:p-7 rounded-[1.5rem] shadow-sm border border-navy-100/60 relative overflow-hidden group">
+                <div className="bg-white p-5 md:p-7 rounded-[1.5rem] shadow-sm border-t-[6px] border-navy-800 border-x border-b border-navy-100/60 relative">
                     <div className="flex flex-col md:flex-row md:items-center justify-between mb-5 border-b pb-4 border-navy-50">
                         <div className="flex items-center space-x-3">
                             <Icon name="Calendar" className="w-[1.4rem] h-[1.4rem] text-gold-500" />
                             <div><h2 className="text-lg font-bold text-navy-900 tracking-tight">{activeRabu.title}</h2><p className="text-sm font-semibold text-navy-400 mt-0.5">{formatIndoDate(rabuYMD)}</p></div>
                         </div>
-                        <span className="text-xs font-bold text-navy-800 bg-gold-50 px-4 py-1.5 rounded-full mt-3 md:mt-0 w-fit border border-gold-200 uppercase tracking-widest shadow-sm">{activeRabu.time}</span>
+                        <span className="text-xs font-bold text-navy-800 bg-gold-50 px-4 py-1.5 rounded-full mt-3 md:mt-0 w-fit border border-gold-200 uppercase tracking-widest shadow-sm">Waktu: {activeRabu.time}</span>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
                         {activeRabu.petugas.map((p, idx) => (
@@ -633,6 +701,17 @@
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 items-start">
                         <div className="space-y-6">
                             <div>
+                                <div className="flex justify-between items-end mb-2 bg-navy-50/50 p-3 rounded-xl border border-navy-100/50"><h3 className="font-bold text-navy-800 text-sm uppercase tracking-wider">Khotbah / Umum</h3><span className="text-[11px] text-navy-600 font-bold bg-white px-2 py-0.5 rounded-full border border-navy-100">{activeSabat.khotbahTime}</span></div>
+                                <div className="flex flex-col">{activeSabat.khotbah.map((p, idx) => (<div key={idx} className="flex justify-between items-center py-2 border-b border-navy-50/50 last:border-0 hover:bg-navy-50/30 transition-colors rounded-lg px-2"><span className="text-sm text-navy-500 font-medium">{p.tugas}</span><span className="text-sm font-bold text-navy-900 text-right">{p.nama}</span></div>))}</div>
+                            </div>
+                            <div>
+                                <div className="mb-2 bg-navy-50/50 p-3 rounded-xl border border-navy-100/50"><h3 className="font-bold text-navy-800 text-sm uppercase tracking-wider">Pelayanan Musik</h3></div>
+                                <div className="flex flex-col">{activeSabat.musik.map((p, idx) => (<div key={idx} className="flex justify-between items-center py-2 border-b border-navy-50/50 last:border-0 hover:bg-navy-50/30 transition-colors rounded-lg px-2"><span className="text-sm text-navy-500 font-medium">{p.tugas}</span><span className="text-sm font-bold text-navy-900 text-right">{p.nama}</span></div>))}</div>
+                            </div>
+                        </div>
+                        
+                        <div className="space-y-6">
+                            <div>
                                 <div className="flex justify-between items-end mb-2 bg-navy-50/50 p-3 rounded-xl border border-navy-100/50"><h3 className="font-bold text-navy-800 text-sm uppercase tracking-wider">Sekolah Sabat</h3><span className="text-[11px] text-navy-600 font-bold bg-white px-2 py-0.5 rounded-full border border-navy-100">{activeSabat.sekolahSabatTime}</span></div>
                                 <div className="flex flex-col">{activeSabat.sekolahSabat.map((p, idx) => (<div key={idx} className="flex justify-between items-center py-2 border-b border-navy-50/50 last:border-0 hover:bg-navy-50/30 transition-colors rounded-lg px-2"><span className="text-sm text-navy-500 font-medium">{p.tugas}</span><span className="text-sm font-bold text-navy-900 text-right">{p.nama}</span></div>))}</div>
                             </div>
@@ -642,16 +721,6 @@
                             </div>
                         </div>
 
-                        <div className="space-y-6">
-                            <div>
-                                <div className="flex justify-between items-end mb-2 bg-navy-50/50 p-3 rounded-xl border border-navy-100/50"><h3 className="font-bold text-navy-800 text-sm uppercase tracking-wider">Khotbah / Umum</h3><span className="text-[11px] text-navy-600 font-bold bg-white px-2 py-0.5 rounded-full border border-navy-100">{activeSabat.khotbahTime}</span></div>
-                                <div className="flex flex-col">{activeSabat.khotbah.map((p, idx) => (<div key={idx} className="flex justify-between items-center py-2 border-b border-navy-50/50 last:border-0 hover:bg-navy-50/30 transition-colors rounded-lg px-2"><span className="text-sm text-navy-500 font-medium">{p.tugas}</span><span className="text-sm font-bold text-navy-900 text-right">{p.nama}</span></div>))}</div>
-                            </div>
-                            <div>
-                                <div className="mb-2 bg-navy-50/50 p-3 rounded-xl border border-navy-100/50"><h3 className="font-bold text-navy-800 text-sm uppercase tracking-wider">Pelayanan Musik</h3></div>
-                                <div className="flex flex-col">{activeSabat.musik.map((p, idx) => (<div key={idx} className="flex justify-between items-center py-2 border-b border-navy-50/50 last:border-0 hover:bg-navy-50/30 transition-colors rounded-lg px-2"><span className="text-sm text-navy-500 font-medium">{p.tugas}</span><span className="text-sm font-bold text-navy-900 text-right">{p.nama}</span></div>))}</div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -673,27 +742,10 @@
             const isRabu = new Date(targetDateStr + 'T00:00:00').getDay() === 3;
 
             return (
-                <div className="space-y-6 md:space-y-8 animate-fade-in">
-                    <div className="bg-navy-900 rounded-[1.5rem] overflow-hidden shadow-lg p-2.5">
-                        <div className="relative w-full rounded-xl overflow-hidden" style={{ paddingTop: '56.25%' }}>
-                            <iframe className="absolute top-0 left-0 w-full h-full" src={youtubeUrl} title="YouTube Live Stream" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-                        </div>
-                        <div className="pt-4 pb-2 px-2 text-white flex justify-center w-full">
-                            <div className="font-bold text-sm tracking-widest flex items-center bg-gold-400/20 px-5 py-2.5 rounded-full border border-gold-400/30 text-gold-400 uppercase"><span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse mr-2.5"></span> Live Streaming ART1STV</div>
-                        </div>
-                    </div>
 
-                    {showPerjamuan && !isRabu && (
-                        <div className="bg-gradient-to-r from-gold-400 to-gold-500 text-navy-900 p-5 md:p-6 rounded-[1.25rem] shadow flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-in border border-gold-300">
-                            <div className="text-center sm:text-left">
-                                <h3 className="font-black text-[1.15rem] leading-none uppercase tracking-widest flex items-center justify-center sm:justify-start mb-1.5"><Icon name="Gift" className="w-4 h-4 mr-2" /> Sabat Perjamuan</h3>
-                                <p className="text-sm text-navy-800 font-bold">{formatIndoDate(perjamuanYMD)}</p>
-                            </div>
-                            <button onClick={() => setActiveTab('jadwal')} className="bg-navy-900 text-gold-400 hover:text-gold-300 px-6 py-3 rounded-xl text-sm font-bold shadow hover:bg-navy-800 transition shrink-0 w-full sm:w-auto">Lihat Petugas</button>
-                        </div>
-                    )}
-
-                    <div className="bg-white p-6 md:p-8 rounded-[1.5rem] shadow-sm border border-navy-100/60">
+            		<div className="space-y-6 md:space-y-8 animate-fade-in">
+                    
+                        <div className="bg-white p-6 md:p-8 rounded-[1.5rem] shadow-sm border border-navy-100/60">
                         <div className="flex justify-between items-start sm:items-center mb-6 flex-col sm:flex-row gap-4 border-b pb-5 border-navy-50">
                             <div>
                                 <h3 className={`text-sm font-bold uppercase tracking-widest mb-3 flex items-center ${isToday ? 'text-red-500' : 'text-gold-500'}`}>{isToday ? "🔥 Hari Ini" : "⏳ Terdekat"}</h3>
@@ -731,26 +783,47 @@
                                 </div>
                             </div>
                         )}
-                        <button onClick={() => setActiveTab('jadwal')} className="sm:hidden w-full mt-4 flex justify-center items-center text-sm font-medium text-blue-600 hover:text-blue-800 transition bg-blue-50 hover:bg-blue-100 px-4 py-3 rounded-lg">Lihat Semua Jadwal &rarr;</button>
+                        <button onClick={() => setActiveTab('jadwal')} className="sm:hidden w-full mt-4 flex justify-center items-center text-sm font-medium text-navy-600 hover:text-navy-800 transition bg-navy-50 hover:bg-navy-100 px-4 py-3 rounded-lg">Lihat Semua Jadwal &rarr;</button>
                     </div>
+                    
+                    {showPerjamuan && !isRabu && (
+                    <div className="bg-gradient-to-r from-gold-400 to-gold-500 text-navy-900 p-5 md:p-6 rounded-[1.25rem] shadow flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-in border border-gold-300">
+                            <div className="text-center sm:text-left">
+                                <h3 className="font-black text-[1.15rem] leading-none uppercase tracking-widest flex items-center justify-center sm:justify-start mb-1.5"><Icon name="Gift" className="w-4 h-4 mr-2" /> Sabat Perjamuan</h3>
+                                <p className="text-sm text-navy-800 font-bold">{formatIndoDate(perjamuanYMD)}</p>
+                            </div>
+                            <button onClick={() => setActiveTab('jadwal')} className="bg-navy-900 text-gold-400 hover:text-gold-300 px-6 py-3 rounded-xl text-sm font-bold shadow hover:bg-navy-800 transition shrink-0 w-full sm:w-auto">Lihat Petugas</button>
+                        </div>     
+                    
+                    )}
+                  
+                    <div className="bg-navy-900 rounded-[1.5rem] overflow-hidden shadow-lg p-2.5">
+                        <div className="relative w-full rounded-xl overflow-hidden" style={{ paddingTop: '56.25%' }}>
+                            <iframe className="absolute top-0 left-0 w-full h-full" src={youtubeUrl} title="YouTube Live Stream" frameBorder="2" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                        </div>
+                        <div className="pt-4 pb-2 px-2 text-white flex justify-center w-full">
+                            <div className="font-bold text-sm tracking-widest flex items-center bg-gold-400/20 px-5 py-2.5 rounded-full border border-gold-400/30 text-gold-400 uppercase"><span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse mr-2.5"></span> Live </div>
+                        </div>
+                    </div>
+                    
                 </div>
             );
         };
 
         const Persembahan = ({ dataPejabat }) => {
             const bendaharas = dataPejabat.filter(p => (p.jabatan && p.jabatan.toLowerCase().includes('bendahara')) || (p.kategori && p.kategori.toLowerCase() === 'keuangan'));
-            const qrisUrl = "https://images.spr.so/cdn-cgi/imagedelivery/j42No7y-dcokJuNgXeA0ig/811ba11f-520e-4307-89d3-34cd3011d3c8/WhatsApp_Image_2025-05-16_at_12.01.55_65684299/w=1920,quality=90,fit=scale-down";
+            const qrisUrl = "./notavailable.jpg";
             return (
                 <div className="space-y-4 md:space-y-6 animate-fade-in relative z-10">
                     <div className="bg-white p-5 md:p-8 rounded-[1.5rem] shadow-sm border border-navy-100/60">
-                        <div className="flex items-center space-x-3 mb-6 border-b border-navy-50 pb-4"><Icon name="Gift" className="w-[1.4rem] h-[1.4rem] text-gold-500" /><h2 className="text-xl font-bold text-navy-900 tracking-tight">Persembahan, Perpuluhan, Ucapan Syukur, dan Donasi</h2></div>
+                        <div className="flex items-center space-x-3 mb-6 border-b border-navy-50 pb-4"><Icon name="Gift" className="w-[1.5rem] h-[1.5rem] text-gold-500" /><h2 className="text-xl font-bold text-navy-900 tracking-tight">Persembahan, Perpuluhan, Ucapan Syukur, dan Donasi</h2></div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 items-stretch mb-8">
                             <div className="flex flex-col items-center p-6 bg-navy-50/50 rounded-2xl border border-navy-100/50 h-full justify-center shadow-sm">
-                                <div className="w-40 md:w-48 bg-white border border-navy-100 p-2.5 rounded-xl shadow-sm mb-4"><img src={qrisUrl} alt="QRIS GMAHK Tidar 1" className="w-full h-auto object-contain rounded-lg" crossOrigin="anonymous" /></div>
-                                <a href={qrisUrl} target="_blank" rel="noopener noreferrer" download="QRIS_GMAHK_Tidar1.jpg" className="bg-navy-900 hover:bg-navy-800 text-gold-400 px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 shadow"><Icon name="Download" className="w-3.5 h-3.5" /><span>Download QRIS</span></a>
+                                <div className="w-40 md:w-48 bg-white border border-navy-100 p-2.5 rounded-xl shadow-sm mb-4"><img src={qrisUrl} alt="QRIS GMAHK PISGAH BISDAC" className="w-full h-auto object-contain rounded-lg" crossOrigin="anonymous" /></div>
+                                <a href={qrisUrl} target="_blank" rel="noopener noreferrer" download="QRIS_GMAHK_PISGAH.jpg" className="bg-navy-900 hover:bg-navy-800 text-gold-400 px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 shadow"><Icon name="Downloads" className="w-3.5 h-3.5" /><span>QRIS BELUM TERSEDIA</span></a>
                             </div>
                             <div className="flex flex-col justify-center text-center p-6 bg-gradient-to-br from-navy-800 to-navy-900 border border-gold-300 rounded-2xl h-full shadow-sm text-gold-400">
-                                <p className="text-xs md:text-sm font-bold mb-1 tracking-wide uppercase">Atau Transfer Bank ke:</p><p className="font-extrabold text-2xl md:text-3xl tracking-widest my-2 font-mono">511-44-7777-8</p><p className="text-xs md:text-sm font-bold opacity-90">BCA a/n GMAHK Tidar 1 Surabaya</p>
+                                <p className="text-xs md:text-sm font-bold mb-1 tracking-wide uppercase">Atau Transfer Bank ke:</p><p className="font-extrabold text-2xl md:text-3xl tracking-widest my-2 font-mono">1090001711043</p><p className="text-xs md:text-sm font-bold opacity-90">MANDIRI </p><p className="text-xs md:text-sm font-bold opacity-90">a.n</p> <p className="text-xs md:text-sm font-bold opacity-90">GMAHK PISGAH BISDAC</p>
                             </div>
                         </div>
                         <div className="bg-navy-50/30 p-5 md:p-6 rounded-2xl border border-navy-100/50 space-y-6 shadow-sm">
@@ -767,7 +840,14 @@
                                 <h3 className="font-bold text-navy-900 text-sm mb-1.5 flex items-center"><span className="bg-navy-900/10 text-navy-800 w-5 h-5 rounded-full inline-flex items-center justify-center text-xs mr-2 font-bold">2</span>Sertakan Keterangan</h3>
                                 <p className="text-xs text-navy-600 mb-4 pl-7 font-medium">Sebutkan rincian nominal persembahan Anda pada chat WhatsApp:</p>
                                 <div className="flex flex-wrap gap-2 pl-0 md:pl-7">
-                                    {['Perpuluhan', 'Persembahan Terpadu', 'Persembahan Khusus', 'Persembahan Syukur', 'Donasi Kas Gereja', 'Donasi Kas Departemen', 'Lain-lain'].map((item, i) => { const colors = ['bg-gold-500', 'bg-navy-500', 'bg-red-500', 'bg-green-500', 'bg-purple-500', 'bg-teal-500', 'bg-gray-500']; return (<span key={i} className="flex items-center bg-white border border-navy-100 px-3 py-1.5 rounded-full text-[10px] md:text-xs font-bold text-navy-700 shadow-sm"><span className={`w-1.5 h-1.5 rounded-full ${colors[i]} mr-2`}></span>{item}</span>); })}
+                                    {['Perpuluhan', 'Persembahan Terpadu', 'Persembahan Khusus', 'Persembahan Syukur', 'Donasi Kas Gereja', 'Donasi Kas Departemen', 'Lain-lain'].map((item, i) => { const colors = ['bg-gold-500', 'bg-navy-500', 'bg-red-500', 'bg-green-500', 'bg-purple-500', 'bg-teal-500', 'bg-navy-500']; return (<span key={i} className="flex items-center bg-white border border-navy-100 px-3 py-1.5 rounded-full text-[10px] md:text-xs font-bold text-navy-700 shadow-sm"><span className={`w-1.5 h-1.5 rounded-full ${colors[i]} mr-2`}></span>{item}</span>); })}
+                                </div>
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-navy-900 text-sm mb-1.5 flex items-center"><span className="bg-navy-400/20 text-navy-600 w-5 h-5 rounded-full inline-flex items-center justify-center text-xs mr-2 font-bold">3</span>Ada 2 waktu pengumpulan persembahan</h3>
+                                <p className="text-xs text-navy-600 mb-4 pl-7 font-medium">1. Pada Saat Jam Khotbah (Persembahan)</p>
+                                <p className="text-xs text-navy-600 mb-4 pl-7 font-medium">2. Pada Saat Lagu Tutup Jam Khotbah (Pembangunan)</p>
+                                <div className="flex flex-wrap gap-2 pl-0 md:pl-7">
                                 </div>
                             </div>
                         </div>
@@ -778,25 +858,24 @@
 
         const Keanggotaan = ({ setActiveTab }) => (
             <div className="space-y-6 animate-fade-in relative z-10">
-                <button onClick={() => setActiveTab('home')} className="text-navy-600 font-bold flex items-center hover:text-gold-600 transition-colors mb-2">&larr; Kembali ke Home</button>
                 <div className="bg-white p-6 md:p-8 rounded-[1.5rem] shadow-sm border border-navy-100/60">
                     <h2 className="text-[1.3rem] font-black mb-4 text-navy-900 border-b pb-3 border-navy-50">Layanan Keanggotaan</h2>
                     <p className="text-sm font-medium text-navy-600 mb-6">Pilih jenis permohonan keanggotaan yang sesuai dengan status Anda saat ini.</p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
                         <button onClick={() => setActiveTab('member_baru')} className="w-full text-left p-5 rounded-[1.25rem] border border-navy-100/50 bg-navy-50/30 hover:bg-navy-50 transition-colors flex items-center justify-between h-full group shadow-sm"><div><h3 className="font-bold text-navy-900 group-hover:text-gold-600 transition-colors">Member Baru</h3><p className="text-xs font-medium text-navy-500 mt-1.5 leading-relaxed">Untuk yang belum pernah menjadi anggota GMAHK (Non-Adventist).</p></div><span className="text-gold-500 font-black text-xl ml-4 transform group-hover:translate-x-1 transition-transform">&rarr;</span></button>
-                        <button onClick={() => setActiveTab('pindah_masuk')} className="w-full text-left p-5 rounded-[1.25rem] border border-navy-100/50 bg-navy-50/30 hover:bg-navy-50 transition-colors flex items-center justify-between h-full group shadow-sm"><div><h3 className="font-bold text-navy-900 group-hover:text-gold-600 transition-colors">Pindah Masuk - ACMS</h3><p className="text-xs font-medium text-navy-500 mt-1.5 leading-relaxed">Untuk anggota GMAHK yang ingin pindah ke Tidar 1.</p></div><span className="text-gold-500 font-black text-xl ml-4 transform group-hover:translate-x-1 transition-transform">&rarr;</span></button>
+                        <button onClick={() => setActiveTab('pindah_masuk')} className="w-full text-left p-5 rounded-[1.25rem] border border-navy-100/50 bg-navy-50/30 hover:bg-navy-50 transition-colors flex items-center justify-between h-full group shadow-sm"><div><h3 className="font-bold text-navy-900 group-hover:text-gold-600 transition-colors">Pindah Masuk - ACMS</h3><p className="text-xs font-medium text-navy-500 mt-1.5 leading-relaxed">Untuk anggota GMAHK yang ingin pindah ke Jemaat PISGAH-BATAM.</p></div><span className="text-gold-500 font-black text-xl ml-4 transform group-hover:translate-x-1 transition-transform">&rarr;</span></button>
                     </div>
                 </div>
                 <div className="bg-white p-6 md:p-8 rounded-[1.5rem] shadow-sm border border-navy-100/60 pb-safe">
                     <h2 className="text-[1.3rem] font-black mb-4 text-navy-900 border-b pb-3 border-navy-50">Jadwal Kegiatan & Pelayanan</h2>
-                    <p className="text-sm font-medium text-navy-600 mb-6">Lihat jadwal ibadah rutin dan daftar petugas pelayanan jemaat Tidar 1.</p>
+                    <p className="text-sm font-medium text-navy-600 mb-6">Lihat jadwal ibadah rutin dan daftar petugas pelayanan jemaat PISGAH-BISDAC.</p>
                     <button onClick={() => setActiveTab('jadwal')} className="w-full text-left p-5 rounded-[1.25rem] border border-gold-200 bg-gradient-to-br from-gold-50 to-white hover:border-gold-300 transition-colors flex items-center justify-between group shadow-sm"><div className="flex items-center"><div className="w-[3rem] h-[3rem] bg-gold-400 rounded-full flex items-center justify-center text-navy-900 mr-4 shrink-0 shadow-sm"><Icon name="Calendar" className="w-5 h-5" /></div><div><h3 className="font-bold text-navy-900">Lihat Jadwal Jemaat</h3><p className="text-xs font-medium text-navy-600 mt-1">Jadwal petugas ibadah hari Rabu dan Sabat.</p></div></div><span className="text-gold-500 font-black text-xl ml-4 transform group-hover:translate-x-1 transition-transform">&rarr;</span></button>
                 </div>
             </div>
         );
 
         const MemberBaru = ({ setActiveTab, dataPejabat }) => {
-            const contacts = dataPejabat.filter(p => ['gembala', 'ketua1', 'ketua2'].includes(p.id));
+            const contacts = dataPejabat.filter(p => ['gembala', 'ketua'].includes(p.id));
             return (
                 <div className="space-y-6 animate-fade-in relative z-10">
                     <button onClick={() => setActiveTab('keanggotaan')} className="text-navy-600 font-bold flex items-center hover:text-gold-600 transition-colors mb-2">&larr; Kembali ke Pilihan Keanggotaan</button>
@@ -812,7 +891,7 @@
         };
 
         const PindahMasuk = ({ setActiveTab, dataPejabat }) => {
-            const contacts = dataPejabat.filter(p => ['sekretaris1', 'sekretaris2'].includes(p.id));
+            const contacts = dataPejabat.filter(p => ['sekretaris'].includes(p.id));
             return (
                 <div className="space-y-6 animate-fade-in relative z-10">
                     <button onClick={() => setActiveTab('keanggotaan')} className="text-navy-600 font-bold flex items-center hover:text-gold-600 transition-colors mb-2">&larr; Kembali ke Pilihan Keanggotaan</button>
@@ -837,8 +916,6 @@
 
             return (
                 <div className="space-y-6 animate-fade-in relative z-10">
-                    <button onClick={() => setActiveTab('home')} className="text-navy-600 font-bold flex items-center hover:text-gold-600 transition-colors mb-2">&larr; Kembali ke Home</button>
-
                     <div className="space-y-6">
                         {categories.map((cat, idx) => {
                             const items = dataPejabat.filter(cat.filter);
@@ -890,14 +967,14 @@
                 html2pdf().set(opt).from(element).save().then(() => {
                     setIsGenerating(false); setStep('success');
                     const subject = encodeURIComponent(`Permohonan Pindah Masuk ACMS - ${formData.namaLengkap}`);
-                    const body = encodeURIComponent(`Syalom Admin,\n\nBerikut saya lampirkan dokumen PDF permohonan pindah keanggotaan (ACMS) atas nama ${formData.namaLengkap} yang baru saja saya unduh dari aplikasi ART1S.\n\nTerima kasih.\n\n(Mohon jangan lupa untuk melampirkan file ${filename} yang baru saja terdownload ke dalam email ini)`);
-                    window.location.href = `mailto:admin@tidar1.org?subject=${subject}&body=${body}`;
+                    const body = encodeURIComponent(`Syalom Admin,\n\nBerikut saya lampirkan dokumen PDF permohonan pindah keanggotaan (ACMS) atas nama ${formData.namaLengkap} yang baru saja saya unduh dari aplikasi PISGAH-BISDAC.\n\nTerima kasih.\n\n(Mohon jangan lupa untuk melampirkan file ${filename} yang baru saja terdownload ke dalam email ini)`);
+                    window.location.href = `mailto:gmahkpisgahbisdac@gmail.com?subject=${subject}&body=${body}`;
                 });
             };
 
             if (step === 'success') {
                 return (
-                    <div className="bg-white p-8 md:p-10 rounded-[1.5rem] shadow-sm border border-navy-100/60 text-center animate-fade-in relative z-10"><div className="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm"><Icon name="Check" className="w-10 h-10" /></div><h2 className="text-[1.8rem] font-black text-navy-900 mb-3 tracking-tight">Dokumen Berhasil Dibuat!</h2><p className="text-navy-600 mb-8 font-medium">File PDF permohonan Anda telah berhasil <b>diunduh</b> ke perangkat Anda.</p><div className="bg-navy-50/50 p-6 rounded-2xl text-left border border-navy-100 mb-8 shadow-inner"><h3 className="font-bold text-navy-900 mb-2 flex items-center"><Icon name="Info" className="w-5 h-5 mr-2 text-gold-500" /> Langkah Selanjutnya</h3><p className="text-sm text-navy-600 mb-4 leading-relaxed">Aplikasi email standar/bawaan Anda (seperti Gmail atau Mail) akan terbuka secara otomatis.</p><ol className="list-decimal list-outside ml-4 space-y-2 text-sm text-navy-700 font-medium"><li>Temukan file PDF yang baru saja terunduh (biasanya di folder Downloads).</li><li><b>"Attach / Lampirkan"</b> file tersebut ke dalam badan email yang terbuka.</li><li>Klik tombol <b>Kirim</b> untuk mengirimkannya ke Sekretaris Jemaat Tidar 1.</li></ol></div><button onClick={() => setActiveTab('pindah_masuk')} className="bg-navy-900 hover:bg-navy-800 text-gold-400 px-8 py-3.5 rounded-xl font-bold transition shadow hover:shadow-md">Selesai & Kembali</button></div>
+                    <div className="bg-white p-8 md:p-10 rounded-[1.5rem] shadow-sm border border-navy-100/60 text-center animate-fade-in relative z-10"><div className="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm"><Icon name="Check" className="w-10 h-10" /></div><h2 className="text-[1.8rem] font-black text-navy-900 mb-3 tracking-tight">Dokumen Berhasil Dibuat!</h2><p className="text-navy-600 mb-8 font-medium">File PDF permohonan Anda telah berhasil <b>diunduh</b> ke perangkat Anda.</p><div className="bg-navy-50/50 p-6 rounded-2xl text-left border border-navy-100 mb-8 shadow-inner"><h3 className="font-bold text-navy-900 mb-2 flex items-center"><Icon name="Info" className="w-5 h-5 mr-2 text-gold-500" /> Langkah Selanjutnya</h3><p className="text-sm text-navy-600 mb-4 leading-relaxed">Aplikasi email standar/bawaan Anda (seperti Gmail atau Mail) akan terbuka secara otomatis.</p><ol className="list-decimal list-outside ml-4 space-y-2 text-sm text-navy-700 font-medium"><li>Temukan file PDF yang baru saja terunduh (biasanya di folder Downloads).</li><li><b>"Attach / Lampirkan"</b> file tersebut ke dalam badan email yang terbuka.</li><li>Klik tombol <b>Kirim</b> untuk mengirimkannya ke Sekretaris Jemaat PISGAH BISDAC.</li></ol></div><button onClick={() => setActiveTab('pindah_masuk')} className="bg-navy-900 hover:bg-navy-800 text-gold-400 px-8 py-3.5 rounded-xl font-bold transition shadow hover:shadow-md">Selesai & Kembali</button></div>
                 );
             }
 
@@ -916,7 +993,7 @@
                         <div className="bg-navy-100/50 shadow-inner overflow-x-auto border border-navy-200 rounded-[1.5rem] p-4 sm:p-8 relative">
                             <div className="absolute top-4 right-4 text-xs font-bold text-navy-400 uppercase tracking-widest bg-white/50 px-3 py-1 rounded-full backdrop-blur-sm z-10 pointer-events-none">Preview Saja</div>
                             <div className="w-max mx-auto shadow-xl bg-white relative rounded overflow-hidden">
-                                <div id="pdf-content" className="p-10 bg-white text-black text-sm relative" style={{ width: '210mm', minHeight: '297mm', fontFamily: '"Open Sans", sans-serif', boxSizing: 'border-box' }}><p className="text-[10px] text-gray-500 absolute top-4 right-10 leading-none">Form ACMS-03</p><div className="flex justify-between items-center mb-10 mt-6"><div className="w-[180px] flex justify-start"><img src="https://i.postimg.cc/dQhq2HGf/png-acms-new-logo.png" alt="ACMS Logo" crossOrigin="anonymous" className="h-[60px] object-contain block" /></div><div className="flex-1 text-center px-4"><h2 className="font-bold text-[16px] leading-tight">PERMOHONAN PERPINDAHAN ANGGOTA</h2><h2 className="font-bold text-[16px] leading-tight mt-1">GMAHK KONFERENS JAWA KAWASAN TIMUR</h2><h2 className="font-bold text-[16px] leading-tight mt-1">JEMAAT TIDAR 1 SURABAYA</h2></div><div className="w-[180px] flex flex-col items-center"><div className="border border-black bg-[#dce6f1] font-bold py-1 w-full text-center text-[12px]">DIISI OLEH PEMOHON</div><p className="italic text-center mt-1 text-[12px] leading-snug">Bagi Pemohon yang namanya <br /><span className="font-bold not-italic">SUDAH</span> ada di ACMS</p></div></div><div className="mb-6"><p className="font-bold mb-2">A. PROFIL PEMOHON <span className="font-normal text-[11px]">(Mohon diisi sesuai dengan KTP/Akte Kelahiran / identitas lainnya menggunakan huruf besar)</span></p><table className="w-full ml-4" style={{ borderCollapse: 'separate', borderSpacing: '0 4px' }}><tbody><tr><td className="w-1/4 py-1 align-top">1. Nama Lengkap</td><td className="w-3/4 py-1 align-top">: <span className="uppercase">{formData.namaLengkap}</span></td></tr><tr><td className="w-1/4 py-1 align-top">2. Jenis Kelamin</td><td className="w-3/4 py-1 align-top">: {formData.jenisKelamin}</td></tr><tr><td className="w-1/4 py-1 align-top">3. Tanggal Lahir</td><td className="w-3/4 py-1 align-top">: {formatDate(formData.tanggalLahir)}</td></tr><tr><td className="w-1/4 py-1 align-top">4. Nama Ibu</td><td className="w-3/4 py-1 align-top">: <span className="uppercase">{formData.namaIbu}</span></td></tr><tr><td className="w-1/4 py-1 align-top">5. Baptisan</td><td className="w-3/4 py-1"></td></tr><tr><td className="w-1/4 py-1 pl-4 align-top">- tanggal</td><td className="w-3/4 py-1 align-top">: {formatDate(formData.baptisanTanggal)}</td></tr><tr><td className="w-1/4 py-1 pl-4 align-top">- tempat</td><td className="w-3/4 py-1 align-top">: <span className="uppercase">{formData.baptisanTempat}</span></td></tr><tr><td className="w-1/4 py-1 pl-4 align-top">- pendeta</td><td className="w-3/4 py-1 align-top">: <span className="uppercase">{formData.baptisanPendeta}</span></td></tr></tbody></table></div><div className="mb-8"><p className="font-bold mb-2">B. PERNYATAAN PEMOHON</p><table className="w-full ml-4 mb-4" style={{ borderCollapse: 'separate', borderSpacing: '0 4px' }}><tbody><tr><td className="w-[80%] py-1 align-top">1. Apakah Anda dalam masa disiplin Gereja?</td><td className="w-[20%] py-1 font-bold align-top">: {formData.masaDisiplin}</td></tr><tr><td className="w-[80%] py-1 align-top">2. Apakah Anda sudah pernah mengajukan permohonan perpindahan keanggotaan?</td><td className="w-[20%] py-1 font-bold align-top">: {formData.pernahPindah}</td></tr></tbody></table><p className="mb-2">Dengan ini saya memohon agar memindahkan keanggotaan saya dari:</p><table className="w-full ml-4 mb-4" style={{ borderCollapse: 'separate', borderSpacing: '0 4px' }}><tbody><tr><td className="w-1/4 py-1 align-top">1. Nama Jemaat Asal</td><td className="w-3/4 py-1 align-top">: <span className="uppercase">{formData.jemaatAsalNama}</span></td></tr><tr><td className="w-1/4 py-1 align-top">2. Alamat Jemaat Asal</td><td className="w-3/4 py-1 align-top">: {formData.jemaatAsalAlamat}</td></tr><tr><td className="w-1/4 py-1 align-top">3. Nama Sekretaris</td><td className="w-3/4 py-1 align-top">: <span className="uppercase">{formData.jemaatAsalSekretaris}</span></td></tr><tr><td className="w-1/4 py-1 align-top">4. Telp/Email Aktif</td><td className="w-3/4 py-1 align-top">: {formData.jemaatAsalKontak}</td></tr></tbody></table><p className="mb-6">Demikian permohonan ini saya ajukan tanpa ada paksaan dari pihak manapun.</p><div className="flex justify-end pr-10"><div className="text-center w-64"><p>Tempat/Tanggal diajukan:</p><p className="mb-14">Surabaya, {formatDate(new Date())}</p><p className="border-t border-black pt-1 uppercase leading-none">( {formData.namaLengkap || '..........................'} )</p><p className="text-[11px] mt-1">Nama dan Tanda Tangan Pemohon</p></div></div></div><div className="mb-6 mt-10 pt-6 border-t-[1.5px] border-dashed border-gray-400"><p className="font-bold text-center mb-5 tracking-wide text-[13px]">DIISI OLEH SEKRETARIS JEMAAT</p><p className="font-bold mb-2 text-[13px]">C. DATA KEPUTUSAN MAJELIS</p><table className="w-full ml-4" style={{ borderCollapse: 'separate', borderSpacing: '0 6px' }}><tbody><tr><td className="w-[40%] py-1.5 align-bottom">1. Keputusan Majelis Tanggal</td><td className="w-[60%] py-1.5 border-b border-dotted border-gray-500 align-bottom">: </td></tr><tr><td className="w-[40%] py-1.5 align-bottom"> Nomor Keputusan</td><td className="w-[60%] py-1.5 border-b border-dotted border-gray-500 align-bottom">: </td></tr><tr><td className="w-[40%] py-1.5 align-bottom">2. Di proses tanggal</td><td className="w-[60%] py-1.5 border-b border-dotted border-gray-500 align-bottom">: </td></tr><tr><td className="w-[40%] py-1.5 align-bottom">3. Ketua Jemaat</td><td className="w-[60%] py-1.5 border-b border-dotted border-gray-500 align-bottom">: </td></tr><tr><td className="w-[40%] py-1.5 align-bottom">4. Gembala Jemaat</td><td className="w-[60%] py-1.5 border-b border-dotted border-gray-500 align-bottom">: </td></tr></tbody></table><div className="flex justify-end pr-10 mt-8"><div className="text-center w-64"><p className="mb-14">20........</p><p className="border-t border-black pt-1 leading-none">( ........................................ )</p><p className="text-[11px] mt-1">Nama dan Tanda Tangan Sekretaris Jemaat</p></div></div></div><div className="mt-8 pt-4 border-t border-gray-200 flex justify-between items-center text-[10px] text-gray-400 font-sans"><p>ACMS v.3.03</p><p>&copy; Copyright by ART1S Tech Team 2026</p></div></div>
+                                <div id="pdf-content" className="p-10 bg-white text-black text-sm relative" style={{ width: '210mm', minHeight: '297mm', fontFamily: '"Open Sans", sans-serif', boxSizing: 'border-box' }}><p className="text-[10px] text-navy-500 absolute top-4 right-10 leading-none">Form ACMS-03</p><div className="flex justify-between items-center mb-10 mt-6"><div className="w-[180px] flex justify-start"><img src="https://i.postimg.cc/dQhq2HGf/png-acms-new-logo.png" alt="ACMS Logo" crossOrigin="anonymous" className="h-[60px] object-contain block" /></div><div className="flex-1 text-center px-4"><h2 className="font-bold text-[16px] leading-tight">PERMOHONAN PERPINDAHAN ANGGOTA</h2><h2 className="font-bold text-[16px] leading-tight mt-1">GMAHK KONFERENS JAWA KAWASAN TIMUR</h2><h2 className="font-bold text-[16px] leading-tight mt-1">JEMAAT PISGAH BISDAC</h2></div><div className="w-[180px] flex flex-col items-center"><div className="border border-black bg-[#dce6f1] font-bold py-1 w-full text-center text-[12px]">DIISI OLEH PEMOHON</div><p className="italic text-center mt-1 text-[12px] leading-snug">Bagi Pemohon yang namanya <br /><span className="font-bold not-italic">SUDAH</span> ada di ACMS</p></div></div><div className="mb-6"><p className="font-bold mb-2">A. PROFIL PEMOHON <span className="font-normal text-[11px]">(Mohon diisi sesuai dengan KTP/Akte Kelahiran / identitas lainnya menggunakan huruf besar)</span></p><table className="w-full ml-4" style={{ borderCollapse: 'separate', borderSpacing: '0 4px' }}><tbody><tr><td className="w-1/4 py-1 align-top">1. Nama Lengkap</td><td className="w-3/4 py-1 align-top">: <span className="uppercase">{formData.namaLengkap}</span></td></tr><tr><td className="w-1/4 py-1 align-top">2. Jenis Kelamin</td><td className="w-3/4 py-1 align-top">: {formData.jenisKelamin}</td></tr><tr><td className="w-1/4 py-1 align-top">3. Tanggal Lahir</td><td className="w-3/4 py-1 align-top">: {formatDate(formData.tanggalLahir)}</td></tr><tr><td className="w-1/4 py-1 align-top">4. Nama Ibu</td><td className="w-3/4 py-1 align-top">: <span className="uppercase">{formData.namaIbu}</span></td></tr><tr><td className="w-1/4 py-1 align-top">5. Baptisan</td><td className="w-3/4 py-1"></td></tr><tr><td className="w-1/4 py-1 pl-4 align-top">- tanggal</td><td className="w-3/4 py-1 align-top">: {formatDate(formData.baptisanTanggal)}</td></tr><tr><td className="w-1/4 py-1 pl-4 align-top">- tempat</td><td className="w-3/4 py-1 align-top">: <span className="uppercase">{formData.baptisanTempat}</span></td></tr><tr><td className="w-1/4 py-1 pl-4 align-top">- pendeta</td><td className="w-3/4 py-1 align-top">: <span className="uppercase">{formData.baptisanPendeta}</span></td></tr></tbody></table></div><div className="mb-8"><p className="font-bold mb-2">B. PERNYATAAN PEMOHON</p><table className="w-full ml-4 mb-4" style={{ borderCollapse: 'separate', borderSpacing: '0 4px' }}><tbody><tr><td className="w-[80%] py-1 align-top">1. Apakah Anda dalam masa disiplin Gereja?</td><td className="w-[20%] py-1 font-bold align-top">: {formData.masaDisiplin}</td></tr><tr><td className="w-[80%] py-1 align-top">2. Apakah Anda sudah pernah mengajukan permohonan perpindahan keanggotaan?</td><td className="w-[20%] py-1 font-bold align-top">: {formData.pernahPindah}</td></tr></tbody></table><p className="mb-2">Dengan ini saya memohon agar memindahkan keanggotaan saya dari:</p><table className="w-full ml-4 mb-4" style={{ borderCollapse: 'separate', borderSpacing: '0 4px' }}><tbody><tr><td className="w-1/4 py-1 align-top">1. Nama Jemaat Asal</td><td className="w-3/4 py-1 align-top">: <span className="uppercase">{formData.jemaatAsalNama}</span></td></tr><tr><td className="w-1/4 py-1 align-top">2. Alamat Jemaat Asal</td><td className="w-3/4 py-1 align-top">: {formData.jemaatAsalAlamat}</td></tr><tr><td className="w-1/4 py-1 align-top">3. Nama Sekretaris</td><td className="w-3/4 py-1 align-top">: <span className="uppercase">{formData.jemaatAsalSekretaris}</span></td></tr><tr><td className="w-1/4 py-1 align-top">4. Telp/Email Aktif</td><td className="w-3/4 py-1 align-top">: {formData.jemaatAsalKontak}</td></tr></tbody></table><p className="mb-6">Demikian permohonan ini saya ajukan tanpa ada paksaan dari pihak manapun.</p><div className="flex justify-end pr-10"><div className="text-center w-64"><p>Tempat/Tanggal diajukan:</p><p className="mb-14">Surabaya, {formatDate(new Date())}</p><p className="border-t border-black pt-1 uppercase leading-none">( {formData.namaLengkap || '..........................'} )</p><p className="text-[11px] mt-1">Nama dan Tanda Tangan Pemohon</p></div></div></div><div className="mb-6 mt-10 pt-6 border-t-[1.5px] border-dashed border-navy-400"><p className="font-bold text-center mb-5 tracking-wide text-[13px]">DIISI OLEH SEKRETARIS JEMAAT</p><p className="font-bold mb-2 text-[13px]">C. DATA KEPUTUSAN MAJELIS</p><table className="w-full ml-4" style={{ borderCollapse: 'separate', borderSpacing: '0 6px' }}><tbody><tr><td className="w-[40%] py-1.5 align-bottom">1. Keputusan Majelis Tanggal</td><td className="w-[60%] py-1.5 border-b border-dotted border-navy-500 align-bottom">: </td></tr><tr><td className="w-[40%] py-1.5 align-bottom"> Nomor Keputusan</td><td className="w-[60%] py-1.5 border-b border-dotted border-navy-500 align-bottom">: </td></tr><tr><td className="w-[40%] py-1.5 align-bottom">2. Di proses tanggal</td><td className="w-[60%] py-1.5 border-b border-dotted border-navy-500 align-bottom">: </td></tr><tr><td className="w-[40%] py-1.5 align-bottom">3. Ketua Jemaat</td><td className="w-[60%] py-1.5 border-b border-dotted border-navy-500 align-bottom">: </td></tr><tr><td className="w-[40%] py-1.5 align-bottom">4. Gembala Jemaat</td><td className="w-[60%] py-1.5 border-b border-dotted border-navy-500 align-bottom">: </td></tr></tbody></table><div className="flex justify-end pr-10 mt-8"><div className="text-center w-64"><p className="mb-14">20........</p><p className="border-t border-black pt-1 leading-none">( ........................................ )</p><p className="text-[11px] mt-1">Nama dan Tanda Tangan Sekretaris Jemaat</p></div></div></div><div className="mt-8 pt-4 border-t border-navy-200 flex justify-between items-center text-[10px] text-navy-400 font-sans"><p>ACMS v.3.03</p><p>&copy; Copyright by PISGAH-BISDAC Team 2026</p></div></div>
                             </div>
                         </div>
                     </div>
@@ -962,12 +1039,12 @@
                                     </div>
                                 </div>
                             </div>
-                            <div className="opacity-50 pointer-events-none grayscale bg-gray-50 p-4 rounded-xl border border-gray-200">
-                                <h3 className="font-bold text-gray-800 border-b pb-1 mb-3">C. DATA KEPUTUSAN MAJELIS <span className="text-red-600 text-[10px] ml-2 font-bold bg-red-100 px-2 py-0.5 rounded uppercase tracking-wider">(Hanya diisi oleh Sekretaris Jemaat)</span></h3>
+                            <div className="opacity-50 pointer-events-none navyscale bg-navy-50 p-4 rounded-xl border border-navy-200">
+                                <h3 className="font-bold text-navy-800 border-b pb-1 mb-3">C. DATA Keputusan MAJELIS <span className="text-red-600 text-[10px] ml-2 font-bold bg-red-100 px-2 py-0.5 rounded uppercase tracking-wider">(Hanya diisi oleh Sekretaris Jemaat)</span></h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div><label className="block text-xs text-gray-600 mb-1">Keputusan Majelis Tanggal</label><input type="text" disabled className="w-full p-2 border border-gray-300 rounded bg-gray-200" /></div>
-                                    <div><label className="block text-xs text-gray-600 mb-1">Nomor Keputusan</label><input type="text" disabled className="w-full p-2 border border-gray-300 rounded bg-gray-200" /></div>
-                                    <div className="md:col-span-2"><label className="block text-xs text-gray-600 mb-1">Diproses Tanggal</label><input type="text" disabled className="w-full p-2 border border-gray-300 rounded bg-gray-200" /></div>
+                                    <div><label className="block text-xs text-navy-600 mb-1">Keputusan Majelis Tanggal</label><input type="text" disabled className="w-full p-2 border border-navy-300 rounded bg-navy-200" /></div>
+                                    <div><label className="block text-xs text-navy-600 mb-1">Nomor Keputusan</label><input type="text" disabled className="w-full p-2 border border-navy-300 rounded bg-navy-200" /></div>
+                                    <div className="md:col-span-2"><label className="block text-xs text-navy-600 mb-1">Diproses Tanggal</label><input type="text" disabled className="w-full p-2 border border-navy-300 rounded bg-navy-200" /></div>
                                 </div>
                             </div>
                             <button type="submit" className="w-full bg-navy-900 hover:bg-navy-800 text-gold-400 font-bold py-4 rounded-xl transition mt-8 text-lg flex justify-center items-center shadow-lg hover:shadow-xl"><span className="mr-3">Lanjut Preview Formulir</span> <Icon name="ChevronRight" className="w-5 h-5 bg-navy-800 rounded-full" /></button>
@@ -1019,8 +1096,8 @@
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-900/60 px-4 backdrop-blur-md animate-fade-in">
                     <div className="bg-white rounded-[1.5rem] shadow-2xl p-6 md:p-8 max-w-sm w-full relative border border-navy-100/60">
                         <button onClick={onClose} className="absolute top-4 right-4 text-navy-400 hover:text-red-500 transition-colors bg-navy-50 w-8 h-8 rounded-full flex items-center justify-center font-bold pb-1">&times;</button>
-                        <div className="flex justify-center mb-6"><div className="w-16 h-16 bg-navy-50 rounded-full flex items-center justify-center text-gold-500 shadow-inner"><Icon name="Settings" className="w-8 h-8" /></div></div>
-                        <h2 className="text-2xl font-black text-center text-navy-900 mb-2 tracking-tight">Admin Login</h2>
+                        <div className="flex justify-center mb-6"><div className="w-16 h-16 bg-navy-50 rounded-full flex items-center justify-center text-gold-600 shadow-inner"><Icon name="Settings" className="w-8 h-8" /></div></div>
+                        <h2 className="text-xl font-black text-center text-navy-900 mb-2 tracking-tight">Admin Login</h2>
                         <p className="text-sm text-center text-navy-500 mb-8 font-medium">Lakukan otentikasi untuk mengelola jadwal dan data jemaat.</p>
                         <form onSubmit={handleLogin}>
                             <div className="mb-6">
@@ -1042,15 +1119,217 @@
             );
         };
 
-        const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, adminToken, setAdminToken, youtubeUrl, setYoutubeUrl, kategoriPejabat, setKategoriPejabat }) => {
-            const [adminTab, setAdminTab] = React.useState('jadwal'); // jadwal, pelayan, pengaturan
-            const [viewMonth, setViewMonth] = React.useState(new Date().getMonth());
-            const [viewYear, setViewYear] = React.useState(new Date().getFullYear());
-            const [subTab, setSubTab] = React.useState('rabu');
-            const [editingDate, setEditingDate] = React.useState(null);
-            const [editForm, setEditForm] = React.useState([]);
-            const [isSavingJadwal, setIsSavingJadwal] = React.useState(false);
-            const [isSavingPejabat, setIsSavingPejabat] = React.useState(false);
+        // ========== WARTA PAGE DENGAN PAGINATION (5 per halaman) ==========
+        const WartaPage = ({ daftarWarta, setActiveTab }) => {
+            const [imageSizes, setImageSizes] = React.useState({});        // key = rowIndex
+            const [imageErrors, setImageErrors] = React.useState({});      // key = rowIndex
+            const [expandedWarta, setExpandedWarta] = React.useState({});  // key = rowIndex
+            const [currentPage, setCurrentPage] = React.useState(1);
+            const ITEMS_PER_PAGE = 5;
+
+            // Reset ke halaman 1 setiap kali daftarWarta berubah (misal setelah refresh)
+            React.useEffect(() => {
+                setCurrentPage(1);
+            }, [daftarWarta]);
+
+            const handleImageSizeChange = (rowIndex, value) => {
+                setImageSizes(prev => ({ ...prev, [rowIndex]: value }));
+            };
+
+            const handleImageError = (rowIndex, url) => {
+                console.warn(`Gambar gagal dimuat: ${url}`);
+                setImageErrors(prev => ({ ...prev, [rowIndex]: true }));
+            };
+
+            const toggleExpand = (rowIndex) => {
+                setExpandedWarta(prev => ({ ...prev, [rowIndex]: !prev[rowIndex] }));
+            };
+
+            // Urutkan warta dari terbaru ke terlama
+            const sortedWarta = React.useMemo(() => {
+                return [...daftarWarta].sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+            }, [daftarWarta]);
+
+            // Hitung total halaman
+            const totalPages = Math.ceil(sortedWarta.length / ITEMS_PER_PAGE);
+            
+            // Ambil warta untuk halaman saat ini
+            const paginatedWarta = React.useMemo(() => {
+                const start = (currentPage - 1) * ITEMS_PER_PAGE;
+                const end = start + ITEMS_PER_PAGE;
+                return sortedWarta.slice(start, end);
+            }, [sortedWarta, currentPage]);
+
+            const goToPage = (page) => {
+                if (page < 1 || page > totalPages) return;
+                setCurrentPage(page);
+                // Scroll ke atas setelah ganti halaman
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            const CHAR_LIMIT = 150;
+
+            return (
+                <div className="space-y-6 animate-fade-in">
+                   
+                    <div className="bg-white rounded-[1.5rem] p-6 shadow-sm border border-navy-100/60">
+                        <h2 className="text-2xl font-bold mb-4 text-navy-900">Warta Gereja</h2>
+                        {sortedWarta.length === 0 ? (
+                            <p className="text-navy-500">Belum ada warta.</p>
+                        ) : (
+                            <>
+                                <div className="space-y-6">
+                                    {paginatedWarta.map((warta) => {
+                                        const rowIdx = warta.rowIndex;
+                                        const imageWidth = imageSizes[rowIdx] ?? 100;
+                                        const hasError = imageErrors[rowIdx];
+                                        const isValid = warta.gambarUrl && warta.gambarUrl.startsWith('http');
+                                        
+                                        const plainText = stripHtml(warta.isi);
+                                        const isLong = plainText.length > CHAR_LIMIT;
+                                        const isExpanded = expandedWarta[rowIdx] || false;
+
+                                        let contentToShow = '';
+                                        if (!isLong || isExpanded) {
+                                            contentToShow = warta.isi; // full HTML
+                                        } else {
+                                            const truncated = truncateText(plainText, 500);
+                                            contentToShow = truncated; // teks polos potongan
+                                        }
+
+                                        return (
+                                            <div key={rowIdx} className="border-b border-navy-100 pb-4 last:border-0">
+                                                <center>
+                                                    <h3 className="font-bold text-lg text-navy-800">{warta.judul}</h3>
+                                                    <div className="flex flex-col items-center mt-1">
+                                                        <p className="text-sm text-navy-500">{warta.tanggal}</p>
+                                                        <p className="text-xs text-navy-400 mt-1">oleh: {warta.penulis}</p>
+                                                    </div>
+                                                </center>
+                                                {isValid && (
+                                                    <div className="my-2">
+                                                        <div className="flex items-center justify-center gap-2 mb-1">
+                                                            <label className="text-xs text-navy-500"></label>
+                                                            <input
+                                                                type="range"
+                                                                min="50"
+                                                                max="100"
+                                                                value={imageWidth}
+                                                                onChange={(e) => handleImageSizeChange(rowIdx, parseInt(e.target.value))}
+                                                                className="w-32 h-1 bg-navy-200 rounded-lg appearance-none cursor-pointer"
+                                                            />
+                                                            <span className="text-xs text-navy-500 w-10">{imageWidth}%</span>
+                                                        </div>
+                                                        <center>
+                                                            {!hasError ? (
+                                                                <img
+                                                                    src={warta.gambarUrl}
+                                                                    className="h-auto rounded-lg shadow-sm"
+                                                                    style={{ width: `${imageWidth}%` }}
+                                                                    alt="Gambar warta"
+                                                                    onError={() => handleImageError(rowIdx, warta.gambarUrl)}
+                                                                    referrerPolicy="no-referrer"
+                                                                />
+                                                            ) : (
+                                                                <div className="text-red-500 text-sm p-4 bg-red-50 rounded-lg">
+                                                                    ❌ Gambar gagal dimuat. 
+                                                                    <button 
+                                                                        onClick={() => setImageErrors(prev => ({ ...prev, [rowIdx]: false }))}
+                                                                        className="ml-2 text-blue-600 underline"
+                                                                    >
+                                                                        Coba lagi
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                        </center>
+                                                    </div>
+                                                )}
+                                                {!isValid && warta.gambarUrl && (
+                                                    <div className="my-2 text-center text-yellow-600 text-sm">
+                                                        ⚠️ Format URL gambar tidak valid. Silakan edit warta dan upload ulang gambar.
+                                                    </div>
+                                                )}
+                                                
+                                                <div className="text-justify text-sm mt-2 whitespace-pre-wrap text-navy-700 warta-content">
+                                                    {isLong && !isExpanded ? (
+                                                        <span>{contentToShow}</span>
+                                                    ) : (
+                                                        <div dangerouslySetInnerHTML={{ __html: contentToShow }} />
+                                                    )}
+                                                </div>
+
+                                                {isLong && (
+                                                    <div className="text-center mt-2">
+                                                        <button
+                                                            onClick={() => toggleExpand(rowIdx)}
+                                                            className="w-full py-3.5 rounded-xl font-bold transition-all duration-300 flex items-center justify-center space-x-2 bg-navy-800 hover:bg-navy-300 text-gold-400"
+                                                        >
+                                                            {isExpanded ? 'Tutup' : 'Baca selengkapnya'}
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+
+                                {/* PAGINATION CONTROLS */}
+                                {totalPages > 1 && (
+                                    <div className="flex justify-center items-center gap-2 mt-8 pt-4 border-t border-navy-100">
+                                        <button
+                                            onClick={() => goToPage(currentPage - 1)}
+                                            disabled={currentPage === 1}
+                                            className={`px-4 py-2 rounded-xl text-sm font-bold transition-colors ${
+                                                currentPage === 1
+                                                    ? 'bg-navy-100 text-navy-400 cursor-not-allowed'
+                                                    : 'bg-navy-200 text-navy-700 hover:bg-navy-300'
+                                            }`}
+                                        >
+                                            Sebelumnya
+                                        </button>
+                                        <div className="flex gap-1">
+                                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                                                <button
+                                                    key={page}
+                                                    onClick={() => goToPage(page)}
+                                                    className={`w-9 h-9 rounded-full text-sm font-bold transition-colors ${
+                                                        page === currentPage
+                                                            ? 'bg-gold-500 text-white shadow-sm'
+                                                            : 'bg-navy-100 text-navy-600 hover:bg-navy-200'
+                                                    }`}
+                                                >
+                                                    {page}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <button
+                                            onClick={() => goToPage(currentPage + 1)}
+                                            disabled={currentPage === totalPages}
+                                            className={`px-4 py-2 rounded-xl text-sm font-bold transition-colors ${
+                                                currentPage === totalPages
+                                                    ? 'bg-navy-100 text-navy-400 cursor-not-allowed'
+                                                    : 'bg-navy-200 text-navy-700 hover:bg-navy-300'
+                                            }`}
+                                        >
+                                            Selanjutnya
+                                        </button>
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+ // ========== AKHIR WARTA PAGE ==========
+
+        // --- KOMPONEN AdminDashboard yang DIPERBAIKI (dengan fitur warta) ---
+            const AdminDashboard = ({ 
+            dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, adminToken, setAdminToken,
+            youtubeUrl, setYoutubeUrl, kategoriPejabat, setKategoriPejabat,
+            pengumuman, setPengumuman, daftarWarta, setDaftarWarta, refreshWarta 
+            }) => {
+            const [adminTab, setAdminTab] = React.useState('pengaturan'); // jadwal, pelayan, warta, pengaturan
 
             // State Ganti Password
             const [oldPassword, setOldPassword] = React.useState('');
@@ -1063,107 +1342,390 @@
             const [editYoutubeUrl, setEditYoutubeUrl] = React.useState(youtubeUrl);
             const [isSavingUrl, setIsSavingUrl] = React.useState(false);
 
-            // Drag and Drop States
-            const [draggedItem, setDraggedItem] = React.useState(null);
+            // State Pengumuman
+            const [editPengumuman, setEditPengumuman] = React.useState(pengumuman);
+            const [isSavingPengumuman, setIsSavingPengumuman] = React.useState(false);
+            const textareaRef = React.useRef(null);
+            const [linkModalOpenPengumuman, setLinkModalOpenPengumuman] = React.useState(false);
+            const [linkUrlPengumuman, setLinkUrlPengumuman] = React.useState('');
+            const [linkTextPengumuman, setLinkTextPengumuman] = React.useState('');
 
-            const handleDragStart = (e, item) => {
-                setDraggedItem(item);
-                setTimeout(() => { if (e.target) e.target.style.opacity = '0.5'; }, 0);
-            };
-            const handleDragEnd = (e) => {
-                if (e.target) e.target.style.opacity = '1';
-                setDraggedItem(null);
-            };
-            const handleDragOver = (e) => { e.preventDefault(); };
-            const handleDrop = (e, targetKategori) => {
-                e.preventDefault();
-                if (draggedItem && draggedItem.kategori !== targetKategori) {
-                    const newData = dataPejabat.map(p => p.id === draggedItem.id ? { ...p, kategori: targetKategori } : p);
-                    setDataPejabat(newData);
-                }
+            // State Warta (form)
+            const [editingWarta, setEditingWarta] = React.useState(null); // { rowIndex, judul, isi, gambarUrl }
+            const [editWartaModal, setEditWartaModal] = React.useState(false);
+            const [editWartaJudul, setEditWartaJudul] = React.useState('');
+            const [editWartaIsi, setEditWartaIsi] = React.useState('');
+            const [editWartaGambar, setEditWartaGambar] = React.useState(null);
+            const [isUpdatingWarta, setIsUpdatingWarta] = React.useState(false);
+
+            const [wartaJudul, setWartaJudul] = React.useState('');
+            const [wartaIsi, setWartaIsi] = React.useState('');
+            const [wartaGambar, setWartaGambar] = React.useState(null);
+            const [isSavingWarta, setIsSavingWarta] = React.useState(false);
+            const [wartaPenulis, setWartaPenulis] = React.useState('');
+            const [editWartaPenulis, setEditWartaPenulis] = React.useState('');
+            const [wartaIsiHtml, setWartaIsiHtml] = React.useState('');
+            const wartaTextareaRef = React.useRef(null);
+            const editWartaTextareaRef = React.useRef(null);
+
+            const [linkModalOpen, setLinkModalOpen] = React.useState(false);
+            const [linkUrl, setLinkUrl] = React.useState('');
+            const [linkText, setLinkText] = React.useState('');
+            const [currentLinkEditor, setCurrentLinkEditor] = React.useState(null); // 'warta' atau 'editWarta'
+
+            // Fungsi menangani pembuatan link warta
+            const openLinkModal = (editorType) => {
+    const textarea = editorType === 'warta' ? wartaTextareaRef.current : editWartaTextareaRef.current;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+    if (!selectedText) {
+        alert("Pilih teks terlebih dahulu untuk dijadikan link.");
+        return;
+    }
+    setLinkText(selectedText);
+    setLinkUrl('');
+    setCurrentLinkEditor(editorType);
+    setLinkModalOpen(true);
+};
+
+const insertLink = () => {
+    if (!linkUrl) {
+        alert("URL tidak boleh kosong.");
+        return;
+    }
+    let url = linkUrl;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+    }
+    const tag = `<a href="${url}" target="_blank" rel="noopener noreferrer">${linkText}</a>`;
+    
+    if (currentLinkEditor === 'warta') {
+        const textarea = wartaTextareaRef.current;
+        if (!textarea) return;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const newText = wartaIsi.substring(0, start) + tag + wartaIsi.substring(end);
+        setWartaIsi(newText);
+        setTimeout(() => {
+            textarea.focus();
+            textarea.setSelectionRange(start + tag.length, start + tag.length);
+        }, 0);
+    } else if (currentLinkEditor === 'editWarta') {
+        const textarea = editWartaTextareaRef.current;
+        if (!textarea) return;
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const newText = editWartaIsi.substring(0, start) + tag + editWartaIsi.substring(end);
+        setEditWartaIsi(newText);
+        setTimeout(() => {
+            textarea.focus();
+            textarea.setSelectionRange(start + tag.length, start + tag.length);
+        }, 0);
+    }
+    setLinkModalOpen(false);
+    setLinkUrl('');
+    setLinkText('');
+    setCurrentLinkEditor(null);
+};
+
+// Fungsi menangani pembuatan link Pengumuman
+const openLinkModalPengumuman = () => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = editPengumuman.isi.substring(start, end);
+    if (!selectedText) {
+        alert("Pilih teks terlebih dahulu untuk dijadikan link.");
+        return;
+    }
+    setLinkTextPengumuman(selectedText);
+    setLinkUrlPengumuman('');
+    setLinkModalOpenPengumuman(true);
+};
+
+const insertLinkPengumuman = () => {
+    if (!linkUrlPengumuman) {
+        alert("URL tidak boleh kosong.");
+        return;
+    }
+    let url = linkUrlPengumuman;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+    }
+    const tag = `<a href="${url}" target="_blank" rel="noopener noreferrer">${linkTextPengumuman}</a>`;
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const newText = editPengumuman.isi.substring(0, start) + tag + editPengumuman.isi.substring(end);
+    setEditPengumuman({ ...editPengumuman, isi: newText });
+    setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + tag.length, start + tag.length);
+    }, 0);
+    setLinkModalOpenPengumuman(false);
+    setLinkUrlPengumuman('');
+    setLinkTextPengumuman('');
+};
+
+            // Fungsi simpan warta
+            const handleWartaFormSubmit = async (e) => {
+              e.preventDefault();
+              setIsSavingWarta(true);
+              let gambarUrl = "";
+              if (wartaGambar) {
+              const reader = new FileReader();
+              reader.readAsDataURL(wartaGambar);
+              await new Promise(resolve => { reader.onload = resolve; });
+              gambarUrl = reader.result;
+            }
+            try {
+            const res = await fetch(GAS_API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+            action: 'saveWarta',
+            password: adminToken,
+            judul: wartaJudul,
+            isi: wartaIsi,
+            gambarUrl: gambarUrl,
+            penulis: wartaPenulis
+            })
+            });
+            const result = await res.json();
+            if (result.success) {
+            alert("Warta berhasil disimpan!");
+            setWartaJudul('');
+            setWartaIsi('');
+            setWartaGambar(null);
+            setWartaPenulis('');
+            if (refreshWarta) refreshWarta();
+            } else {
+            alert("Gagal menyimpan: " + (result.message || "Unknown error"));
+            }
+            } catch (err) {
+            alert("Terjadi kesalahan: " + err.message);
+            }
+            setIsSavingWarta(false);
             };
 
-            const handleTambahKategori = () => {
-                const nama = prompt("Masukkan nama kelompok baru:");
-                if (nama && !kategoriPejabat.includes(nama)) {
-                    setKategoriPejabat([...kategoriPejabat, nama]);
-                }
-            };
-            const handleHapusKategori = (kat) => {
-                if (window.confirm(`Hapus kelompok "${kat}"? Pejabat di dalamnya akan dipindahkan ke kategori "Lainnya".`)) {
-                    if (!kategoriPejabat.includes("Lainnya") && kat !== "Lainnya") { setKategoriPejabat([...kategoriPejabat.filter(k => k !== kat), "Lainnya"]); }
-                    else { setKategoriPejabat(kategoriPejabat.filter(k => k !== kat)); }
-                    setDataPejabat(dataPejabat.map(p => p.kategori === kat ? { ...p, kategori: "Lainnya" } : p));
-                }
-            };
-            const handleTambahPejabatBaru = (kat) => {
-                const id_baru = 'pejabat' + Date.now();
-                const obj = { id: id_baru, jabatan: "Jabatan", nama: "Nama Pejabat", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Baru&background=e0e7ff&color=3730a3&size=128", kategori: kat };
-                setDataPejabat([...dataPejabat, obj]);
+            // Fingsi Update dan Delete Warta
+            const handleEditWarta = (warta) => {
+                setEditingWarta(warta);
+                setEditWartaJudul(warta.judul);
+                setEditWartaIsi(warta.isi);
+                setEditWartaPenulis(warta.penulis || '');
+                setEditWartaGambar(null);
+                setEditWartaModal(true);
             };
 
-            // Referensi untuk fitur scroll tombol tab
+const handleUpdateWarta = async (e) => {
+  e.preventDefault();
+  if (!editingWarta) return;
+  setIsUpdatingWarta(true);
+  let gambarUrl = editingWarta.gambarUrl;
+  if (editWartaGambar) {
+    const reader = new FileReader();
+    reader.readAsDataURL(editWartaGambar);
+    await new Promise(resolve => { reader.onload = resolve; });
+    gambarUrl = reader.result;
+  }
+  try {
+    const res = await fetch(GAS_API_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'updateWarta',
+        password: adminToken,
+        rowIndex: editingWarta.rowIndex,
+        judul: editWartaJudul,
+        isi: editWartaIsi,
+        gambarUrl: gambarUrl,
+        penulis: editWartaPenulis
+      })
+    });
+    const result = await res.json();
+    if (result.success) {
+      alert("Warta berhasil diperbarui!");
+      setEditWartaModal(false);
+      setEditingWarta(null);
+      if (refreshWarta) refreshWarta();
+    } else {
+      alert("Gagal memperbarui: " + (result.message || "Unknown error"));
+    }
+  } catch (err) {
+    alert("Terjadi kesalahan: " + err.message);
+  }
+  setIsUpdatingWarta(false);
+};
+
+const handleDeleteWarta = async (rowIndex, judul) => {
+  if (!window.confirm(`Yakin ingin menghapus warta "${judul}"?`)) return;
+  try {
+    const res = await fetch(GAS_API_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'deleteWarta',
+        password: adminToken,
+        rowIndex: rowIndex
+      })
+    });
+    const result = await res.json();
+    if (result.success) {
+      alert("Warta berhasil dihapus!");
+      if (refreshWarta) refreshWarta();
+    } else {
+      alert("Gagal menghapus: " + (result.message || "Unknown error"));
+    }
+  } catch (err) {
+    alert("Terjadi kesalahan: " + err.message);
+  }
+};
+
+console.log("Data yang dikirim:", { judul: wartaJudul, isi: wartaIsi, penulis: wartaPenulis });
+
+            // Fungsi untuk menyisipkan tag HTML BOLD Pengumuman
+            const insertFormatting = (tag) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = editPengumuman.isi;
+    const selectedText = text.substring(start, end);
+    let newText = text;
+    if (tag === 'bold') {
+        newText = text.substring(0, start) + '<strong>' + selectedText + '</strong>' + text.substring(end);
+    } else if (tag === 'italic') {
+        newText = text.substring(0, start) + '<em>' + selectedText + '</em>' + text.substring(end);
+    }
+    setEditPengumuman({ ...editPengumuman, isi: newText });
+    setTimeout(() => {
+        textarea.focus();
+        textarea.setSelectionRange(start + (tag === 'bold' ? 8 : 5), end + (tag === 'bold' ? 8 : 5));
+    }, 0);
+};
+
+            // Fungsi untuk insert formatting pada warta baru
+const insertWartaFormatting = (tag) => {
+  const textarea = wartaTextareaRef.current;
+  if (!textarea) return;
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const text = wartaIsi;
+  const selectedText = text.substring(start, end);
+  let newText = text;
+  if (tag === 'bold') {
+    newText = text.substring(0, start) + '<strong>' + selectedText + '</strong>' + text.substring(end);
+  } else if (tag === 'italic') {
+    newText = text.substring(0, start) + '<em>' + selectedText + '</em>' + text.substring(end);
+  }
+  setWartaIsi(newText);
+  setTimeout(() => {
+    textarea.focus();
+    textarea.setSelectionRange(start + (tag === 'bold' ? 8 : 5), end + (tag === 'bold' ? 8 : 5));
+  }, 0);
+};
+
+// Fungsi untuk insert formatting pada edit warta
+const insertEditWartaFormatting = (tag) => {
+  const textarea = editWartaTextareaRef.current;
+  if (!textarea) return;
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const text = editWartaIsi;
+  const selectedText = text.substring(start, end);
+  let newText = text;
+  if (tag === 'bold') {
+    newText = text.substring(0, start) + '<strong>' + selectedText + '</strong>' + text.substring(end);
+  } else if (tag === 'italic') {
+    newText = text.substring(0, start) + '<em>' + selectedText + '</em>' + text.substring(end);
+  }
+  setEditWartaIsi(newText);
+  setTimeout(() => {
+    textarea.focus();
+    textarea.setSelectionRange(start + (tag === 'bold' ? 8 : 5), end + (tag === 'bold' ? 8 : 5));
+  }, 0);
+};
+
+
+            // ==========================================
+            // State & Fungsi untuk Kelola Jadwal
+            // ==========================================
             const scrollContainerRef = React.useRef(null);
             const scrollTabs = (direction) => {
                 if (scrollContainerRef.current) {
-                    const scrollAmount = 250;
-                    scrollContainerRef.current.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
+                    scrollContainerRef.current.scrollBy({ left: direction === 'left' ? -200 : 200, behavior: 'smooth' });
                 }
             };
 
-            const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-
-            const getTriwulan = (m) => {
-                if (m < 3) return "JANUARI - MARET";
-                if (m < 6) return "APRIL - JUNI";
-                if (m < 9) return "JULI - SEPTEMBER";
-                return "OKTOBER - DESEMBER";
-            };
-
-            const prevMonth = () => { if (viewMonth === 0) { setViewMonth(11); setViewYear(viewYear - 1); } else { setViewMonth(viewMonth - 1); } setEditingDate(null); };
-            const nextMonth = () => { if (viewMonth === 11) { setViewMonth(0); setViewYear(viewYear + 1); } else { setViewMonth(viewMonth + 1); } setEditingDate(null); };
-
-            const getDatesForMonth = (year, month, dayOfWeek) => {
-                let d = new Date(year, month, 1);
-                let dates = [];
-                while (d.getDay() !== dayOfWeek) { d.setDate(d.getDate() + 1); }
-                while (d.getMonth() === month) { dates.push(toYMD(d)); d.setDate(d.getDate() + 7); }
-                return dates;
-            };
-
-            const isRabu = subTab === 'rabu';
-            const targetDates = isRabu ? getDatesForMonth(viewYear, viewMonth, 3) : getDatesForMonth(viewYear, viewMonth, 6);
-
-            const getActiveArray = (rowData, tab) => {
-                if (tab === 'rabu') return rowData.petugas;
-                if (tab === 'sekolahSabat') return rowData.sekolahSabat;
-                if (tab === 'khotbah') return rowData.khotbah;
-                if (tab === 'diakon') return rowData.diakon;
-                if (tab === 'musik') return rowData.musik;
-                if (tab === 'perjamuan') return rowData.perjamuan;
-                return [];
-            };
-
             const subTabs = [
-                { id: 'rabu', label: 'Rabu: Permintaan Doa' },
-                { id: 'sekolahSabat', label: 'Sekolah Sabat' },
-                { id: 'khotbah', label: 'Ibadah Khotbah' },
-                { id: 'susunanAcara', label: 'Susunan Acara (Lagu)' },
-                { id: 'musik', label: 'Petugas Musik' },
-                { id: 'diakon', label: 'Petugas Diakon' },
+                { id: 'rabu', label: 'Ibadah Rabu' },
+                { id: 'khotbah', label: 'Khotbah / Umum' },
+                { id: 'ss', label: 'Sekolah Sabat' },
+                { id: 'diakon', label: 'Diakon & Diakones' },
+                { id: 'musik', label: 'Pelayanan Musik' },
+                { id: 'susunanAcara', label: 'Susunan Acara' },
                 { id: 'perjamuan', label: 'Perjamuan Kudus' }
             ];
 
+            const [subTab, setSubTab] = React.useState('rabu');
+            const [editingDate, setEditingDate] = React.useState(null);
+            const [viewMonth, setViewMonth] = React.useState(new Date().getMonth());
+            const [viewYear, setViewYear] = React.useState(new Date().getFullYear());
+
+            const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const prevMonth = () => { if (viewMonth === 0) { setViewMonth(11); setViewYear(viewYear - 1); } else { setViewMonth(viewMonth - 1); } setEditingDate(null); };
+            const nextMonth = () => { if (viewMonth === 11) { setViewMonth(0); setViewYear(viewYear + 1); } else { setViewMonth(viewMonth + 1); } setEditingDate(null); };
+            const getTriwulan = (m) => Math.floor(m / 3) + 1;
+            
+            const isRabu = subTab === 'rabu';
             const currentSubTabLabel = subTabs.find(t => t.id === subTab)?.label || '';
-            const columns = subTab === 'susunanAcara' ? ["Status Pengisian"] : getActiveArray(isRabu ? initialJadwalRabu : initialJadwalSabat, subTab).map(p => p.tugas);
+
+            const targetDates = React.useMemo(() => {
+                const dates = [];
+                const date = new Date(viewYear, viewMonth, 1);
+                const targetDay = isRabu ? 3 : 6;
+                while (date.getMonth() === viewMonth) {
+                    if (date.getDay() === targetDay) dates.push(toYMD(date));
+                    date.setDate(date.getDate() + 1);
+                }
+                if (subTab === 'perjamuan') {
+                    const perjamuanMonths = [2, 5, 8, 11];
+                    if (perjamuanMonths.includes(viewMonth)) return dates;
+                    return [];
+                }
+                return dates;
+            }, [viewYear, viewMonth, isRabu, subTab]);
+
+            // ===============================================
+            // FIX: JUDUL KOLOM DINAMIS BERDASARKAN TUGAS
+            // ===============================================
+            const getActiveArray = (row, tab) => {
+                if (tab === 'rabu') return row.petugas || [];
+                if (tab === 'ss') return row.sekolahSabat || [];
+                if (tab === 'khotbah') return row.khotbah || [];
+                if (tab === 'diakon') return row.diakon || [];
+                if (tab === 'musik') return row.musik || [];
+                if (tab === 'perjamuan') return row.perjamuan || [];
+                return [];
+            };
+
+            const defaultRowData = isRabu ? initialJadwalRabu : initialJadwalSabat;
+            const defaultDataArray = getActiveArray(defaultRowData, subTab);
+            const columns = subTab === 'susunanAcara' ? ['Detail'] : defaultDataArray.map(p => p.tugas);
+
+
+            const [editForm, setEditForm] = React.useState({});
+            const [isSavingJadwal, setIsSavingJadwal] = React.useState(false);
 
             const handleEditClick = (date) => {
                 setEditingDate(date);
-                const existingData = jadwalDB[date] || (isRabu ? initialJadwalRabu : initialJadwalSabat);
+                const rowData = jadwalDB[date] || (isRabu ? initialJadwalRabu : initialJadwalSabat);
                 if (subTab === 'susunanAcara') {
-                    setEditForm(JSON.parse(JSON.stringify(existingData.susunan || defaultSusunan)));
+                    setEditForm({ ...defaultSusunan, ...(rowData.susunan || {}) });
                 } else {
-                    setEditForm(JSON.parse(JSON.stringify(getActiveArray(existingData, subTab))));
+                    setEditForm(JSON.parse(JSON.stringify(getActiveArray(rowData, subTab))));
                 }
             };
 
@@ -1177,110 +1739,149 @@
                 setEditForm(prev => ({ ...prev, [field]: value }));
             };
 
-            // SIMPAN JADWAL
-            const handleSaveRow = (date) => {
-                const baseData = jadwalDB[date] ? JSON.parse(JSON.stringify(jadwalDB[date])) : JSON.parse(JSON.stringify(isRabu ? initialJadwalRabu : initialJadwalSabat));
-                if (subTab === 'rabu') baseData.petugas = editForm;
-                else if (subTab === 'sekolahSabat') baseData.sekolahSabat = editForm;
-                else if (subTab === 'khotbah') baseData.khotbah = editForm;
-                else if (subTab === 'susunanAcara') baseData.susunan = editForm;
-                else if (subTab === 'diakon') baseData.diakon = editForm;
-                else if (subTab === 'musik') baseData.musik = editForm;
-                else if (subTab === 'perjamuan') baseData.perjamuan = editForm;
-
+            const handleSaveRow = async (date) => {
                 setIsSavingJadwal(true);
+                try {
+                    const currentData = jadwalDB[date] || (isRabu ? initialJadwalRabu : initialJadwalSabat);
+                    let updatedRow = JSON.parse(JSON.stringify(currentData));
+                    if (subTab === 'susunanAcara') updatedRow.susunan = editForm;
+                    else if (subTab === 'rabu') updatedRow.petugas = editForm;
+                    else if (subTab === 'ss') updatedRow.sekolahSabat = editForm;
+                    else updatedRow[subTab] = editForm;
 
-                fetch(GAS_API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'saveJadwal',
-                        password: adminToken, // Otorisasi
-                        tanggal: date,
-                        data: baseData
-                    })
-                })
-                    .then(res => res.json())
-                    .then(result => {
-                        setIsSavingJadwal(false);
-                        if (result.success) {
-                            setJadwalDB({ ...jadwalDB, [date]: baseData });
-                            setEditingDate(null);
-                        } else { alert("Gagal menyimpan: " + (result.message || "Akses ditolak.")); }
-                    })
-                    .catch(err => { alert("Gagal terhubung ke server."); setIsSavingJadwal(false); });
+                    const res = await fetch(GAS_API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action: 'saveJadwal', password: adminToken, date: date, data: updatedRow })
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        setJadwalDB(prev => ({ ...prev, [date]: updatedRow }));
+                        setEditingDate(null);
+                    } else { alert("Gagal menyimpan jadwal."); }
+                } catch (err) { alert("Terjadi kesalahan."); }
+                setIsSavingJadwal(false);
             };
 
-            // HAPUS (RESET) JADWAL
-            const handleDeleteRow = (date) => {
-                if (!jadwalDB[date]) return;
-                if (window.confirm(`Kembalikan jadwal ${formatIndoDateShort(date)} ke default?`)) {
-                    setIsSavingJadwal(true);
-                    const defaultData = JSON.parse(JSON.stringify(isRabu ? initialJadwalRabu : initialJadwalSabat));
-
-                    fetch(GAS_API_URL, {
+            const handleDeleteRow = async (date) => {
+                if(!window.confirm("Kembalikan ke jadwal default?")) return;
+                setIsSavingJadwal(true);
+                try {
+                    let updatedRow = jadwalDB[date] ? JSON.parse(JSON.stringify(jadwalDB[date])) : null;
+                    if (updatedRow) {
+                        if (subTab === 'susunanAcara') delete updatedRow.susunan;
+                        else if (subTab === 'rabu') delete updatedRow.petugas;
+                        else if (subTab === 'ss') delete updatedRow.sekolahSabat;
+                        else delete updatedRow[subTab];
+                    }
+                    const res = await fetch(GAS_API_URL, {
                         method: 'POST',
-                        body: JSON.stringify({
-                            action: 'saveJadwal',
-                            password: adminToken, // Otorisasi
-                            tanggal: date,
-                            data: defaultData
-                        })
-                    })
-                        .then(res => res.json())
-                        .then(result => {
-                            setIsSavingJadwal(false);
-                            if (result.success) {
-                                const newDB = { ...jadwalDB };
-                                delete newDB[date];
-                                setJadwalDB(newDB);
-                            } else { alert("Gagal mereset: " + (result.message || "Akses ditolak.")); }
-                        })
-                        .catch(err => { alert("Gagal mereset data."); setIsSavingJadwal(false); });
+                        body: JSON.stringify({ action: 'saveJadwal', password: adminToken, date: date, data: updatedRow })
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        setJadwalDB(prev => {
+                            const newDB = { ...prev };
+                            if(updatedRow) newDB[date] = updatedRow;
+                            else delete newDB[date];
+                            return newDB;
+                        });
+                    } else { alert("Gagal mereset jadwal."); }
+                } catch (err) { alert("Terjadi kesalahan."); }
+                setIsSavingJadwal(false);
+            };
+
+            // ==========================================
+            // State & Fungsi untuk Drag & Drop Pejabat
+            // ==========================================
+            const [draggedItem, setDraggedItem] = React.useState(null);
+            const [isSavingPejabat, setIsSavingPejabat] = React.useState(false);
+
+            const handleDragStart = (e, item) => {
+                setDraggedItem(item);
+                e.dataTransfer.effectAllowed = 'move';
+                setTimeout(() => { e.target.classList.add('opacity-50'); }, 0);
+            };
+            
+            const handleDragEnd = (e) => {
+                setDraggedItem(null);
+                e.target.classList.remove('opacity-50');
+            };
+
+            const handleDragOver = (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+            };
+
+            const handleDrop = (e, targetKategori) => {
+                e.preventDefault();
+                if (draggedItem && draggedItem.kategori !== targetKategori) {
+                    const newData = dataPejabat.map(p => p.id === draggedItem.id ? { ...p, kategori: targetKategori } : p);
+                    setDataPejabat(newData);
                 }
             };
 
-            // SIMPAN PEJABAT
-            const handleSimpanPejabat = () => {
-                setIsSavingPejabat(true);
-                fetch(GAS_API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'savePejabat',
-                        password: adminToken, // Otorisasi
-                        data: dataPejabat,
-                        kategoriPejabat: kategoriPejabat
-                    })
-                })
-                    .then(res => res.json())
-                    .then(result => {
-                        setIsSavingPejabat(false);
-                        if (result.success) {
-                            alert("Berhasil! Data Pelayan Jemaat tersimpan di Google Sheets.");
-                        } else { alert("Gagal menyimpan: " + (result.message || "Akses ditolak.")); }
-                    })
-                    .catch(err => { alert("Gagal menyimpan data Pejabat."); setIsSavingPejabat(false); });
+            const handleTambahKategori = () => {
+                const name = prompt("Masukkan nama kategori baru:");
+                if (name && !kategoriPejabat.includes(name)) setKategoriPejabat([...kategoriPejabat, name]);
             };
 
-            // GANTI PASSWORD
-            const handleGantiPassword = async (e) => {
+            const handleHapusKategori = (kat) => {
+                if (window.confirm(`Hapus kategori "${kat}"? Semua pejabat di dalamnya akan pindah ke "Lainnya".`)) {
+                    setKategoriPejabat(kategoriPejabat.filter(k => k !== kat));
+                    setDataPejabat(dataPejabat.map(p => p.kategori === kat ? { ...p, kategori: "Lainnya" } : p));
+                }
+            };
+
+            const handleTambahPejabatBaru = (kat) => {
+                const newP = { id: 'pej_' + Date.now(), jabatan: "Jabatan Baru", nama: "Nama Pejabat", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Baru&background=random", kategori: kat };
+                setDataPejabat([...dataPejabat, newP]);
+            };
+
+            const handleSimpanPejabat = async () => {
+                setIsSavingPejabat(true);
+                try {
+                    const res = await fetch(GAS_API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action: 'saveDataPejabat', password: adminToken, dataPejabat: dataPejabat, kategoriPejabat: kategoriPejabat })
+                    });
+                    const result = await res.json();
+                    if (result.success) alert("Data Pejabat & Kategori berhasil disimpan!");
+                    else alert("Gagal menyimpan data.");
+                } catch (err) { alert("Terjadi kesalahan saat menyimpan data pejabat."); }
+                setIsSavingPejabat(false);
+            };
+
+            // ==========================================
+            // PERBAIKAN: Menambahkan Kembali Kolom Password Lama
+            // ==========================================
+            const handleChangePassword = async (e) => {
                 e.preventDefault();
+                if (!oldPassword || !newPassword) {
+                    alert("Harap isi password lama dan password baru.");
+                    return;
+                }
+                
                 setIsChangingPass(true);
                 try {
                     const res = await fetch(GAS_API_URL, {
                         method: 'POST',
-                        body: JSON.stringify({ action: 'changePassword', oldPassword: oldPassword, newPassword: newPassword })
+                        body: JSON.stringify({ 
+                            action: 'changePassword', 
+                            password: oldPassword,     // Memasukkan input password lama yang di ketik user
+                            newPassword: newPassword   // Password baru yang diinput
+                        })
                     });
                     const result = await res.json();
                     if (result.success) {
-                        alert("Password Admin berhasil diperbarui!");
-                        setAdminToken(newPassword); // Update token lokal
-                        setOldPassword('');
-                        setNewPassword('');
+                        alert("Password berhasil diperbarui!");
+                        setAdminToken(newPassword); // Update token session saat ini
+                        setOldPassword('');         // Kosongkan input lama
+                        setNewPassword('');         // Kosongkan input baru
                     } else {
-                        alert("Gagal merubah password: " + (result.message || "Password lama salah."));
+                        alert("Gagal merubah password: " + (result.message || "Password lama yang Anda masukkan salah."));
                     }
                 } catch (err) {
-                    alert("Gagal terhubung ke server.");
+                    alert("Gagal terhubung ke server saat mengganti password.");
                 }
                 setIsChangingPass(false);
             };
@@ -1292,7 +1893,7 @@
                 try {
                     const res = await fetch(GAS_API_URL, {
                         method: 'POST',
-                        body: JSON.stringify({ action: 'saveYoutubeUrl', password: adminToken, url: editYoutubeUrl })
+                        body: JSON.stringify({ action: 'saveYoutubeUrl', password: adminToken, youtubeUrl: editYoutubeUrl })
                     });
                     const result = await res.json();
                     if (result.success) {
@@ -1305,6 +1906,32 @@
                     alert("Gagal terhubung ke server.");
                 }
                 setIsSavingUrl(false);
+            };
+
+            // SIMPAN PENGUMUMAN
+            const handleSavePengumuman = async (e) => {
+                e.preventDefault();
+                setIsSavingPengumuman(true);
+                try {
+                    const res = await fetch(GAS_API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ 
+                            action: 'savePengumuman', 
+                            password: adminToken, 
+                            pengumuman: JSON.stringify(editPengumuman)
+                        })
+                    });
+                    const result = await res.json();
+                    if (result.success) {
+                        alert("Pengumuman berhasil diperbarui!");
+                        setPengumuman(editPengumuman);
+                    } else {
+                        alert("Gagal merubah pengumuman: " + (result.message || "Akses ditolak."));
+                    }
+                } catch (err) {
+                    alert("Gagal terhubung ke server.");
+                }
+                setIsSavingPengumuman(false);
             };
 
             const handleFileChange = (e, id) => {
@@ -1346,15 +1973,124 @@
             const handleHapusPejabat = (id) => { if (window.confirm("Yakin ingin menghapus data pelayan ini?")) { setDataPejabat(dataPejabat.filter(p => p.id !== id)); } };
 
             return (
+                
                 <div className="space-y-6 animate-fade-in relative z-10">
                     <div className="bg-white rounded-[1.5rem] shadow-sm border border-navy-100/60 overflow-hidden">
                         <div className="flex flex-col sm:flex-row border-b border-navy-50 bg-navy-50/20">
                             <button onClick={() => setAdminTab('jadwal')} className={`flex-1 py-4 font-bold text-sm md:text-base text-center transition-colors ${adminTab === 'jadwal' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Kelola Jadwal</button>
+                            <button onClick={() => setAdminTab('warta')} className={`flex-1 py-4 font-bold text-sm md:text-base text-center transition-colors ${adminTab === 'warta' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Buat Warta</button>
                             <button onClick={() => setAdminTab('pelayan')} className={`flex-1 py-4 font-bold text-sm md:text-base text-center transition-colors border-l sm:border-t-0 border-t border-navy-50 ${adminTab === 'pelayan' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Kelola Pejabat</button>
                             <button onClick={() => setAdminTab('pengaturan')} className={`flex-1 py-4 font-bold text-sm md:text-base text-center transition-colors border-l sm:border-t-0 border-t border-navy-50 ${adminTab === 'pengaturan' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Pengaturan Admin</button>
                         </div>
 
                         <div className={`p-4 md:p-6 ${adminTab === 'jadwal' ? 'bg-navy-50/30' : 'bg-white'}`}>
+                            {/* Modal Edit Warta */}
+{editWartaModal && (
+  <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-900/60 px-4 backdrop-blur-md">
+    <div className="bg-white rounded-[1.5rem] shadow-2xl p-6 md:p-8 max-w-lg w-full relative border border-navy-100/60">
+      <button onClick={() => setEditWartaModal(false)} className="absolute top-4 right-4 text-navy-400 hover:text-red-500 transition-colors bg-navy-50 w-8 h-8 rounded-full flex items-center justify-center font-bold pb-1">&times;</button>
+      <h3 className="text-xl font-bold mb-4">Edit Warta</h3>
+      <form onSubmit={handleUpdateWarta}>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-navy-700 mb-1">Judul Warta</label>
+          <input type="text" value={editWartaJudul} onChange={e => setEditWartaJudul(e.target.value)} required className="w-full px-4 py-2 border border-navy-300 rounded-lg focus:ring-2 focus:ring-navy-500" />
+        </div>
+        <div className="mb-4">
+  <label className="block text-sm font-medium text-navy-700 mb-1">Isi Warta</label>
+  <div className="flex gap-2 mb-2">
+    <button type="button" onClick={() => insertEditWartaFormatting('bold')} className="px-3 py-1 bg-navy-100 hover:bg-navy-200 text-navy-800 rounded font-bold text-sm">B</button>
+    <button type="button" onClick={() => insertEditWartaFormatting('italic')} className="px-3 py-1 bg-navy-100 hover:bg-navy-200 text-navy-800 rounded italic text-sm">I</button>
+    <button type="button" onClick={() => openLinkModal('editWarta')} className="px-3 py-1 bg-navy-100 hover:bg-navy-200 text-navy-800 rounded text-sm">
+    🔗 Link
+</button>
+    </div>
+  <textarea
+    ref={editWartaTextareaRef}
+    rows="5"
+    value={editWartaIsi}
+    onChange={e => setEditWartaIsi(e.target.value)}
+    required
+    className="w-full px-4 py-2 border border-navy-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+  ></textarea>
+</div>
+        <div className="mb-5">
+            <label className="block text-sm font-medium text-navy-700 mb-1">Penulis</label>
+            <input type="text" value={editWartaPenulis} onChange={e => setEditWartaPenulis(e.target.value)} className="w-full px-4 py-2 border border-navy-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-navy-700 mb-1">Ganti Gambar (Opsional)</label>
+          <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-navy-300 border-dashed rounded-lg">
+            <div className="space-y-1 text-center">
+              <div className="flex text-sm text-navy-600 justify-center">
+                <label className="relative cursor-pointer bg-white rounded-md font-medium text-gold-600 hover:text--500">
+                  <span>Pilih file gambar baru</span>
+                  <input type="file" accept="image/*" className="sr-only" onChange={(e) => setEditWartaGambar(e.target.files[0])} />
+                </label>
+              </div>
+              <p className="text-xs text-navy-500">PNG, JPG up to 10MB</p>
+              {editWartaGambar && <p className="text-sm font-semibold text-gold-600 mt-2">{editWartaGambar.name}</p>}
+            </div>
+          </div>
+          {editingWarta?.gambarUrl && !editWartaGambar && (
+            <center><div className="mt-2">
+              <p className="text-xs text-navy-500">Gambar saat ini:</p>
+              <img src={editingWarta.gambarUrl} className="h-16 w-auto object-cover mt-1 rounded" alt="current" />
+            </div></center>
+          )}
+        </div>
+        <button type="submit" disabled={isUpdatingWarta} className="w-full bg-navy-800 hover:bg-navy-400 text-gold-400 font-bold py-3 px-4 rounded-lg transition-colors">
+          {isUpdatingWarta ? "Menyimpan..." : "Simpan Perubahan"}
+        </button>
+      </form>
+    </div>
+  </div>
+)}
+
+{/* Modal Input URL untuk Link */}
+{linkModalOpen && (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-900/60 px-4 backdrop-blur-md">
+        <div className="bg-white rounded-[1.5rem] shadow-2xl p-6 md:p-8 max-w-md w-full relative border border-navy-100/60">
+            <button onClick={() => setLinkModalOpen(false)} className="absolute top-4 right-4 text-navy-400 hover:text-red-500 transition-colors bg-navy-50 w-8 h-8 rounded-full flex items-center justify-center font-bold pb-1">&times;</button>
+            <h3 className="text-xl font-bold mb-4 text-navy-900">Masukkan URL Link</h3>
+            <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Teks yang akan di-link</label>
+                <input type="text" value={linkText} disabled className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" />
+            </div>
+            <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-1">URL Tujuan</label>
+                <input type="url" value={linkUrl} onChange={e => setLinkUrl(e.target.value)} placeholder="https://..." className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" autoFocus />
+            </div>
+            <div className="flex justify-end gap-3">
+                <button onClick={() => setLinkModalOpen(false)} className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition">Batal</button>
+                <button onClick={insertLink} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">Sisipkan Link</button>
+            </div>
+        </div>
+    </div>
+)}
+
+
+{/* Modal Input URL untuk Link Pengumuman */}
+{linkModalOpenPengumuman && (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-900/60 px-4 backdrop-blur-md">
+        <div className="bg-white rounded-[1.5rem] shadow-2xl p-6 md:p-8 max-w-md w-full relative border border-navy-100/60">
+            <button onClick={() => setLinkModalOpenPengumuman(false)} className="absolute top-4 right-4 text-navy-400 hover:text-red-500 transition-colors bg-navy-50 w-8 h-8 rounded-full flex items-center justify-center font-bold pb-1">&times;</button>
+            <h3 className="text-xl font-bold mb-4 text-navy-900">Masukkan URL Link</h3>
+            <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Teks yang akan di-link</label>
+                <input type="text" value={linkTextPengumuman} disabled className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100" />
+            </div>
+            <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-1">URL Tujuan</label>
+                <input type="url" value={linkUrlPengumuman} onChange={e => setLinkUrlPengumuman(e.target.value)} placeholder="https://..." className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" autoFocus />
+            </div>
+            <div className="flex justify-end gap-3">
+                <button onClick={() => setLinkModalOpenPengumuman(false)} className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition">Batal</button>
+                <button onClick={insertLinkPengumuman} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">Sisipkan Link</button>
+            </div>
+        </div>
+    </div>
+)}
+
                             {adminTab === 'jadwal' && (
                                 <div className="animate-fade-in space-y-4">
                                     <div className="flex items-center gap-2">
@@ -1378,7 +2114,7 @@
                                     {subTab === 'perjamuan' && (
                                         <div className="bg-gold-50/50 border border-gold-200 p-4 rounded-xl text-navy-800 text-sm flex items-start shadow-sm">
                                             <Icon name="Gift" className="w-5 h-5 text-gold-500 mr-3 shrink-0" />
-                                            <p><b>Jadwal Spesial:</b> Perjamuan Kudus hanya dilaksanakan pada <span className="font-bold underline text-gold-600">Sabtu terakhir</span> di bulan Maret, Juni, Oktober, dan Desember. Mengisi jadwal pada tanggal lain tidak akan memunculkannya secara otomatis di bulan tersebut.</p>
+                                            <p><b>Jadwal Spesial:</b> Perjamuan Kudus hanya dilaksanakan pada <span className="font-bold underline text-gold-600">Sabtu</span> di bulan Maret, September, dan Desember. Mengisi jadwal pada tanggal lain tidak akan memunculkannya secara otomatis di bulan tersebut.</p>
                                         </div>
                                     )}
 
@@ -1395,12 +2131,18 @@
                                             </div>
                                         </div>
                                         <div className="overflow-x-auto">
-                                            <table className={`w-full text-left border-collapse ${subTab === 'perjamuan' ? 'min-w-[2800px]' : subTab === 'susunanAcara' ? 'min-w-[400px]' : 'min-w-[800px]'}`}>
+                                            <table className={`text-left border-collapse ${
+                                                    subTab === 'perjamuan' ? 'w-full min-w-[800px] mx-auto' : 
+                                                    subTab === 'susunanAcara' ? 'w-full min-w-[300px] mx-auto' : 
+                                                    subTab === 'diakon' ? 'w-full min:w-[400px] mx-auto' :
+                                                    subTab === 'musik' ? 'w-full min:w-[400px] mx-auto' :
+                                                    'w-full min-w-[800px] mx-auto'
+                                                    }`}>
                                                 <thead className="bg-navy-50/50 border-b border-navy-100/60">
                                                     <tr>
-                                                        <th className="p-4 text-[10px] md:text-xs font-black text-navy-500 uppercase tracking-widest text-center w-36">Tanggal</th>
-                                                        {columns.map((col, i) => <th key={i} className="p-4 text-[10px] md:text-xs font-black text-navy-500 uppercase tracking-widest text-center">{col}</th>)}
-                                                        <th className="p-4 text-[10px] md:text-xs font-black text-navy-500 uppercase tracking-widest text-center w-28">Aksi</th>
+                                                        <th className="p-2 text-[10px] md:text-xs font-black text-navy-500 uppercase tracking-widest text-center w-36">Tanggal</th>
+                                                        {columns.map((col, i) => <th key={i} className="p-2 text-[10px] md:text-xs font-black text-navy-500 uppercase tracking-widest text-center">{col}</th>)}
+                                                        <th className="p-2 text-[10px] md:text-xs font-black text-navy-500 uppercase tracking-widest text-center w-1">Ubah</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody className="divide-y divide-navy-50 bg-white">
@@ -1439,7 +2181,7 @@
                                                                                     <div className="flex items-center space-x-3 border border-navy-100 p-3 rounded-xl bg-navy-50/30">
                                                                                         <input type="checkbox" checked={editForm.kLaguPujian1_show || false} onChange={(e) => handleEditFormChangeSusunan('kLaguPujian1_show', e.target.checked)} className="w-5 h-5 text-gold-500 rounded focus:ring-gold-500 accent-gold-500" />
                                                                                         <div className="flex-1">
-                                                                                            <label className="text-[10px] text-navy-600 font-bold uppercase tracking-widest block mb-0.5">Lagu Pujian 1 (Sebelum Persembahan)</label>
+                                                                                            <label className="text-[10px] text-navy-600 font-bold uppercase tracking-widest block mb-0.5">Lagu Pujian 1 (Saat Persembahan Khotbah)</label>
                                                                                             {editForm.kLaguPujian1_show && <input type="text" value={editForm.kLaguPujian1_judul || ''} onChange={(e) => handleEditFormChangeSusunan('kLaguPujian1_judul', e.target.value)} placeholder="Misal: Koor Pemuda" className="w-full p-2 border border-navy-200 rounded-lg text-xs font-bold text-navy-900 outline-none focus:border-gold-500 bg-white" />}
                                                                                         </div>
                                                                                     </div>
@@ -1521,7 +2263,118 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                
                             )}
+
+                            {adminTab === 'warta' && (
+                                
+                                <div className="max-w-2xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6 md:p-8">
+                                    <div className="mb-8">
+
+  <h3 className="text-xl font-bold text-navy-800 mb-4 border-b pb-2">Daftar Warta</h3>
+  {daftarWarta.length === 0 ? (
+    <p className="text-navy-500">Belum ada warta.</p>
+  ) : (
+    
+    <div className="space-y-4">
+  {daftarWarta.map((warta, idx) => {
+    const plainPreview = stripHtml(warta.isi);
+    const shortPreview = plainPreview.length > 200 ? plainPreview.substring(0, 200) + '...' : plainPreview;
+    return (
+      <div key={idx} className="border border-navy-200 rounded-lg p-4 bg-navy-50">
+        <center>
+          <div className="flex justify-between items-start">
+            <div>
+              <h4 className="font-bold text-navy-800">{warta.judul}</h4>
+              <p className="text-xs text-navy-500">{warta.tanggal}</p>
+            </div>
+            <div className="relative flex flex-col justify-between h-full">
+              <button onClick={() => handleEditWarta(warta)} className="p-2 text-gold-600 hover:bg-navy-100 rounded-full transition" title="Edit Warta">
+                <Icon name="Edit" className="w-4 h-4" />
+              </button>
+              <button onClick={() => handleDeleteWarta(warta.rowIndex, warta.judul)} className="p-2 text-navy-600 hover:bg-gold-100 rounded-full transition" title="Hapus Warta">
+                <Icon name="Trash" className="w-4 h-4" />
+              </button>
+            </div>
+          </div></center>
+          <div className="flex gap-3 items-start">
+  {warta.gambarUrl && (
+    <img 
+      src={warta.gambarUrl} 
+      className="h-20 w-auto object-cover rounded shrink-0" 
+      alt="preview" 
+    />
+  )}
+  <p className="text-xs text-justify text-navy-700">{shortPreview}</p>
+</div>
+      </div>
+    );
+  })}
+</div>
+  )}
+
+                                    
+                                        <h1 className="text-xl font-bold text-navy-800 mb-4 border-b pb-2">Input Warta Baru</h1>
+                                        <p className="text-navy-500">Silakan isi konten warta di bawah ini.</p>
+                                    </div>
+                                    
+                                    <form onSubmit={handleWartaFormSubmit}>
+                                        <div className="mb-5">
+                                            <label className="block text-sm font-medium text-navy-700 mb-1">Judul Warta</label>
+                                            <input type="text" value={wartaJudul} onChange={e => setWartaJudul(e.target.value)} required className="w-full px-4 py-2 border border-navy-300 rounded-lg focus:ring-2 focus:ring-navy-500" />
+                                        </div>
+                                        <div className="mb-5">
+  <label className="block text-sm font-medium text-navy-700 mb-1">Penulis</label>
+  <input 
+    type="text" 
+    value={wartaPenulis} 
+    onChange={e => setWartaPenulis(e.target.value)} 
+    className="w-full px-4 py-2 border border-navy-300 rounded-lg" 
+  />
+</div>
+                                        <div className="mb-5">
+  <label className="block text-sm font-medium text-navy-700 mb-1">Isi Warta</label>
+  <div className="flex gap-2 mb-2">
+    <button type="button" onClick={() => insertWartaFormatting('bold')} className="px-3 py-1 bg-navy-100 hover:bg-navy-200 text-navy-800 rounded font-bold text-sm">B</button>
+    <button type="button" onClick={() => insertWartaFormatting('italic')} className="px-3 py-1 bg-navy-100 hover:bg-navy-200 text-navy-800 rounded italic text-sm">I</button>
+  <button type="button" onClick={() => openLinkModal('warta')} className="px-3 py-1 bg-navy-100 hover:bg-navy-200 text-navy-800 rounded text-sm">
+    🔗 Link
+</button>
+    </div>
+  <textarea
+    ref={wartaTextareaRef}
+    rows="5"
+    value={wartaIsi}
+    onChange={e => setWartaIsi(e.target.value)}
+    required
+    className="w-full px-4 py-2 border border-navy-300 rounded-lg focus:ring-2 focus:ring-navy-500"
+  ></textarea>
+</div>
+                                        <div className="mb-8">
+                                            <label className="block text-sm font-medium text-navy-700 mb-1">Unggah Gambar (Opsional)</label>
+                                            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-navy-300 border-dashed rounded-lg">
+                                                <div className="space-y-1 text-center">
+                                                    <div className="flex text-sm text-navy-600 justify-center">
+                                                        <label className="relative cursor-pointer bg-white rounded-md font-medium text-gold-400 hover:text-navy-800">
+                                                            <span>Pilih file gambar</span>
+                                                            <input type="file" accept="image/*" className="sr-only" onChange={(e) => setWartaGambar(e.target.files[0])} />
+                                                        </label>
+                                                    </div>
+                                                    <p className="text-xs text-navy-500">PNG, JPG up to 10MB</p>
+                                                    {wartaGambar && <p className="text-sm font-semibold text-navy-600 mt-2">{wartaGambar.name}</p>}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" disabled={isSavingWarta} className="w-full bg-navy-900 hover:bg-navy-800 text-gold-400 shadow-md hover:shadow-lg font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+                                            {isSavingWarta ? "Menyimpan..." : "Simpan Warta"}
+                                        </button>
+                                    </form>
+                                </div>
+                                
+                            )}
+
+                            
 
                             {adminTab === 'pelayan' && (
                                 <div className="space-y-6 animate-fade-in bg-white p-2 md:p-4 rounded-xl">
@@ -1606,49 +2459,88 @@
                             )}
 
                             {adminTab === 'pengaturan' && (
-                                <div className="max-w-md mx-auto animate-fade-in space-y-6">
+                                <div className="space-y-6 md:space-y-8 animate-fade-in relative z-10">
+                                    
+                                    {/* --- FORM GANTI PASSWORD --- */}
                                     <div className="bg-white border border-navy-100/60 rounded-[1.5rem] p-6 shadow-sm">
                                         <div className="flex items-center space-x-4 mb-6 border-b border-navy-50 pb-5">
-                                            <div className="w-12 h-12 bg-navy-50 rounded-full flex items-center justify-center text-navy-900 shadow-inner"><Icon name="Settings" className="w-6 h-6" /></div>
-                                            <div><h3 className="font-black text-navy-900 text-lg tracking-tight">Ganti Password Admin</h3><p className="text-xs text-navy-500 font-bold uppercase tracking-widest mt-1 mt-1">Keamanan Otentikasi</p></div>
+                                            <div className="w-12 h-12 bg-navy-50 rounded-full flex items-center justify-center text-navy-600 shadow-inner"><Icon name="Settings" className="w-6 h-6" /></div>
+                                            <div><h3 className="font-black text-navy-900 text-lg tracking-tight">Ganti Password Admin</h3><p className="text-xs text-navy-500 font-bold uppercase tracking-widest mt-1">Keamanan Sistem</p></div>
                                         </div>
-                                        <form onSubmit={handleGantiPassword} className="space-y-5">
+                                        <form onSubmit={handleChangePassword} className="space-y-5">
                                             <div>
                                                 <label className="block text-xs font-bold text-navy-700 mb-2 uppercase tracking-widest">Password Lama</label>
                                                 <div className="relative">
-                                                    <input type={showOldPass ? "text" : "password"} value={oldPassword} onChange={e => setOldPassword(e.target.value)} required className="w-full p-3.5 pr-10 border border-navy-200 rounded-xl focus:border-gold-500 outline-none transition-colors bg-navy-50/50 text-sm font-bold shadow-sm" />
-                                                    <button type="button" onClick={() => setShowOldPass(!showOldPass)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-navy-400 hover:text-gold-500 transition-colors focus:outline-none"><Icon name={showOldPass ? "EyeOff" : "Eye"} className="w-5 h-5" /></button>
+                                                    <input type={showOldPass ? "text" : "password"} value={oldPassword} onChange={e => setOldPassword(e.target.value)} required className="w-full p-3.5 border border-navy-200 rounded-xl focus:border-gold-500 outline-none transition-colors bg-white text-sm font-bold shadow-sm pr-12" placeholder="Masukkan password lama" />
+                                                    <button type="button" onClick={() => setShowOldPass(!showOldPass)} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-navy-400 hover:text-white-600 transition-colors">
+                                                        <Icon name={showOldPass ? "EyeOff" : "Eye"} className="w-5 h-5" />
+                                                    </button>
                                                 </div>
                                             </div>
                                             <div>
                                                 <label className="block text-xs font-bold text-navy-700 mb-2 uppercase tracking-widest">Password Baru</label>
                                                 <div className="relative">
-                                                    <input type={showNewPass ? "text" : "password"} value={newPassword} onChange={e => setNewPassword(e.target.value)} required minLength="6" className="w-full p-3.5 pr-10 border border-navy-200 rounded-xl focus:border-gold-500 outline-none transition-colors bg-navy-50/50 text-sm font-bold shadow-sm" />
-                                                    <button type="button" onClick={() => setShowNewPass(!showNewPass)} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-navy-400 hover:text-gold-500 transition-colors focus:outline-none"><Icon name={showNewPass ? "EyeOff" : "Eye"} className="w-5 h-5" /></button>
+                                                    <input type={showNewPass ? "text" : "password"} value={newPassword} onChange={e => setNewPassword(e.target.value)} required className="w-full p-3.5 border border-navy-200 rounded-xl focus:border-gold-500 outline-none transition-colors bg-navy-50/50 text-sm font-bold shadow-sm pr-12" placeholder="Masukkan password baru" />
+                                                    <button type="button" onClick={() => setShowNewPass(!showNewPass)} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-navy-400 hover:text-white-600 transition-colors">
+                                                        <Icon name={showNewPass ? "EyeOff" : "Eye"} className="w-5 h-5" />
+                                                    </button>
                                                 </div>
                                             </div>
-                                            <button type="submit" disabled={isChangingPass} className={`w-full ${isChangingPass ? 'bg-navy-300 text-navy-500 cursor-not-allowed' : 'bg-navy-900 hover:bg-navy-800 text-gold-400 shadow-md hover:shadow-lg'} font-bold py-3.5 rounded-xl transition-all mt-6 flex items-center justify-center`}>
-                                                {isChangingPass ? <><span className="w-4 h-4 border-2 border-navy-500 border-t-white rounded-full animate-spin mr-2"></span> Memproses...</> : 'Simpan Password Baru'}
+                                            <button type="submit" disabled={isChangingPass} className={`w-full ${isChangingPass ? 'bg-navy-300 text-navy-500 cursor-not-allowed' : 'bg-navy-900 hover:bg-navy-800 text-gold-400 shadow-md hover:shadow-lg'} font-bold py-3.5 rounded-xl transition-all mt-6 flex justify-center items-center`}>
+                                                {isChangingPass ? <><span className="w-4 h-4 border-2 border-navy-500 border-t-white rounded-full animate-spin mr-2"></span> Menyimpan...</> : 'Simpan Password Baru'}
                                             </button>
                                         </form>
                                     </div>
 
+                                    {/* --- FORM YOUTUBE URL --- */}
                                     <div className="bg-white border border-navy-100/60 rounded-[1.5rem] p-6 shadow-sm">
                                         <div className="flex items-center space-x-4 mb-6 border-b border-navy-50 pb-5">
-                                            <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center text-red-500 shadow-inner"><Icon name="Video" className="w-6 h-6" /></div>
-                                            <div><h3 className="font-black text-navy-900 text-lg tracking-tight">URL YouTube Embed</h3><p className="text-xs text-navy-500 font-bold uppercase tracking-widest mt-1">Live Streaming Acara</p></div>
+                                            <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center text-red-600 shadow-inner">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+                                            </div>
+                                            <div><h3 className="font-black text-navy-900 text-lg tracking-tight">URL Video YouTube</h3><p className="text-xs text-navy-500 font-bold uppercase tracking-widest mt-1">Video di Halaman Utama</p></div>
                                         </div>
                                         <form onSubmit={handleSaveYoutubeUrl} className="space-y-5">
                                             <div>
-                                                <label className="block text-xs font-bold text-navy-700 mb-2 uppercase tracking-widest">Tautan Video Embed</label>
-                                                <textarea value={editYoutubeUrl} onChange={e => setEditYoutubeUrl(e.target.value)} required rows="3" className="w-full p-3.5 border border-navy-200 rounded-xl focus:border-gold-500 outline-none transition-colors bg-navy-50/50 text-sm font-mono font-medium shadow-sm leading-relaxed"></textarea>
-                                                <p className="text-[10px] text-navy-500 mt-2 font-bold leading-relaxed bg-navy-50 p-2.5 rounded-lg border border-navy-100">Pastikan URL diawali dengan <br /><span className="text-gold-600">https://www.youtube.com/embed/</span>... atau <br /><span className="text-gold-600">https://www.youtube-nocookie.com/embed/</span>...</p>
+                                                <label className="block text-xs font-bold text-navy-700 mb-2 uppercase tracking-widest">Link Embed YouTube</label>
+                                                <input type="text" value={editYoutubeUrl} onChange={e => setEditYoutubeUrl(e.target.value)} required placeholder="Contoh: https://www.youtube.com/embed/..." className="w-full p-3.5 border border-navy-200 rounded-xl focus:border-gold-500 outline-none transition-colors bg-navy-50/50 text-sm font-medium shadow-sm" />
                                             </div>
                                             <button type="submit" disabled={isSavingUrl} className={`w-full ${isSavingUrl ? 'bg-navy-300 text-navy-500 cursor-not-allowed' : 'bg-navy-900 hover:bg-navy-800 text-gold-400 shadow-md hover:shadow-lg'} font-bold py-3.5 rounded-xl transition-all mt-6 flex justify-center items-center`}>
-                                                {isSavingUrl ? <><span className="w-4 h-4 border-2 border-navy-500 border-t-white rounded-full animate-spin mr-2"></span> Menyimpan...</> : 'Simpan URL Baru'}
+                                                {isSavingUrl ? <><span className="w-4 h-4 border-2 border-navy-500 border-t-white rounded-full animate-spin mr-2"></span> Menyimpan...</> : 'Simpan URL YouTube'}
                                             </button>
                                         </form>
                                     </div>
+
+                                    {/* --- FORM PENGUMUMAN --- */}
+                                    <div className="bg-white border border-navy-100/60 rounded-[1.5rem] p-6 shadow-sm">
+                                        <div className="flex items-center space-x-4 mb-6 border-b border-navy-50 pb-5">
+                                            <div className="w-12 h-12 bg-gold-50 rounded-full flex items-center justify-center text-gold-600 shadow-inner"><Icon name="Megaphone" className="w-6 h-6" /></div>
+                                            <div><h3 className="font-black text-navy-900 text-lg tracking-tight">Pengumuman Jemaat</h3><p className="text-xs text-navy-500 font-bold uppercase tracking-widest mt-1">Tampil di Halaman Depan</p></div>
+                                        </div>
+                                        <form onSubmit={handleSavePengumuman} className="space-y-5">
+                                            <div>
+                                                <label className="block text-xs font-bold text-navy-700 mb-2 uppercase tracking-widest">Judul Pengumuman</label>
+                                                <input type="text" value={editPengumuman.header} onChange={e => setEditPengumuman({...editPengumuman, header: e.target.value})} placeholder="Misal: Pengumuman Penting" className="w-full p-3.5 border border-navy-200 rounded-xl focus:border-gold-500 outline-none transition-colors bg-navy-50/50 text-sm font-medium shadow-sm mb-4" />
+                                                
+                                                <div className="flex justify-between items-end mb-2">
+                                                    <label className="block text-xs font-bold text-navy-700 uppercase tracking-widest">Isi Pengumuman</label>
+                                                    <div className="flex space-x-2">
+                                                        <button type="button" onClick={() => insertFormatting('bold')} className="px-3 py-1 bg-navy-100 hover:bg-navy-200 text-navy-800 rounded font-bold text-sm shadow-sm transition-colors" title="Beri efek tebal pada teks yang dipilih">B</button>
+                                                        <button type="button" onClick={() => insertFormatting('italic')} className="px-3 py-1 bg-navy-100 hover:bg-navy-200 text-navy-800 rounded italic text-sm">I</button>
+                                                        <button type="button" onClick={openLinkModalPengumuman} className="px-3 py-1 bg-navy-100 hover:bg-navy-200 text-navy-800 rounded text-sm">
+    🔗 Link
+</button>
+                                                    </div>
+                                                </div>
+                                                <textarea ref={textareaRef} value={editPengumuman.isi} onChange={e => setEditPengumuman({...editPengumuman, isi: e.target.value})} rows="5" placeholder="Kosongkan isi untuk menyembunyikan kotak pengumuman..." className="w-full p-3.5 border border-navy-200 rounded-xl focus:border-gold-500 outline-none transition-colors bg-navy-50/50 text-sm font-medium shadow-sm leading-relaxed whitespace-pre-wrap"></textarea>
+                                                <p className="text-[10px] text-navy-500 mt-2 font-bold leading-relaxed bg-navy-50 p-2.5 rounded-lg border border-navy-100">Blok teks pada kotak lalu tekan tombol B untuk menambahkan format tebal, tombol I untuk menambahkan format italic dan tombol link untuk menambahkan hyperlink. Hapus semua isi teks untuk menyembunyikan pengumuman dari layar utama.</p>
+                                            </div>
+                                            <button type="submit" disabled={isSavingPengumuman} className={`w-full ${isSavingPengumuman ? 'bg-navy-300 text-navy-500 cursor-not-allowed' : 'bg-navy-900 hover:bg-navy-800 text-gold-400 shadow-md hover:shadow-lg'} font-bold py-3.5 rounded-xl transition-all flex justify-center items-center`}>
+                                                {isSavingPengumuman ? <><span className="w-4 h-4 border-2 border-navy-500 border-t-white rounded-full animate-spin mr-2"></span> Menyimpan...</> : 'Simpan Pengumuman'}
+                                            </button>
+                                        </form>
+                                    </div>
+
                                 </div>
                             )}
                         </div>
@@ -1697,11 +2589,31 @@
 
             const [jadwalDB, setJadwalDB] = React.useState({});
             const [dataPejabat, setDataPejabat] = React.useState(initialDataPejabat);
-            const [kategoriPejabat, setKategoriPejabat] = React.useState(["Kepemimpinan", "Keuangan", "Departemen & Pelayanan", "Lainnya"]);
-            const [youtubeUrl, setYoutubeUrl] = React.useState("https://www.youtube-nocookie.com/embed?listType=playlist&list=UUz6rQ_5zP0Y0c8V7aKx2jLQ");
+            const [kategoriPejabat, setKategoriPejabat] = React.useState(["Gembala", "Officers", "Departemen & Pelayanan", "Lainnya"]);
+            const [youtubeUrl, setYoutubeUrl] = React.useState("https://www.youtube.com/embed/EAO55pnNsgs");
+            
+            // Pengumuman default State
+            const [pengumuman, setPengumuman] = React.useState({ header: "Pengumuman Jemaat", isi: "" });
 
             // Token Admin (berisi password valid setelah login)
             const [adminToken, setAdminToken] = React.useState('');
+
+            // Warta default State
+            const [daftarWarta, setDaftarWarta] = React.useState([]);
+
+            // Fungsi refresh warta
+            const refreshWarta = async () => {
+    try {
+        const res = await fetch(`${GAS_API_URL}?action=getData`);
+        const data = await res.json();
+        if (data.daftarWarta) {
+            console.log("Warta diterima:", data.daftarWarta);
+            setDaftarWarta(data.daftarWarta);
+        }
+    } catch (err) {
+        console.error("Gagal refresh warta", err);
+    }
+};
 
             const today = new Date();
             today.setHours(0, 0, 0, 0);
@@ -1771,6 +2683,25 @@
                         if (data.jadwalDB) setJadwalDB(data.jadwalDB);
                         if (data.youtubeUrl) setYoutubeUrl(data.youtubeUrl);
                         if (data.kategoriPejabat) setKategoriPejabat(data.kategoriPejabat);
+                        if (data.daftarWarta) setDaftarWarta(data.daftarWarta);
+                        
+                        // Menangani Pengumuman agar kompatibel dengan data lama (String biasa) dan JSON object baru
+                        if (data.pengumuman !== undefined) {
+                            try {
+                                const parsed = JSON.parse(data.pengumuman);
+                                if (parsed && typeof parsed === 'object') {
+                                    setPengumuman({ 
+                                        header: parsed.header || "Pengumuman Jemaat", 
+                                        isi: decodeHTML(parsed.isi || "") 
+                                    });
+                                } else {
+                                    setPengumuman({ header: "Pengumuman Jemaat", isi: decodeHTML(data.pengumuman) });
+                                }
+                            } catch (e) {
+                                // Jika gagal di-parse, artinya datanya masih berupa string murni dari versi sebelumnya
+                                setPengumuman({ header: "Pengumuman Jemaat", isi: decodeHTML(data.pengumuman) });
+                            }
+                        }
                         setIsAppLoading(false);
                     })
                     .catch(error => {
@@ -1779,13 +2710,13 @@
                     });
             }, []);
 
-            // FIX TYPO: Memperbaiki penulisan state yang sebelumnya kurang kurung siku
             const [isAdminLoggedIn, setIsAdminLoggedIn] = React.useState(false);
             const [showLoginModal, setShowLoginModal] = React.useState(false);
 
             const tabs = [
                 { id: 'home', label: 'Home', icon: 'Home' },
                 { id: 'belajar', label: 'Belajar', icon: 'BookOpen' },
+                { id: 'warta', label: 'Warta', icon: 'Warta' },
                 { id: 'live', label: 'Live', icon: 'Video' },
                 { id: 'jadwal', label: 'Jadwal', icon: 'Calendar' },
                 { id: 'persembahan', label: 'Persembahan', icon: 'Gift' }
@@ -1796,11 +2727,12 @@
 
             const renderContent = () => {
                 switch (activeTab) {
-                    case 'home': return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} />;
+                    case 'home': return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} pengumuman={pengumuman} />;
                     case 'belajar': return <Belajar setActiveTab={setActiveTab} />;
                     case 'belajar_alkitab': return <DetailAlkitab setActiveTab={setActiveTab} dataPejabat={dataPejabat} />;
                     case 'belajar_28dasar': return <Detail28Dasar setActiveTab={setActiveTab} dataPejabat={dataPejabat} />;
                     case 'belajar_egw': return <DetailEGW setActiveTab={setActiveTab} dataPejabat={dataPejabat} />;
+                    case 'warta':  return <WartaPage daftarWarta={daftarWarta} setActiveTab={setActiveTab} />;
                     case 'live': return <Live setActiveTab={setActiveTab} activeRabu={activeRabu} activeSabat={activeSabat} rabuYMD={rabuYMD} sabatYMD={sabatYMD} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} activePerjamuan={activePerjamuan} youtubeUrl={youtubeUrl} />;
                     case 'jadwal': return <Jadwal activeRabu={jadwalKhususRabu} activeSabat={jadwalKhususSabat} rabuYMD={displayRabuYMD} sabatYMD={displaySabatYMD} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} activePerjamuan={activePerjamuan} />;
                     case 'persembahan': return <Persembahan dataPejabat={dataPejabat} />;
@@ -1810,67 +2742,131 @@
                     case 'hubungi': return <Hubungi setActiveTab={setActiveTab} dataPejabat={dataPejabat} />;
                     case 'form_acms': return <FormACMS setActiveTab={setActiveTab} />;
                     case 'susunan_ibadah': return <SusunanIbadah setActiveTab={setActiveTab} activeSabat={activeSabat} sabatYMD={sabatYMD} />;
-                    case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} /> : <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} />;
-                    default: return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} />;
-                }
-            };
+                    case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard 
+                            dataPejabat={dataPejabat} setDataPejabat={setDataPejabat}
+                            jadwalDB={jadwalDB} setJadwalDB={setJadwalDB}
+                            adminToken={adminToken} setAdminToken={setAdminToken}
+                            youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl}
+                            kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat}
+                            pengumuman={pengumuman} setPengumuman={setPengumuman}
+                            daftarWarta={daftarWarta} setDaftarWarta={setDaftarWarta}
+                            refreshWarta={refreshWarta}
+                            /> : 
+                        <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} pengumuman={pengumuman} />;
+                        }
+                     };
 
             if (isAppLoading) {
                 return (
-                    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center relative">
+                    <div className="min-h-screen bg-navy-50 flex flex-col items-center justify-center relative">
                         {/* Loading Spinner di Tengah */}
                         <div className="flex flex-col items-center justify-center mt-[-10vh]">
                             <div className="w-12 h-12 border-4 border-navy-100 border-t-gold-500 rounded-full animate-spin mb-4 shadow-sm"></div>
-                            <p className="text-navy-500 font-bold uppercase tracking-widest text-xs animate-pulse">Memuat Data...</p>
+                            <p className="text-navy-500 font-bold uppercase tracking-widest text-xs animate-pulse">Loading...</p>
                         </div>
                         {/* Logo diantara tengah dan bawah layar (25% dari bawah) */}
                         <div className="absolute bottom-[25%] flex flex-col items-center animate-fade-in">
-                            <img src="./art1s-outline.svg" alt="ART1S Logo" className="h-16 md:h-20 w-auto opacity-80" />
+                            <img src="./PisgahColor.png" alt="PISGAH-BISDAC Logo" className="h-16 md:h-20 w-auto opacity-80" />
                         </div>
                     </div>
                 );
             }
 
             return (
-                <div className="min-h-screen bg-gray-50 flex flex-col">
+                <div className="min-h-screen bg-navy-50 flex flex-col">
                     <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onSuccess={(token) => { setAdminToken(token); setIsAdminLoggedIn(true); setShowLoginModal(false); setActiveTab('admin_dashboard'); }} />
 
                     <header className="md:hidden bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-navy-50 shadow-sm">
-                        <div className="flex justify-between items-center px-5 py-4">
-                            <img src="./art1s-outline.svg" alt="ART1S Logo" className="h-7 w-auto" />
-                            {isAdminLoggedIn ? (<button onClick={handleLogout} className="p-2.5 bg-red-50 rounded-full text-red-600 hover:bg-red-100 transition"><Icon name="LogOut" className="w-4 h-4" /></button>) : (<button onClick={handleAdminClick} className="p-2.5 bg-navy-50 rounded-full text-navy-700 hover:bg-navy-100 transition"><Icon name="LogIn" className="w-4 h-4" /></button>)}
-                        </div>
-                    </header>
+    <div className="flex justify-between items-center px-5 py-4">
+        <img src="./PisgahLogoColor.png" alt="PISGAH-BISDAC Logo" className="h-7 w-auto" />
+        <div className="flex gap-2">
+            {isAdminLoggedIn ? (
+                <>
+                    <button onClick={() => setActiveTab('admin_dashboard')} className="p-2.5 bg-navy-50 rounded-full text-navy-700 hover:bg-navy-100 transition" title="Dashboard">
+                        <Icon name="Settings" className="w-4 h-4" />
+                    </button>
+                    <button onClick={handleLogout} className="p-2.5 bg-red-50 rounded-full text-red-600 hover:bg-red-100 transition" title="Logout">
+                        <Icon name="LogOut" className="w-4 h-4" />
+                    </button>
+                </>
+            ) : (
+                <button onClick={handleAdminClick} className="p-2.5 bg-navy-50 rounded-full text-navy-700 hover:bg-navy-100 transition" title="Admin Login">
+                    <Icon name="LogIn" className="w-4 h-4" />
+                </button>
+            )}
+        </div>
+    </div>
+</header>
 
                     <header className="hidden md:block bg-white/90 backdrop-blur-md sticky top-0 z-50 border-b border-navy-50 shadow-sm">
-                        <div className="max-w-5xl mx-auto px-6 py-4 flex justify-between items-center">
-                            <div className="flex items-center space-x-2">
-                                <img src="./art1s-outline.svg" alt="ART1S Logo" className="h-9 w-auto" />
-                            </div>
+                            <div className="max-w-6xl mx-auto px-6 py-4 flex justify-center items-center gap-6">
+                            {/* area kiri (bisa diisi logo nanti) */}
+                            <img src="./PisgahLogoColor.png" alt="PISGAH-BISDAC Logo" className="h-9 w-auto" />
+                            <div className="flex gap-2"></div>
+                            {/* menu tengah */}
                             <nav className="flex space-x-2">
                                 {tabs.map(tab => {
                                     const isActive = activeTab.startsWith(tab.id);
                                     return (
-                                        <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 flex items-center space-x-2 ${isActive ? 'bg-navy-900 text-white shadow-md' : 'text-navy-600 hover:bg-navy-50 hover:text-navy-900'}`}><Icon name={tab.icon} className={`w-[1.15rem] h-[1.15rem] ${isActive ? 'text-gold-400' : ''}`} /><span>{tab.label}</span></button>
+                                        <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 flex items-center space-x-2 ${isActive ? 'bg-navy-700 text-white shadow-md' : 'text-navy-600 hover:bg-navy-50 hover:text-navy-900'}`}><Icon name={tab.icon} className={`w-[1.15rem] h-[1.15rem] ${isActive ? 'text-gold-400' : ''}`} /><span>{tab.label}</span></button>
                                     );
                                 })}
                             </nav>
+                            {/* area admin */}
                             {isAdminLoggedIn ? (
-                                <div className="flex items-center space-x-3"><button onClick={() => setActiveTab('admin_dashboard')} className="flex items-center space-x-2 bg-navy-50 text-navy-900 px-5 py-2.5 rounded-full text-sm font-bold hover:bg-navy-100 transition"><Icon name="Settings" className="w-[1.15rem] h-[1.15rem]" /><span>Dashboard</span></button><button onClick={handleLogout} className="flex items-center justify-center bg-red-50 text-red-600 p-2.5 rounded-full hover:bg-red-100 transition"><Icon name="LogOut" className="w-4 h-4" /></button></div>
+                                <div className="flex items-center space-x-3"><button onClick={() => setActiveTab('admin_dashboard')} className="flex items-center space-x-2 bg-navy-50 text-navy-900 px-5 py-2.5 rounded-full text-sm font-bold hover:bg-navy-200 transition"><Icon name="Settings" className="w-[1.15rem] h-[1.15rem]" /><span>Dashboard</span></button><button onClick={handleLogout} className="flex items-center justify-center bg-red-50 text-red-600 p-2.5 rounded-full hover:bg-red-100 transition"><Icon name="LogOut" className="w-4 h-4" /></button></div>
                             ) : (
-                                <button onClick={handleAdminClick} className="flex items-center space-x-2 bg-gold-500 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-gold-600 hover:shadow-md transition-all duration-300"><Icon name="LogIn" className="w-[1.15rem] h-[1.15rem]" /><span>Admin Login</span></button>
+                                <button onClick={handleAdminClick} className="flex items-center space-x-2 bg-gold-400 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-gold-600 hover:shadow-md transition-all duration-300"><Icon name="LogIn" className="w-[1.15rem] h-[1.15rem]" /><span></span></button>
                             )}
+
                         </div>
                     </header>
 
                     <main className="flex-1 max-w-5xl mx-auto w-full p-4 md:p-8 pb-32 md:pb-12">
                         <div className="mb-6 md:mb-10">
-                            <h2 className="text-2xl md:text-[2rem] font-bold text-navy-900 capitalize tracking-tight">
-                                {activeTab === 'home' ? 'Selamat Datang' : activeTab === 'belajar' ? 'Halaman Belajar' : activeTab.startsWith('belajar_') ? 'Detail Pembelajaran' : activeTab === 'keanggotaan' ? 'Keanggotaan Jemaat' : activeTab === 'member_baru' ? 'Permohonan Member Baru' : activeTab === 'pindah_masuk' ? 'Permohonan Pindah Masuk' : activeTab === 'hubungi' ? 'Hubungi Kami' : activeTab === 'form_acms' ? 'Formulir Pindah Masuk' : activeTab === 'susunan_ibadah' ? 'Susunan Ibadah' : activeTab === 'admin_dashboard' ? 'Dashboard Admin' : activeTab}
-                            </h2>
-                            {activeTab === 'home' && <p className="text-navy-500 font-medium mt-1">Gereja Masehi Advent Hari Ketujuh Tidar 1 Surabaya</p>}
-                            {activeTab === 'admin_dashboard' && <p className="text-navy-500 font-medium mt-1">Kelola data dinamis untuk website ART1S.</p>}
-                        </div>
+
+ {/* LOGO PISGAH DI HOME */}                          
+  <div className="flex items-center space-x-3 mb-6 border-b border-navy-50 pb-4">
+    <img src="./PisgahColor.png" className="h-16 md:h-20 w-auto opacity-90" /> 
+    <div>
+      <h1 className="text-xl md:text-2xl font-bold text-navy-700 tracking-tight">PISGAH <span className="text-gold-500">BISDAC</span></h1>
+      <p className="text-navy-700 tracking-tighter">Batam International Seventh-Day Adventist Church</p>
+    </div>
+  </div>
+ {/* Sampai di sini */} 
+
+  <h1 className="text-2xl md:text-[2rem] font-bold text-navy-700 capitalize tracking-tight">
+    {activeTab === 'home' ? (
+      <p className=""></p>
+    ) : activeTab === 'belajar' ? (
+      'Halaman Belajar'
+    ) : activeTab.startsWith('belajar_') ? (
+      'Detail Pembelajaran'
+    ) : activeTab === 'keanggotaan' ? (
+      'Keanggotaan Jemaat'
+    ) : activeTab === 'member_baru' ? (
+      'Permohonan Member Baru'
+    ) : activeTab === 'pindah_masuk' ? (
+      'Permohonan Pindah Masuk'
+    ) : activeTab === 'hubungi' ? (
+      'Hubungi Kami'
+    ) : activeTab === 'form_acms' ? (
+      'Formulir Pindah Masuk'
+    ) : activeTab === 'susunan_ibadah' ? (
+      'Susunan Ibadah'
+    ) : activeTab === 'admin_dashboard' ? (
+      'Dashboard Admin'
+    ) : activeTab === 'warta' ? (
+      'Warta Gereja'  
+    ) : (
+      activeTab
+    )}
+  </h1>
+  
+  {activeTab === 'admin_dashboard' && (
+    <p className="text-navy-500 font-medium mt-1">Kelola data dinamis untuk website PISGAH-BISDAC</p>
+  )}
+</div>
                         {renderContent()}
                     </main>
 
@@ -1893,7 +2889,7 @@
                     {activeTab !== 'admin_dashboard' && activeTab !== 'hubungi' && (
                         <button
                             onClick={() => setActiveTab('hubungi')}
-                            className="fixed bottom-28 md:bottom-8 right-6 md:right-8 z-40 bg-navy-900 hover:bg-navy-800 text-gold-400 p-4 rounded-full shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 flex items-center justify-center animate-fade-in border border-gold-500/20"
+                            className="fixed bottom-28 md:bottom-8 right-6 md:right-8 z-40 bg-navy-600 hover:bg-navy-800 text-gold-400 p-4 rounded-full shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 flex items-center justify-center animate-fade-in border border-gold-500/20"
                             aria-label="Hubungi Kami"
                             title="Hubungi Kami"
                         >
