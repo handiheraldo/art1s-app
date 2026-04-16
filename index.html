@@ -1891,6 +1891,151 @@
             );
         };
 
+        // --- COMPONENT: SEARCH ---
+        const Search = ({ setActiveTab, jadwalDB, rabuYMD, sabatYMD, tabs }) => {
+            const [query, setQuery] = React.useState('');
+            
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            // Filter menus
+            const filteredMenus = tabs.filter(t => t.id !== 'admin_dashboard' && t.id !== 'search' && t.label.toLowerCase().includes(query.toLowerCase()));
+            
+            // Filter future schedules for the officer
+            let futureJadwal = [];
+            
+            if (query.length >= 2) {
+                // Collect default rabu, sabat
+                const allDatesInDB = Object.keys(jadwalDB);
+                // Also add this week's rabuYMD and sabatYMD just in case they are not in DB and use default
+                if (!allDatesInDB.includes(rabuYMD)) allDatesInDB.push(rabuYMD);
+                if (!allDatesInDB.includes(sabatYMD)) allDatesInDB.push(sabatYMD);
+                
+                const uniqueDates = [...new Set(allDatesInDB)];
+                
+                // Sort dates ascending
+                uniqueDates.sort((a,b) => new Date(a) - new Date(b));
+                
+                uniqueDates.forEach(dateStr => {
+                    const dObj = new Date(dateStr + "T00:00:00");
+                    if (dObj >= today) {
+                        const jData = jadwalDB[dateStr];
+                        const isRabu = dObj.getDay() === 3;
+                        let foundTugas = [];
+                        
+                        if (isRabu) {
+                            const data = jData ? jData.petugas : initialJadwalRabu.petugas;
+                            if (data) {
+                                data.forEach(p => {
+                                    if (p.nama && p.nama.toLowerCase().includes(query.toLowerCase())) {
+                                        foundTugas.push({ role: p.tugas, name: p.nama });
+                                    }
+                                });
+                            }
+                        } else {
+                            const sourceData = jData || initialJadwalSabat;
+                            const categories = ['sekolahSabat', 'khotbah', 'diakon', 'musik', 'perjamuan'];
+                            categories.forEach(cat => {
+                                if (sourceData[cat]) {
+                                    sourceData[cat].forEach(p => {
+                                        if (p.nama && p.nama.toLowerCase().includes(query.toLowerCase())) {
+                                            foundTugas.push({ role: p.tugas, name: p.nama });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        
+                        if (foundTugas.length > 0) {
+                            futureJadwal.push({
+                                date: dateStr,
+                                isRabu: isRabu,
+                                tugas: foundTugas
+                            });
+                        }
+                    }
+                });
+            }
+
+            return (
+                <div className="space-y-6 animate-fade-in pb-10">
+                    <div className="relative mb-6">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-navy-400">
+                            <Icon name="Search" className="w-5 h-5" />
+                        </div>
+                        <input 
+                            type="text" 
+                            autoFocus
+                            placeholder="Cari Menu atau Nama Petugas..." 
+                            className="w-full pl-12 pr-4 py-4 bg-white border border-navy-100/80 rounded-2xl text-base font-bold text-navy-900 placeholder-navy-300 outline-none focus:border-gold-500 shadow-sm transition-all"
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                        />
+                    </div>
+
+                    {query.length > 0 && (
+                        <div className="space-y-6">
+                            {filteredMenus.length > 0 && (
+                                <div>
+                                    <h3 className="text-xs font-black text-navy-500 uppercase tracking-widest mb-3 px-2">Menu Halaman</h3>
+                                    <div className="bg-white rounded-2xl border border-navy-100/60 overflow-hidden shadow-sm">
+                                        {filteredMenus.map((m, i) => (
+                                            <button key={m.id} onClick={() => setActiveTab(m.id)} className={`w-full flex items-center p-4 text-left hover:bg-gold-50/50 transition-colors ${i !== filteredMenus.length - 1 ? 'border-b border-navy-50' : ''}`}>
+                                                <div className="w-10 h-10 rounded-xl bg-navy-50 flex items-center justify-center text-navy-600 mr-4">
+                                                    <Icon name={m.icon} className="w-5 h-5" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <div className="font-bold text-navy-800">{m.label}</div>
+                                                </div>
+                                                <Icon name="ChevronRight" className="w-4 h-4 text-navy-300" />
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {query.length >= 2 && (
+                                <div>
+                                    <h3 className="text-xs font-black text-gold-600 uppercase tracking-widest mb-3 px-2 mt-4">Jadwal Tugas Mendatang (Hari ini & kedepan)</h3>
+                                    {futureJadwal.length > 0 ? (
+                                        <div className="space-y-3">
+                                            {futureJadwal.map((jadwal, idx) => (
+                                                <div key={idx} onClick={() => setActiveTab('jadwal')} className="bg-white rounded-2xl border border-navy-100/60 p-4 shadow-sm cursor-pointer hover:border-gold-300 transition-colors">
+                                                    <div className="flex justify-between items-start mb-3 border-b border-navy-50 pb-2">
+                                                        <div className="font-black text-navy-800">{formatIndoDate(jadwal.date)}</div>
+                                                        <div className={`text-[10px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-md ${jadwal.isRabu ? 'bg-navy-100 text-navy-700' : 'bg-gold-100 text-gold-700'}`}>{jadwal.isRabu ? 'RABU' : 'SABAT'}</div>
+                                                    </div>
+                                                    <div className="space-y-2 mt-3">
+                                                        {jadwal.tugas.map((t, i) => (
+                                                            <div key={i} className="flex justify-between items-center text-sm">
+                                                                <span className="text-navy-500 font-medium">{t.role}</span>
+                                                                <span className="font-bold text-navy-900 bg-gold-50 px-2 py-0.5 rounded text-xs">{t.name}</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="text-center p-6 border border-dashed border-navy-200 rounded-2xl">
+                                            <p className="text-sm text-navy-500 font-medium">Tidak ada tugas ditemukan untuk <span className="font-bold text-navy-900">"{query}"</span></p>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {query === '' && (
+                        <div className="text-center pt-10 pb-6 opacity-60">
+                            <Icon name="Search" className="w-12 h-12 mx-auto text-navy-300 mb-3" />
+                            <p className="text-sm font-medium text-navy-500">Ketik kata kunci untuk mencari menu atau jadwal petugas gereja.</p>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
         const App = () => {
             const [isAppLoading, setIsAppLoading] = React.useState(true);
 
@@ -2047,6 +2192,7 @@
                     case 'form_acms': return <FormACMS setActiveTab={setActiveTab} />;
                     case 'susunan_ibadah': return <SusunanIbadah setActiveTab={setActiveTab} activeSabat={activeSabat} sabatYMD={sabatYMD} />;
                     case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} heroImageUrl={heroImageUrl} setHeroImageUrl={setHeroImageUrl} /> : <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} />;
+                    case 'search': return <Search setActiveTab={setActiveTab} jadwalDB={jadwalDB} rabuYMD={rabuYMD} sabatYMD={sabatYMD} tabs={tabs} />;
                     default: return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} />;
                 }
             };
@@ -2061,11 +2207,13 @@
 
                     <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-navy-50 shadow-sm">
                         <div className="max-w-5xl mx-auto flex items-center px-4 py-3 gap-3">
-                            <div className="flex-1 relative">
-                                <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none">
-                                    <Icon name="Search" className="w-4 h-4" />
-                                </div>
-                                <input type="text" placeholder="Cari menu..." className="w-full pl-10 pr-4 py-2.5 bg-navy-50/80 border border-navy-100/60 rounded-full text-sm font-medium text-navy-900 placeholder-navy-400 outline-none focus:border-gold-400 focus:bg-white transition-all shadow-sm" onChange={(e) => { const event = new CustomEvent('homeSearch', { detail: e.target.value }); window.dispatchEvent(event); }} />
+                            <div className="flex-1">
+                                <button onClick={() => setActiveTab('search')} className="w-full flex items-center bg-navy-50/80 border border-navy-100/60 rounded-full text-sm font-medium text-navy-400 hover:bg-white hover:border-navy-200 focus:border-gold-400 transition-all shadow-sm">
+                                    <div className="pl-3.5 pr-2 py-2.5 text-navy-400">
+                                        <Icon name="Search" className="w-4 h-4" />
+                                    </div>
+                                    <span className="truncate pr-4 text-left">Pencarian jadwal, fitur...</span>
+                                </button>
                             </div>
                             {isAdminLoggedIn ? (
                                 <button onClick={handleLogout} className="w-10 h-10 bg-red-50 rounded-full text-red-600 hover:bg-red-100 transition flex items-center justify-center shrink-0 shadow-sm"><Icon name="LogOut" className="w-4 h-4" /></button>
@@ -2081,7 +2229,7 @@
                         {activeTab !== 'home' && (
                             <div className="mb-6 md:mb-10">
                                 <h2 className="text-2xl md:text-[2rem] font-bold text-navy-900 capitalize tracking-tight">
-                                    {activeTab === 'belajar' ? 'Halaman Belajar' : activeTab.startsWith('belajar_') ? 'Detail Pembelajaran' : activeTab === 'keanggotaan' ? 'Keanggotaan Jemaat' : activeTab === 'member_baru' ? 'Permohonan Member Baru' : activeTab === 'pindah_masuk' ? 'Permohonan Pindah Masuk' : activeTab === 'hubungi' ? 'Hubungi Kami' : activeTab === 'form_acms' ? 'Formulir Pindah Masuk' : activeTab === 'susunan_ibadah' ? 'Susunan Ibadah' : activeTab === 'admin_dashboard' ? 'Dashboard Admin' : activeTab}
+                                    {activeTab === 'belajar' ? 'Halaman Belajar' : activeTab.startsWith('belajar_') ? 'Detail Pembelajaran' : activeTab === 'keanggotaan' ? 'Keanggotaan Jemaat' : activeTab === 'member_baru' ? 'Permohonan Member Baru' : activeTab === 'pindah_masuk' ? 'Permohonan Pindah Masuk' : activeTab === 'hubungi' ? 'Hubungi Kami' : activeTab === 'form_acms' ? 'Formulir Pindah Masuk' : activeTab === 'susunan_ibadah' ? 'Susunan Ibadah' : activeTab === 'admin_dashboard' ? 'Dashboard Admin' : activeTab === 'search' ? 'Pencarian' : activeTab}
                                 </h2>
                                 {activeTab === 'admin_dashboard' && <p className="text-navy-500 font-medium mt-1">Kelola data dinamis untuk website ART1S.</p>}
                             </div>
