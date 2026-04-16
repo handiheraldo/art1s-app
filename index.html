@@ -206,6 +206,7 @@
                 MessageCircle: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></svg>,
                 Phone: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>,
                 ChevronLeft: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="15 18 9 12 15 6" /></svg>,
+                ArrowLeft: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>,
                 ChevronRight: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="9 18 15 12 9 6" /></svg>,
                 ChevronDown: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="6 9 12 15 18 9" /></svg>,
                 Check: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><polyline points="20 6 9 17 4 12" /></svg>,
@@ -2242,9 +2243,9 @@
                             )}
                             <div className={`flex justify-end ${!(activeTab === 'home' || activeTab === 'search') ? 'flex-1' : ''}`}>
                                 {isAdminLoggedIn ? (
-                                    <button onClick={handleLogout} className="w-10 h-10 bg-red-50 rounded-full text-red-600 hover:bg-red-100 transition flex items-center justify-center shrink-0 shadow-sm"><Icon name="LogOut" className="w-4 h-4" /></button>
+                                    <button onClick={handleLogout} className="w-10 h-10 bg-white border border-navy-100/60 rounded-full text-red-500 hover:text-red-700 hover:bg-red-50 transition flex items-center justify-center shrink-0 shadow-sm"><Icon name="LogOut" className="w-4 h-4" /></button>
                                 ) : (
-                                    <button onClick={handleAdminClick} className="w-10 h-10 bg-gold-500 rounded-full text-white hover:bg-gold-600 transition flex items-center justify-center shrink-0 shadow-md"><Icon name="LogIn" className="w-4 h-4" /></button>
+                                    <button onClick={handleAdminClick} className="w-10 h-10 bg-white border border-navy-100/60 rounded-full text-navy-400 hover:text-navy-600 hover:bg-navy-50/50 transition flex items-center justify-center shrink-0 shadow-sm"><Icon name="LogIn" className="w-4 h-4" /></button>
                                 )}
                             </div>
                         </div>
