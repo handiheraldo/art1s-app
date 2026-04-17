@@ -501,19 +501,22 @@
 
                         <div className="flex flex-col">
                             {/* TABS SCROLLABLE */}
-                            <div className="flex items-center gap-2 p-3 md:p-5 border-b border-navy-50 bg-white overflow-hidden">
-                                <div className="bg-navy-50/50 rounded-[1.25rem] flex-1 flex overflow-x-auto border border-navy-100/50 p-1.5 gap-2 hide-scrollbar scroll-smooth">
-                                    {susunanTabs.map(tab => (
-                                        <button
-                                            key={tab.id}
-                                            onClick={() => setOpenSection(tab.id)}
-                                            className={`px-5 py-2.5 rounded-xl text-sm whitespace-nowrap transition-all duration-300 flex items-center font-bold shrink-0 ${openSection === tab.id ? 'bg-white shadow-sm border border-navy-100/50 text-navy-900 scale-100' : 'text-navy-400 hover:text-navy-700 hover:bg-navy-100/50 scale-95 origin-center'}`}
-                                        >
-                                            <Icon name={tab.icon} className={`w-[1.15rem] h-[1.15rem] mr-2 transition-colors ${openSection === tab.id ? 'text-gold-500' : 'text-navy-400'}`} />
-                                            {tab.label}
-                                        </button>
-                                    ))}
+                            <div className="flex flex-col border-b border-navy-50 bg-white overflow-hidden">
+                                <div className="flex items-center gap-2 p-3 pb-1 md:p-5 md:pb-2">
+                                    <div className="bg-navy-50/50 rounded-[1.25rem] flex-1 flex overflow-x-auto border border-navy-100/50 p-1.5 gap-2 hide-scrollbar scroll-smooth">
+                                        {susunanTabs.map(tab => (
+                                            <button
+                                                key={tab.id}
+                                                onClick={() => setOpenSection(tab.id)}
+                                                className={`px-5 py-2.5 rounded-xl text-sm whitespace-nowrap transition-all duration-300 flex items-center font-bold shrink-0 ${openSection === tab.id ? 'bg-white shadow-sm border border-navy-100/50 text-navy-900 scale-100' : 'text-navy-400 hover:text-navy-700 hover:bg-navy-100/50 scale-95 origin-center'}`}
+                                            >
+                                                <Icon name={tab.icon} className={`w-[1.15rem] h-[1.15rem] mr-2 transition-colors ${openSection === tab.id ? 'text-gold-500' : 'text-navy-400'}`} />
+                                                {tab.label}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
+                                <p className="text-[10px] text-navy-400 italic text-center pb-3 md:hidden">scroll ke samping untuk lihat susunan yang lain &rarr;</p>
                             </div>
 
                             {/* TAB CONTENT */}
@@ -856,7 +859,7 @@
                                 <div className="flex items-center space-x-3"><Icon name="Calendar" className={`w-[1.4rem] h-[1.4rem] ${isToday ? 'text-red-500' : 'text-gold-500'}`} /><h2 className="text-xl font-bold text-navy-900 tracking-tight">{targetJadwal.title}</h2></div>
                                 <p className="text-sm text-navy-500 mt-1 font-medium">{formatIndoDate(targetDateStr)} &bull; {targetJadwal.time}</p>
                             </div>
-                            <button onClick={() => setActiveTab('jadwal')} className="hidden sm:flex items-center justify-center text-sm font-bold text-navy-700 hover:text-navy-900 transition bg-navy-50 hover:bg-navy-100 px-6 py-2.5 rounded-full w-full sm:w-auto">Lihat Jadwal &rarr;</button>
+                            <button onClick={() => setActiveTab('susunan_ibadah')} className="hidden sm:flex items-center justify-center text-sm font-bold text-navy-700 hover:text-navy-900 transition bg-navy-50 hover:bg-navy-100 px-6 py-2.5 rounded-full w-full sm:w-auto">Lihat Susunan Ibadah &rarr;</button>
                         </div>
 
                         {isRabu ? (
@@ -887,7 +890,7 @@
                                 </div>
                             </div>
                         )}
-                        <button onClick={() => setActiveTab('jadwal')} className="sm:hidden w-full mt-4 flex justify-center items-center text-sm font-medium text-blue-600 hover:text-blue-800 transition bg-blue-50 hover:bg-blue-100 px-4 py-3 rounded-lg">Lihat Semua Jadwal &rarr;</button>
+                        <button onClick={() => setActiveTab('susunan_ibadah')} className="sm:hidden w-full mt-4 flex justify-center items-center text-sm font-medium text-blue-600 hover:text-blue-800 transition bg-blue-50 hover:bg-blue-100 px-4 py-3 rounded-lg">Lihat Susunan Ibadah &rarr;</button>
                     </div>
                 </div>
             );
