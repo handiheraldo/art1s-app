@@ -269,8 +269,30 @@
             return `${d}/${m}/${y}`;
         };
 
+        const SkeletonBlock = ({ className }) => <div className={`animate-pulse bg-navy-200 rounded-lg ${className}`}></div>;
+        const SkeletonList = ({ rows = 4 }) => (
+            <div className="w-full space-y-4 py-2">
+                {[...Array(rows)].map((_, i) => (
+                    <div key={i} className="flex justify-between items-center px-4 py-2 border-b border-navy-50/50 last:border-0 hover:bg-navy-50/30">
+                        <div className="w-1/3 h-4 bg-navy-100 animate-pulse rounded-md"></div>
+                        <div className="w-1/3 h-4 bg-navy-100 animate-pulse rounded-md"></div>
+                    </div>
+                ))}
+            </div>
+        );
+        const SkeletonCard = () => (
+            <div className="flex items-center p-4 rounded-xl border border-navy-100 bg-white shadow-sm h-full w-full">
+                <div className="w-14 h-14 rounded-full bg-navy-100 animate-pulse mr-4 shrink-0"></div>
+                <div className="flex-1 space-y-2">
+                    <div className="w-1/3 h-3 bg-navy-100 animate-pulse rounded-md"></div>
+                    <div className="w-2/3 h-4 bg-navy-100 animate-pulse rounded-md"></div>
+                    <div className="w-1/2 h-3 bg-navy-100 animate-pulse rounded-md mt-2"></div>
+                </div>
+            </div>
+        );
+
         // --- COMPONENTS ---
-        const Home = ({ setActiveTab, youtubeUrl, heroImageUrl, jadwalDB, dataPejabat }) => {
+        const Home = ({ setActiveTab, youtubeUrl, heroImageUrl, jadwalDB, dataPejabat, isLoading }) => {
             const [searchQuery, setSearchQuery] = React.useState('');
 
             // Listen for search events from the mobile header
@@ -377,13 +399,17 @@
                 <div className="animate-fade-in relative z-10">
                     {/* Hero Image + Overlapping Welcome Box */}
                     <div className="-mx-4 md:mx-0 -mt-6 md:mt-0 mb-6 md:mb-10">
-                        <div className="w-full overflow-hidden md:rounded-[1.5rem] relative z-0" style={{ aspectRatio: '16/8.5' }}>
-                            <img
-                                src={heroImageUrl}
-                                alt="Hero Banner"
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
+                        {isLoading ? (
+                            <div className="w-full overflow-hidden md:rounded-[1.5rem] relative z-0 bg-navy-200 animate-pulse" style={{ aspectRatio: '16/8.5' }}></div>
+                        ) : (
+                            <div className="w-full overflow-hidden md:rounded-[1.5rem] relative z-0" style={{ aspectRatio: '16/8.5' }}>
+                                <img
+                                    src={heroImageUrl}
+                                    alt="Hero Banner"
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                        )}
                         {/* Welcome Box - overlapping hero */}
                         <div className="relative z-10 mx-4 md:mx-6 -mt-6 md:-mt-7">
                             <div className="welcome-box-gradient rounded-[1.25rem] md:rounded-[1.5rem] shadow-lg border border-blue-100/80 px-5 py-3.5 md:px-8 md:py-4 flex items-center justify-center backdrop-blur-sm">
@@ -442,16 +468,20 @@
                         <h2 className="text-[1.15rem] font-bold mb-4 text-navy-900 flex items-center">
                             <Icon name="Video" className="w-[1.15rem] h-[1.15rem] mr-2 text-gold-500" /> Video Terbaru
                         </h2>
-                        <div className="relative w-full overflow-hidden rounded-[1rem] shadow-sm border border-navy-50" style={{ paddingTop: '56.25%' }}>
-                            <iframe
-                                className="absolute top-0 left-0 w-full h-full"
-                                src={youtubeUrl}
-                                title="YouTube video player"
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen>
-                            </iframe>
-                        </div>
+                        {isLoading ? (
+                            <div className="relative w-full overflow-hidden rounded-[1rem] bg-navy-200 animate-pulse" style={{ paddingTop: '56.25%' }}></div>
+                        ) : (
+                            <div className="relative w-full overflow-hidden rounded-[1rem] shadow-sm border border-navy-50" style={{ paddingTop: '56.25%' }}>
+                                <iframe
+                                    className="absolute top-0 left-0 w-full h-full"
+                                    src={youtubeUrl}
+                                    title="YouTube video player"
+                                    frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen>
+                                </iframe>
+                            </div>
+                        )}
                     </div>
 
                     <div className="bg-white p-5 md:p-7 rounded-[1.5rem] shadow-sm border border-navy-100/60 hover:shadow-md transition-shadow mb-5 md:mb-8">
@@ -471,7 +501,7 @@
             );
         };
 
-        const SusunanIbadah = ({ setActiveTab, activeSabat, sabatYMD }) => {
+        const SusunanIbadah = ({ setActiveTab, activeSabat, sabatYMD, isLoading }) => {
             const [openSection, setOpenSection] = React.useState('khotbah');
 
             const getOfficer = (arr, role) => arr?.find(p => p.tugas === role)?.nama || "-";
@@ -522,25 +552,35 @@
                             {/* TAB CONTENT */}
                             {openSection === 'ss' && (
                                 <div className="p-4 md:p-6 animate-fade-in bg-white">
-                                    {renderItem("Lagu Pengantar", "LS 205")}
-                                    {renderItem("Pemimpin Acara", getOfficer(activeSabat.sekolahSabat, "Pembawa Acara"))}
+                                    {isLoading ? (
+                                        <SkeletonList rows={6} />
+                                    ) : (
+                                        <>
+                                            {renderItem("Lagu Pengantar", "LS 205")}
+                                            {renderItem("Pemimpin Acara", getOfficer(activeSabat.sekolahSabat, "Pembawa Acara"))}
                                     {renderItem("Lagu Buka", susunan.ssLaguBuka)}
                                     {renderItem("Ayat Inti & Doa Buka", getOfficer(activeSabat.sekolahSabat, "Ayat Inti & Doa Buka"))}
                                     {renderItem("Berita Misi", getOfficer(activeSabat.sekolahSabat, "Berita Misi"))}
                                     {renderItem("Diskusi Sekolah Sabat", "Kelas Pemuda 1, Kelas Dewasa, Kelas Pemuda 2, Kelas Anak-anak")}
                                     {renderItem("Pelayanan Perorangan", getOfficer(activeSabat.sekolahSabat, "Pelayanan Perorangan"))}
-                                    {renderItem("Lagu Tutup", susunan.ssLaguTutup)}
-                                    {renderItem("Doa Tutup", getOfficer(activeSabat.sekolahSabat, "Pelayanan Perorangan"))}
+                                            {renderItem("Lagu Tutup", susunan.ssLaguTutup)}
+                                            {renderItem("Doa Tutup", getOfficer(activeSabat.sekolahSabat, "Pelayanan Perorangan"))}
+                                        </>
+                                    )}
                                 </div>
                             )}
 
                             {openSection === 'khotbah' && (
                                 <div className="p-4 md:p-6 animate-fade-in bg-white">
-                                    {renderItem("Lagu Pengantar", "LS 515 - Tuhan Ada Dalam Bait Allah")}
-                                    {renderItem("Lagu Sambutan", "LS 1 - Di Hadapan Hadirat-Mu")}
-                                    {renderItem("Doa Buka", getOfficer(activeSabat.khotbah, "Khotbah"))}
-                                    {renderItem("Ayat Bersahutan", susunan.kAyatBersahutan)}
-                                    {renderItem("Lagu Buka", susunan.kLaguBuka)}
+                                    {isLoading ? (
+                                        <SkeletonList rows={10} />
+                                    ) : (
+                                        <>
+                                            {renderItem("Lagu Pengantar", "LS 515 - Tuhan Ada Dalam Bait Allah")}
+                                            {renderItem("Lagu Sambutan", "LS 1 - Di Hadapan Hadirat-Mu")}
+                                            {renderItem("Doa Buka", getOfficer(activeSabat.khotbah, "Khotbah"))}
+                                            {renderItem("Ayat Bersahutan", susunan.kAyatBersahutan)}
+                                            {renderItem("Lagu Buka", susunan.kLaguBuka)}
                                     {renderItem("Doa Syafaat", getOfficer(activeSabat.khotbah, "Pendamping 1"))}
                                     {susunan.kLaguPujian1_show && renderItem("Lagu Pujian", susunan.kLaguPujian1_judul, true)}
                                     {renderItem("Bacaan Persembahan", getOfficer(activeSabat.khotbah, "Pendamping 2"))}
@@ -553,21 +593,23 @@
                                     {renderItem("Lagu Tema", "Misi Kita")}
                                     {renderItem("Khotbah", getOfficer(activeSabat.khotbah, "Khotbah"), true)}
                                     {renderItem("Lagu Tutup", susunan.kLaguTutup)}
-                                    {renderItem("Doa Berkat", "Pdt. David Indra Utomo")}
-                                    {renderItem("Lagu Berkat", "LS 60 - Pada Akhir Kebaktian")}
-                                    {renderItem("Pengumuman", "Dept. Komunikasi")}
+                                            {renderItem("Doa Berkat", "Pdt. David Indra Utomo")}
+                                            {renderItem("Lagu Berkat", "LS 60 - Pada Akhir Kebaktian")}
+                                            {renderItem("Pengumuman", "Dept. Komunikasi")}
+                                        </>
+                                    )}
                                 </div>
                             )}
 
                             {openSection === 'diakon' && (
                                 <div className="p-4 md:p-6 animate-fade-in bg-white">
-                                    {activeSabat.diakon.map((p, idx) => <div key={idx}>{renderItem(p.tugas, p.nama)}</div>)}
+                                    {isLoading ? <SkeletonList rows={6} /> : activeSabat.diakon.map((p, idx) => <div key={idx}>{renderItem(p.tugas, p.nama)}</div>)}
                                 </div>
                             )}
 
                             {openSection === 'musik' && (
                                 <div className="p-4 md:p-6 animate-fade-in bg-white">
-                                    {activeSabat.musik.map((p, idx) => <div key={idx}>{renderItem(p.tugas, p.nama)}</div>)}
+                                    {isLoading ? <SkeletonList rows={5} /> : activeSabat.musik.map((p, idx) => <div key={idx}>{renderItem(p.tugas, p.nama)}</div>)}
                                 </div>
                             )}
                         </div>
@@ -613,8 +655,22 @@
             );
         };
 
-        const ContactGembala = ({ dataPejabat }) => {
+        const ContactGembala = ({ dataPejabat, isLoading }) => {
             const gembala = dataPejabat.find(p => p.id === 'gembala');
+            if (isLoading) {
+                return (
+                    <div className="mt-10 bg-gold-400/10 border border-gold-200/50 rounded-[1.5rem] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between not-prose shadow-sm relative overflow-hidden">
+                        <div className="flex-1 text-center md:text-left mb-5 md:mb-0 md:mr-8 w-full">
+                            <SkeletonBlock className="h-6 w-3/4 mb-2 mx-auto md:mx-0" />
+                            <SkeletonBlock className="h-4 w-full mb-1" />
+                            <SkeletonBlock className="h-4 w-5/6 mx-auto md:mx-0" />
+                        </div>
+                        <div className="w-full md:w-auto shrink-0">
+                            <SkeletonCard />
+                        </div>
+                    </div>
+                );
+            }
             if (!gembala) return null;
             return (
                 <div className="mt-10 bg-gold-400/10 border border-gold-200/50 rounded-[1.5rem] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between not-prose shadow-sm relative overflow-hidden">
@@ -634,7 +690,7 @@
             );
         };
 
-        const DetailAlkitab = ({ setActiveTab, dataPejabat }) => (
+        const DetailAlkitab = ({ setActiveTab, dataPejabat, isLoading }) => (
             <div className="bg-white rounded-[1.5rem] shadow-sm border border-navy-100/60 p-6 md:p-8 animate-fade-in relative z-10">
                 <div className="prose max-w-none">
                     <h1 className="text-[2rem] font-extrabold text-navy-900 mb-6 border-b pb-4 border-navy-50">Doktrin Alkitab</h1>
@@ -647,13 +703,13 @@
                         <h3 className="text-navy-900 font-bold text-xl pt-2">Ujian Pengalaman</h3>
                         <p>Alkitab adalah ujian bagi pengalaman, penentu doktrin-doktrin yang otoritatif, dan catatan yang dapat dipercaya tentang tindakan Allah dalam sejarah dunia.</p>
                         <div className="bg-gold-50 p-6 rounded-2xl border-l-[6px] border-gold-500 my-8 italic text-navy-900 font-bold shadow-sm">"Firman-Mu itu pelita bagi kakiku dan terang bagi jalanku." (Mazmur 119:105)</div>
-                        <ContactGembala dataPejabat={dataPejabat} />
+                        <ContactGembala dataPejabat={dataPejabat} isLoading={isLoading} />
                     </div>
                 </div>
             </div>
         );
 
-        const Detail28Dasar = ({ setActiveTab, dataPejabat }) => {
+        const Detail28Dasar = ({ setActiveTab, dataPejabat, isLoading }) => {
             const [openIndex, setOpenIndex] = React.useState(null);
             const doktrinData = [
                 { category: "Doktrin tentang Allah", emoji: "✝️", items: [{ title: "Kitab Suci", desc: "Firman Allah yang diilhami.", ref: "2 Timotius 3:16-17; 2 Petrus 1:20-21" }, { title: "Tritunggal / Trinitas", desc: "Allah yang Esa dalam tiga Pribadi.", ref: "Matius 28:19; 2 Korintus 13:14" }, { title: "Bapa", desc: "Allah sebagai Pencipta dan Pemelihara.", ref: "Yohanes 3:16; 1 Yohanes 4:8" }, { title: "Anak", desc: "Yesus Kristus sebagai Penebus.", ref: "Yohanes 1:1-3,14; Kolose 2:9" }, { title: "Roh Kudus", desc: "Pribadi Ilahi yang membimbing umat.", ref: "Yohanes 14:16-17; Kisah 1:8" }] },
@@ -688,13 +744,13 @@
                                 </div>
                             ))}
                         </div>
-                        <ContactGembala dataPejabat={dataPejabat} />
+                        <ContactGembala dataPejabat={dataPejabat} isLoading={isLoading} />
                     </div>
                 </div>
             );
         };
 
-        const DetailEGW = ({ setActiveTab, dataPejabat }) => (
+        const DetailEGW = ({ setActiveTab, dataPejabat, isLoading }) => (
             <div className="bg-white rounded-[1.5rem] shadow-sm border border-navy-100/60 p-6 md:p-8 animate-fade-in relative z-10">
                 <div className="prose max-w-none">
                     <h1 className="text-[2rem] font-extrabold text-navy-900 mb-6 border-b pb-4 border-navy-50">Karunia Nubuat: Ellen G. White</h1>
@@ -709,7 +765,7 @@
                             <h4 className="font-bold text-gold-400 mb-2 flex items-center"><Icon name="Info" className="w-5 h-5 mr-2" />Tahukah Anda?</h4>
                             <p className="text-sm font-medium text-navy-100 leading-relaxed">Ellen G. White adalah salah satu penulis wanita yang karyanya paling banyak diterjemahkan dalam sejarah kesusastraan dunia, dengan fokus utama pada pendidikan, kesehatan, dan kehidupan rohani.</p>
                         </div>
-                        <ContactGembala dataPejabat={dataPejabat} />
+                        <ContactGembala dataPejabat={dataPejabat} isLoading={isLoading} />
                     </div>
                 </div>
             </div>
@@ -730,7 +786,7 @@
             </div>
         );
 
-        const Jadwal = ({ activeRabu, activeSabat, rabuYMD, sabatYMD, showPerjamuan, perjamuanYMD, activePerjamuan }) => (
+        const Jadwal = ({ activeRabu, activeSabat, rabuYMD, sabatYMD, showPerjamuan, perjamuanYMD, activePerjamuan, isLoading }) => (
             <div className="space-y-6 md:space-y-8 animate-fade-in relative z-10">
                 {/* Tombol GDrive Jadwal Lengkap */}
                 <div className="bg-white p-5 md:p-6 rounded-[1.25rem] shadow-sm border border-navy-100/60 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -772,11 +828,18 @@
                         </div>
                         <span className="text-xs font-bold text-navy-800 bg-gold-50 px-4 py-1.5 rounded-full mt-3 md:mt-0 w-fit border border-gold-200 uppercase tracking-widest shadow-sm">{activeRabu.time}</span>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
-                        {activeRabu.petugas.map((p, idx) => (
-                            <div key={idx} className="flex justify-between items-center py-2 border-b border-navy-50/50 last:border-0 md:[&:nth-last-child(-n+2)]:border-0 px-2 hover:bg-navy-50/30 transition-colors rounded-lg"><span className="text-sm text-navy-500 font-medium">{p.tugas}</span><span className="text-sm font-bold text-navy-900 text-right">{p.nama}</span></div>
-                        ))}
-                    </div>
+                    {isLoading ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
+                            <div className="w-full"><SkeletonList rows={4} /></div>
+                            <div className="w-full hidden md:block"><SkeletonList rows={4} /></div>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-1">
+                            {activeRabu.petugas.map((p, idx) => (
+                                <div key={idx} className="flex justify-between items-center py-2 border-b border-navy-50/50 last:border-0 md:[&:nth-last-child(-n+2)]:border-0 px-2 hover:bg-navy-50/30 transition-colors rounded-lg"><span className="text-sm text-navy-500 font-medium">{p.tugas}</span><span className="text-sm font-bold text-navy-900 text-right">{p.nama}</span></div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Sabat */}
@@ -793,22 +856,22 @@
                         <div className="space-y-6">
                             <div>
                                 <div className="flex justify-between items-end mb-2 bg-navy-50/50 p-3 rounded-xl border border-navy-100/50"><h3 className="font-bold text-navy-800 text-sm uppercase tracking-wider">Sekolah Sabat</h3><span className="text-[11px] text-navy-600 font-bold bg-white px-2 py-0.5 rounded-full border border-navy-100">{activeSabat.sekolahSabatTime}</span></div>
-                                <div className="flex flex-col">{activeSabat.sekolahSabat.map((p, idx) => (<div key={idx} className="flex justify-between items-center py-2 border-b border-navy-50/50 last:border-0 hover:bg-navy-50/30 transition-colors rounded-lg px-2"><span className="text-sm text-navy-500 font-medium">{p.tugas}</span><span className="text-sm font-bold text-navy-900 text-right">{p.nama}</span></div>))}</div>
+                                {isLoading ? <SkeletonList rows={5} /> : <div className="flex flex-col">{activeSabat.sekolahSabat.map((p, idx) => (<div key={idx} className="flex justify-between items-center py-2 border-b border-navy-50/50 last:border-0 hover:bg-navy-50/30 transition-colors rounded-lg px-2"><span className="text-sm text-navy-500 font-medium">{p.tugas}</span><span className="text-sm font-bold text-navy-900 text-right">{p.nama}</span></div>))}</div>}
                             </div>
                             <div>
                                 <div className="mb-2 bg-navy-50/50 p-3 rounded-xl border border-navy-100/50"><h3 className="font-bold text-navy-800 text-sm uppercase tracking-wider">Diakon & Diakones</h3></div>
-                                <div className="flex flex-col">{activeSabat.diakon.map((p, idx) => (<div key={idx} className="flex justify-between items-center py-2 border-b border-navy-50/50 last:border-0 hover:bg-navy-50/30 transition-colors rounded-lg px-2"><span className="text-sm text-navy-500 font-medium">{p.tugas}</span><span className="text-sm font-bold text-navy-900 text-right">{p.nama}</span></div>))}</div>
+                                {isLoading ? <SkeletonList rows={4} /> : <div className="flex flex-col">{activeSabat.diakon.map((p, idx) => (<div key={idx} className="flex justify-between items-center py-2 border-b border-navy-50/50 last:border-0 hover:bg-navy-50/30 transition-colors rounded-lg px-2"><span className="text-sm text-navy-500 font-medium">{p.tugas}</span><span className="text-sm font-bold text-navy-900 text-right">{p.nama}</span></div>))}</div>}
                             </div>
                         </div>
 
                         <div className="space-y-6">
                             <div>
                                 <div className="flex justify-between items-end mb-2 bg-navy-50/50 p-3 rounded-xl border border-navy-100/50"><h3 className="font-bold text-navy-800 text-sm uppercase tracking-wider">Khotbah / Umum</h3><span className="text-[11px] text-navy-600 font-bold bg-white px-2 py-0.5 rounded-full border border-navy-100">{activeSabat.khotbahTime}</span></div>
-                                <div className="flex flex-col">{activeSabat.khotbah.map((p, idx) => (<div key={idx} className="flex justify-between items-center py-2 border-b border-navy-50/50 last:border-0 hover:bg-navy-50/30 transition-colors rounded-lg px-2"><span className="text-sm text-navy-500 font-medium">{p.tugas}</span><span className="text-sm font-bold text-navy-900 text-right">{p.nama}</span></div>))}</div>
+                                {isLoading ? <SkeletonList rows={6} /> : <div className="flex flex-col">{activeSabat.khotbah.map((p, idx) => (<div key={idx} className="flex justify-between items-center py-2 border-b border-navy-50/50 last:border-0 hover:bg-navy-50/30 transition-colors rounded-lg px-2"><span className="text-sm text-navy-500 font-medium">{p.tugas}</span><span className="text-sm font-bold text-navy-900 text-right">{p.nama}</span></div>))}</div>}
                             </div>
                             <div>
                                 <div className="mb-2 bg-navy-50/50 p-3 rounded-xl border border-navy-100/50"><h3 className="font-bold text-navy-800 text-sm uppercase tracking-wider">Pelayanan Musik</h3></div>
-                                <div className="flex flex-col">{activeSabat.musik.map((p, idx) => (<div key={idx} className="flex justify-between items-center py-2 border-b border-navy-50/50 last:border-0 hover:bg-navy-50/30 transition-colors rounded-lg px-2"><span className="text-sm text-navy-500 font-medium">{p.tugas}</span><span className="text-sm font-bold text-navy-900 text-right">{p.nama}</span></div>))}</div>
+                                {isLoading ? <SkeletonList rows={4} /> : <div className="flex flex-col">{activeSabat.musik.map((p, idx) => (<div key={idx} className="flex justify-between items-center py-2 border-b border-navy-50/50 last:border-0 hover:bg-navy-50/30 transition-colors rounded-lg px-2"><span className="text-sm text-navy-500 font-medium">{p.tugas}</span><span className="text-sm font-bold text-navy-900 text-right">{p.nama}</span></div>))}</div>}
                             </div>
                         </div>
                     </div>
@@ -816,7 +879,7 @@
             </div>
         );
 
-        const Live = ({ setActiveTab, activeRabu, activeSabat, rabuYMD, sabatYMD, showPerjamuan, perjamuanYMD, activePerjamuan, youtubeUrl }) => {
+        const Live = ({ setActiveTab, activeRabu, activeSabat, rabuYMD, sabatYMD, showPerjamuan, perjamuanYMD, activePerjamuan, youtubeUrl, isLoading }) => {
             const today = new Date();
             const todayDay = today.getDay();
 
@@ -834,9 +897,13 @@
             return (
                 <div className="space-y-6 md:space-y-8 animate-fade-in">
                     <div className="bg-navy-900 rounded-[1.5rem] overflow-hidden shadow-lg p-2.5">
-                        <div className="relative w-full rounded-xl overflow-hidden" style={{ paddingTop: '56.25%' }}>
-                            <iframe className="absolute top-0 left-0 w-full h-full" src={youtubeUrl} title="YouTube Live Stream" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-                        </div>
+                        {isLoading ? (
+                            <div className="relative w-full rounded-xl bg-navy-800 animate-pulse overflow-hidden" style={{ paddingTop: '56.25%' }}></div>
+                        ) : (
+                            <div className="relative w-full rounded-xl overflow-hidden" style={{ paddingTop: '56.25%' }}>
+                                <iframe className="absolute top-0 left-0 w-full h-full" src={youtubeUrl} title="YouTube Live Stream" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+                            </div>
+                        )}
                         <div className="pt-4 pb-2 px-2 text-white flex justify-center w-full">
                             <div className="font-bold text-sm tracking-widest flex items-center bg-gold-400/20 px-5 py-2.5 rounded-full border border-gold-400/30 text-gold-400 uppercase"><span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse mr-2.5"></span> Live Streaming ART1STV</div>
                         </div>
@@ -862,7 +929,11 @@
                             <button onClick={() => setActiveTab('susunan_ibadah')} className="hidden sm:flex items-center justify-center text-sm font-bold text-navy-700 hover:text-navy-900 transition bg-navy-50 hover:bg-navy-100 px-6 py-2.5 rounded-full w-full sm:w-auto">Lihat Susunan Ibadah &rarr;</button>
                         </div>
 
-                        {isRabu ? (
+                        {isLoading ? (
+                            <div className="space-y-6">
+                                <SkeletonList rows={5} />
+                            </div>
+                        ) : isRabu ? (
                             <div className="overflow-hidden border rounded-xl border-navy-100/50">
                                 <table className="w-full text-left text-sm border-collapse">
                                     <tbody>
@@ -896,7 +967,7 @@
             );
         };
 
-        const Persembahan = ({ dataPejabat }) => {
+        const Persembahan = ({ dataPejabat, isLoading }) => {
             const bendaharas = dataPejabat.filter(p => (p.jabatan && p.jabatan.toLowerCase().includes('bendahara')) || (p.kategori && p.kategori.toLowerCase() === 'keuangan'));
             const qrisUrl = "https://images.spr.so/cdn-cgi/imagedelivery/j42No7y-dcokJuNgXeA0ig/811ba11f-520e-4307-89d3-34cd3011d3c8/WhatsApp_Image_2025-05-16_at_12.01.55_65684299/w=1920,quality=90,fit=scale-down";
             return (
@@ -917,7 +988,12 @@
                                 <h3 className="font-bold text-navy-900 text-sm mb-1.5 flex items-center"><span className="bg-gold-400/20 text-gold-600 w-5 h-5 rounded-full inline-flex items-center justify-center text-xs mr-2 border border-gold-400/30 font-bold">1</span>Hubungi Bendahara</h3>
                                 <p className="text-xs text-navy-600 mb-3 pl-7 font-medium">Kirim bukti transfer ke salah satu Bendahara kami:</p>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pl-0 md:pl-7">
-                                    {bendaharas.map((p, idx) => (
+                                    {isLoading ? (
+                                        <>
+                                            <SkeletonCard />
+                                            <SkeletonCard />
+                                        </>
+                                    ) : bendaharas.map((p, idx) => (
                                         <a key={idx} href={`https://wa.me/${p.wa}`} target="_blank" rel="noopener noreferrer" className="flex items-center p-2.5 rounded-xl border border-navy-100 bg-white hover:bg-gold-50 hover:border-gold-200 transition group shadow-sm"><img src={p.img} alt={p.nama} className="w-10 h-10 rounded-full object-cover mr-3 border-2 border-transparent group-hover:border-gold-400 transition" /><div><p className="text-[9px] font-bold text-navy-500 group-hover:text-gold-600 transition-colors uppercase tracking-widest">{p.jabatan}</p><p className="font-bold text-navy-900 text-sm">{p.nama}</p></div></a>
                                     ))}
                                 </div>
@@ -953,7 +1029,7 @@
             </div>
         );
 
-        const MemberBaru = ({ setActiveTab, dataPejabat }) => {
+        const MemberBaru = ({ setActiveTab, dataPejabat, isLoading }) => {
             const contacts = dataPejabat.filter(p => ['gembala', 'ketua1', 'ketua2'].includes(p.id));
             return (
                 <div className="space-y-6 animate-fade-in relative z-10">
@@ -961,14 +1037,20 @@
                         <h2 className="text-[1.3rem] font-black mb-4 text-navy-900 border-b pb-3 border-navy-50">Hubungi Pelayan Jemaat</h2>
                         <p className="text-sm font-medium text-navy-600 mb-6">Silakan hubungi Pendeta atau Ketua Jemaat kami untuk bimbingan rohani dan persiapan keanggotaan:</p>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-                            {contacts.map(p => (<a key={p.id} href={`https://wa.me/${p.wa}`} target="_blank" className="flex items-center justify-between p-4 rounded-xl border border-navy-100 bg-white hover:bg-gold-50 hover:border-gold-200 transition-colors h-full group shadow-sm"><div className="flex items-center"><img src={p.img} alt={p.nama} className="w-12 h-12 rounded-full object-cover mr-4 border-2 border-transparent group-hover:border-gold-400 transition-colors shrink-0" /><div><p className="font-bold text-navy-500 text-[10px] uppercase tracking-widest">{p.jabatan}</p><p className="text-sm font-bold text-navy-900 mt-1 leading-tight">{p.nama}</p></div></div><span className="text-gold-500 font-bold ml-2 opacity-50 group-hover:opacity-100 transition-opacity"><Icon name="MessageCircle" className="w-5 h-5" /></span></a>))}
+                            {isLoading ? (
+                                <>
+                                    <SkeletonCard />
+                                    <SkeletonCard />
+                                    <SkeletonCard />
+                                </>
+                            ) : contacts.map(p => (<a key={p.id} href={`https://wa.me/${p.wa}`} target="_blank" className="flex items-center justify-between p-4 rounded-xl border border-navy-100 bg-white hover:bg-gold-50 hover:border-gold-200 transition-colors h-full group shadow-sm"><div className="flex items-center"><img src={p.img} alt={p.nama} className="w-12 h-12 rounded-full object-cover mr-4 border-2 border-transparent group-hover:border-gold-400 transition-colors shrink-0" /><div><p className="font-bold text-navy-500 text-[10px] uppercase tracking-widest">{p.jabatan}</p><p className="text-sm font-bold text-navy-900 mt-1 leading-tight">{p.nama}</p></div></div><span className="text-gold-500 font-bold ml-2 opacity-50 group-hover:opacity-100 transition-opacity"><Icon name="MessageCircle" className="w-5 h-5" /></span></a>))}
                         </div>
                     </div>
                 </div>
             );
         };
 
-        const PindahMasuk = ({ setActiveTab, dataPejabat }) => {
+        const PindahMasuk = ({ setActiveTab, dataPejabat, isLoading }) => {
             const contacts = dataPejabat.filter(p => ['sekretaris1', 'sekretaris2'].includes(p.id));
             return (
                 <div className="space-y-6 animate-fade-in relative z-10">
@@ -977,19 +1059,39 @@
                         <p className="text-sm font-medium text-navy-600 mb-6">Silakan isi formulir ACMS atau hubungi Sekretaris Jemaat kami untuk bantuan kepindahan:</p>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
                             <button onClick={() => setActiveTab('form_acms')} className="flex items-center justify-between p-4 rounded-xl border border-gold-300 bg-gradient-to-br from-gold-400 to-gold-500 hover:from-gold-300 hover:to-gold-400 transition-colors h-full w-full text-left shadow text-navy-900 group"><div className="flex items-center"><div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-navy-900 mr-4 shrink-0"><Icon name="BookOpen" className="w-5 h-5" /></div><div><p className="font-black text-navy-900 text-sm md:text-base leading-tight">Formulir Pindah Masuk</p><p className="text-xs font-bold text-navy-800 mt-1 opacity-90">Isi Data Online</p></div></div><span className="text-navy-900 font-bold ml-2 transform group-hover:translate-x-1 transition-transform">&rarr;</span></button>
-                            {contacts.map(p => (<a key={p.id} href={`https://wa.me/${p.wa}`} target="_blank" className="flex items-center justify-between p-4 rounded-xl border border-navy-100 bg-white hover:bg-gold-50 hover:border-gold-200 transition-colors h-full group shadow-sm"><div className="flex items-center"><img src={p.img} alt={p.nama} className="w-12 h-12 rounded-full object-cover mr-4 border-2 border-transparent group-hover:border-gold-400 transition-colors shrink-0" /><div><p className="font-bold text-navy-500 text-[10px] uppercase tracking-widest">{p.jabatan}</p><p className="text-sm font-bold text-navy-900 mt-1 leading-tight">{p.nama}</p></div></div><span className="text-gold-500 font-bold ml-2 opacity-50 group-hover:opacity-100 transition-opacity"><Icon name="MessageCircle" className="w-5 h-5" /></span></a>))}
+                            {isLoading ? (
+                                <>
+                                    <SkeletonCard />
+                                    <SkeletonCard />
+                                </>
+                            ) : contacts.map(p => (<a key={p.id} href={`https://wa.me/${p.wa}`} target="_blank" className="flex items-center justify-between p-4 rounded-xl border border-navy-100 bg-white hover:bg-gold-50 hover:border-gold-200 transition-colors h-full group shadow-sm"><div className="flex items-center"><img src={p.img} alt={p.nama} className="w-12 h-12 rounded-full object-cover mr-4 border-2 border-transparent group-hover:border-gold-400 transition-colors shrink-0" /><div><p className="font-bold text-navy-500 text-[10px] uppercase tracking-widest">{p.jabatan}</p><p className="text-sm font-bold text-navy-900 mt-1 leading-tight">{p.nama}</p></div></div><span className="text-gold-500 font-bold ml-2 opacity-50 group-hover:opacity-100 transition-opacity"><Icon name="MessageCircle" className="w-5 h-5" /></span></a>))}
                         </div>
                     </div>
                 </div>
             );
         };
 
-        const Hubungi = ({ setActiveTab, dataPejabat }) => {
+        const Hubungi = ({ setActiveTab, dataPejabat, isLoading }) => {
             // Kategorisasi Pejabat
             const categories = [...new Set(dataPejabat.map(p => p.kategori || "Lainnya"))].map(kat => ({
                 title: kat,
                 filter: p => (p.kategori || "Lainnya") === kat
             }));
+
+            if (isLoading) {
+                return (
+                    <div className="space-y-6 animate-fade-in relative z-10">
+                        <div className="bg-white p-6 md:p-8 rounded-[1.5rem] shadow-sm border border-navy-100/60">
+                            <SkeletonBlock className="h-6 w-1/4 mb-5" />
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 items-stretch">
+                                <SkeletonCard />
+                                <SkeletonCard />
+                                <SkeletonCard />
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
 
             return (
                 <div className="space-y-6 animate-fade-in relative z-10">
@@ -2199,23 +2301,23 @@
 
             const renderContent = () => {
                 switch (activeTab) {
-                    case 'home': return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} />;
+                    case 'home': return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'belajar': return <Belajar setActiveTab={setActiveTab} />;
-                    case 'belajar_alkitab': return <DetailAlkitab setActiveTab={setActiveTab} dataPejabat={dataPejabat} />;
-                    case 'belajar_28dasar': return <Detail28Dasar setActiveTab={setActiveTab} dataPejabat={dataPejabat} />;
-                    case 'belajar_egw': return <DetailEGW setActiveTab={setActiveTab} dataPejabat={dataPejabat} />;
-                    case 'live': return <Live setActiveTab={setActiveTab} activeRabu={activeRabu} activeSabat={activeSabat} rabuYMD={rabuYMD} sabatYMD={sabatYMD} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} activePerjamuan={activePerjamuan} youtubeUrl={youtubeUrl} />;
-                    case 'jadwal': return <Jadwal activeRabu={jadwalKhususRabu} activeSabat={jadwalKhususSabat} rabuYMD={displayRabuYMD} sabatYMD={displaySabatYMD} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} activePerjamuan={activePerjamuan} />;
-                    case 'persembahan': return <Persembahan dataPejabat={dataPejabat} />;
+                    case 'belajar_alkitab': return <DetailAlkitab setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
+                    case 'belajar_28dasar': return <Detail28Dasar setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
+                    case 'belajar_egw': return <DetailEGW setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
+                    case 'live': return <Live setActiveTab={setActiveTab} activeRabu={activeRabu} activeSabat={activeSabat} rabuYMD={rabuYMD} sabatYMD={sabatYMD} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} activePerjamuan={activePerjamuan} youtubeUrl={youtubeUrl} isLoading={isAppLoading} />;
+                    case 'jadwal': return <Jadwal activeRabu={jadwalKhususRabu} activeSabat={jadwalKhususSabat} rabuYMD={displayRabuYMD} sabatYMD={displaySabatYMD} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} activePerjamuan={activePerjamuan} isLoading={isAppLoading} />;
+                    case 'persembahan': return <Persembahan dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'keanggotaan': return <Keanggotaan setActiveTab={setActiveTab} />;
-                    case 'member_baru': return <MemberBaru setActiveTab={setActiveTab} dataPejabat={dataPejabat} />;
-                    case 'pindah_masuk': return <PindahMasuk setActiveTab={setActiveTab} dataPejabat={dataPejabat} />;
-                    case 'hubungi': return <Hubungi setActiveTab={setActiveTab} dataPejabat={dataPejabat} />;
+                    case 'member_baru': return <MemberBaru setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
+                    case 'pindah_masuk': return <PindahMasuk setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
+                    case 'hubungi': return <Hubungi setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'form_acms': return <FormACMS setActiveTab={setActiveTab} />;
-                    case 'susunan_ibadah': return <SusunanIbadah setActiveTab={setActiveTab} activeSabat={activeSabat} sabatYMD={sabatYMD} />;
-                    case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} heroImageUrl={heroImageUrl} setHeroImageUrl={setHeroImageUrl} /> : <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} />;
+                    case 'susunan_ibadah': return <SusunanIbadah setActiveTab={setActiveTab} activeSabat={activeSabat} sabatYMD={sabatYMD} isLoading={isAppLoading} />;
+                    case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} heroImageUrl={heroImageUrl} setHeroImageUrl={setHeroImageUrl} /> : <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'search': return <Search setActiveTab={setActiveTab} jadwalDB={jadwalDB} rabuYMD={rabuYMD} sabatYMD={sabatYMD} tabs={tabs} />;
-                    default: return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} />;
+                    default: return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                 }
             };
 
