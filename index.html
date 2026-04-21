@@ -3,7 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#0b1a30">
+    <link rel="apple-touch-icon" href="./art1s-bg.svg">
     <title>ART1S App</title>
 
     <!-- Favicon -->
@@ -185,6 +188,58 @@
                 { tugas: "Cuci Baskom 1", nama: "" }, { tugas: "Cuci Baskom 2", nama: "" }, { tugas: "Cuci Baskom 3", nama: "" }, { tugas: "Cuci Baskom 4", nama: "" },
                 { tugas: "Cuci Alat Perjamuan", nama: "Diatur oleh Diakones" }
             ]
+        };
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        window.installPWA = () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    } else {
+                        console.log('User dismissed the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                const isIos = () => {
+                    const userAgent = window.navigator.userAgent.toLowerCase();
+                    return /iphone|ipad|ipod/.test(userAgent);
+                };
+                if (isIos()) {
+                    window.dispatchEvent(new CustomEvent('showIosInstallPrompt'));
+                } else {
+                    alert("Aplikasi ini mungkin sudah terinstal atau browser tidak mendukung otomatis instalasi. Silakan cari opsi 'Tambahkan ke Layar Utama' atau 'Add to Home Screen' di menu browser Anda.");
+                }
+            }
+        };
+
+        const IosInstallModal = ({ isOpen, onClose }) => {
+            if (!isOpen) return null;
+            return (
+                <div className="fixed inset-0 bg-navy-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fade-in" onClick={onClose}>
+                    <div className="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl animate-slide-up" onClick={e => e.stopPropagation()}>
+                        <div className="p-6 text-center space-y-4">
+                            <div className="w-16 h-16 bg-navy-50 text-navy-900 rounded-2xl flex items-center justify-center mx-auto shadow-inner">
+                                <Icon name="Share" className="w-8 h-8" />
+                            </div>
+                            <h3 className="font-black text-xl text-navy-900 tracking-tight">Instal di iOS</h3>
+                            <p className="text-sm text-navy-600 px-2 leading-relaxed">
+                                Untuk menginstal aplikasi di iPhone/iPad: <br/><br/>
+                                1. Tekan ikon <b>Share</b> <Icon name="Share" className="w-4 h-4 inline" /> di menu bawah Safari.<br/>
+                                2. Gulir ke bawah dan pilih <br/><b className="text-navy-900">Tambahkan ke Layar Utama</b> (Add to Home Screen).
+                            </p>
+                            <button onClick={onClose} className="w-full bg-navy-900 text-gold-400 font-bold py-3.5 rounded-xl transition-all shadow-md mt-4">Saya Mengerti</button>
+                        </div>
+                    </div>
+                </div>
+            );
         };
 
         const initialDataPejabat = [
@@ -492,6 +547,17 @@
                         <div className="w-full flex justify-center">
                             <iframe data-testid="embed-iframe" style={{ borderRadius: '1rem' }} src="https://open.spotify.com/embed/show/6PcT9H7ksbbJjsnl1qUfKB/video?utm_source=generator" width="100%" height="152" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                         </div>
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center mb-5 md:mb-8 bg-white p-5 md:p-7 rounded-[1.5rem] shadow-sm border border-navy-100/60 text-center">
+                        <div className="w-12 h-12 bg-navy-50 text-navy-900 rounded-full flex items-center justify-center mb-3">
+                            <Icon name="Smartphone" className="w-6 h-6" />
+                        </div>
+                        <h3 className="font-bold text-[1.15rem] text-navy-900 mb-1">Akses Lebih Cepat ⚡</h3>
+                        <p className="text-sm text-navy-600 mb-4 px-2">Dapatkan pengalaman terbaik dengan menginstal aplikasi ini ke layar utama Anda (Add to Home Screen).</p>
+                        <button onClick={() => window.installPWA && window.installPWA()} className="bg-navy-900 hover:bg-navy-800 text-gold-400 font-bold py-3 px-6 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center w-full md:w-auto">
+                            <Icon name="Download" className="w-5 h-5 mr-2" /> Download Web App
+                        </button>
                     </div>
 
                     <footer className="pt-6 pb-2 border-t border-navy-200 text-center text-navy-500 font-medium tracking-wide text-[10px] md:text-xs">
@@ -2287,6 +2353,13 @@
             // FIX TYPO: Memperbaiki penulisan state yang sebelumnya kurang kurung siku
             const [isAdminLoggedIn, setIsAdminLoggedIn] = React.useState(false);
             const [showLoginModal, setShowLoginModal] = React.useState(false);
+            const [showIosPrompt, setShowIosPrompt] = React.useState(false);
+
+            React.useEffect(() => {
+                const handler = () => setShowIosPrompt(true);
+                window.addEventListener('showIosInstallPrompt', handler);
+                return () => window.removeEventListener('showIosInstallPrompt', handler);
+            }, []);
 
             const tabs = [
                 { id: 'home', label: 'Home', icon: 'Home' },
@@ -2328,6 +2401,7 @@
             return (
                 <div className="min-h-screen bg-gray-50 flex flex-col">
                     <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} onSuccess={(token) => { setAdminToken(token); setIsAdminLoggedIn(true); setShowLoginModal(false); setActiveTab('admin_dashboard'); }} />
+                    <IosInstallModal isOpen={showIosPrompt} onClose={() => setShowIosPrompt(false)} />
 
                     <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-navy-50 shadow-sm">
                         <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-3 gap-3">
@@ -2405,6 +2479,17 @@
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').then((registration) => {
+                    console.log('ServiceWorker registration successful');
+                }, (err) => {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
     </script>
 </body>
 
