@@ -370,14 +370,46 @@
                 ? featureItems.filter(item => item.label.toLowerCase().includes(searchQuery.toLowerCase()))
                 : featureItems;
 
-            // Search petugas from jadwalDB and dataPejabat
-            const searchPetugas = () => {
+            // Global Search: Fitur, Halaman, Petugas, dan Pejabat
+            const getGlobalSearchResults = () => {
                 if (!searchQuery.trim()) return [];
                 const q = searchQuery.toLowerCase();
                 const results = [];
                 const seen = new Set();
 
-                // Search in jadwalDB (upcoming schedules)
+                // 1. Search in App Pages / Features
+                const appPages = [
+                    { id: 'home', title: 'Beranda / Home', desc: 'Halaman utama aplikasi', icon: 'Home' },
+                    { id: 'susunan_ibadah', title: 'Susunan Ibadah', desc: 'Jadwal dan susunan acara ibadah', icon: 'List' },
+                    { id: 'jadwal', title: 'Jadwal Pelayanan', desc: 'Jadwal petugas ibadah lengkap', icon: 'Calendar' },
+                    { id: 'live', title: 'Live Streaming / YouTube', desc: 'Ibadah online dan siaran langsung', icon: 'Video' },
+                    { id: 'persembahan', title: 'Persembahan & Perpuluhan', desc: 'Informasi donasi, QRIS, dan rekening', icon: 'Gift' },
+                    { id: 'keanggotaan', title: 'Layanan Anggota', desc: 'Informasi keanggotaan dan mutasi', icon: 'Users' },
+                    { id: 'member_baru', title: 'Member Baru', desc: 'Pendaftaran anggota baru', icon: 'Users' },
+                    { id: 'pindah_masuk', title: 'Pindah Masuk ACMS', desc: 'Prosedur pindah keanggotaan', icon: 'BookOpen' },
+                    { id: 'form_acms', title: 'Formulir ACMS', desc: 'Isi formulir perpindahan ACMS', icon: 'Edit' },
+                    { id: 'hubungi', title: 'Hubungi Kami', desc: 'Kontak gembala dan pejabat jemaat', icon: 'Phone' },
+                    { id: 'belajar_alkitab', title: 'Doktrin Alkitab', desc: 'Pelajari dasar-dasar Alkitab', icon: 'BookOpen' },
+                    { id: 'belajar_28dasar', title: '28 Dasar Kepercayaan', desc: 'Doktrin gereja Masehi Advent Hari Ketujuh', icon: 'List' },
+                    { id: 'belajar_egw', title: 'Ellen G. White', desc: 'Mengenal tulisan roh nubuat', icon: 'BookOpen' },
+                    { id: 'sekolah_sabat', title: 'Sekolah Sabat', desc: 'Akses pelajaran harian Sekolah Sabat', icon: 'BookOpen', isExternal: true, link: 'https://sabbath-school.adventech.io/in' },
+                    { id: 'lagu_sion', title: 'Lagu Sion', desc: 'Buku nyanyian Lagu Sion online', icon: 'Music', isExternal: true, link: 'https://play.lagusion.org/' }
+                ];
+
+                appPages.forEach(page => {
+                    if (page.title.toLowerCase().includes(q) || page.desc.toLowerCase().includes(q)) {
+                        results.push({
+                            tipe: 'halaman',
+                            nama: page.title,
+                            tugas: page.desc,
+                            section: 'Halaman / Fitur',
+                            icon: page.icon,
+                            action: () => page.isExternal ? window.open(page.link, '_blank') : setActiveTab(page.id)
+                        });
+                    }
+                });
+
+                // 2. Search in jadwalDB (upcoming schedules)
                 if (jadwalDB) {
                     Object.entries(jadwalDB).forEach(([date, data]) => {
                         const sections = [
@@ -395,7 +427,8 @@
                                         const uid = `${p.nama}-${p.tugas}-${date}`;
                                         if (!seen.has(uid)) {
                                             seen.add(uid);
-                                            results.push({ nama: p.nama, tugas: p.tugas, section: label, date: date });
+                                            // Action untuk petugas: pindah ke tab jadwal
+                                            results.push({ tipe: 'petugas', nama: p.nama, tugas: p.tugas, section: label, date: date, action: () => setActiveTab('jadwal') });
                                         }
                                     }
                                 });
@@ -404,14 +437,15 @@
                     });
                 }
 
-                // Search in dataPejabat (church officials)
+                // 3. Search in dataPejabat (church officials)
                 if (dataPejabat) {
                     dataPejabat.forEach(p => {
-                        if (p.nama && p.nama.toLowerCase().includes(q)) {
+                        if (p.nama && p.nama.toLowerCase().includes(q) || (p.jabatan && p.jabatan.toLowerCase().includes(q))) {
                             const uid = `pejabat-${p.id}`;
                             if (!seen.has(uid)) {
                                 seen.add(uid);
-                                results.push({ nama: p.nama, tugas: p.jabatan, section: 'Pejabat Jemaat', date: null, img: p.img });
+                                // Action untuk pejabat: hubungi wa
+                                results.push({ tipe: 'pejabat', nama: p.nama, tugas: p.jabatan, section: 'Pejabat Jemaat', date: null, img: p.img, wa: p.wa, action: () => window.open(`https://wa.me/${p.wa}`, '_blank') });
                             }
                         }
                     });
@@ -420,7 +454,7 @@
                 return results;
             };
 
-            const petugasResults = searchPetugas();
+            const globalResults = getGlobalSearchResults();
 
             const renderFeatureCard = (item) => {
                 const labelParts = item.label.split(' ');
@@ -477,21 +511,27 @@
                         </div>
                     </div>
 
-                    {/* Petugas Search Results */}
-                    {searchQuery.trim() && petugasResults.length > 0 && (
+                    {/* Global Search Results */}
+                    {searchQuery.trim() && globalResults.length > 0 && (
                         <div className="mb-5 bg-white rounded-[1.25rem] shadow-sm border border-navy-100/60 overflow-hidden">
                             <div className="px-4 py-3 bg-navy-50/50 border-b border-navy-100/60 flex items-center">
-                                <Icon name="Users" className="w-4 h-4 text-gold-500 mr-2" />
-                                <h3 className="font-bold text-xs text-navy-700 uppercase tracking-widest">Petugas Ditemukan ({petugasResults.length})</h3>
+                                <Icon name="Search" className="w-4 h-4 text-gold-500 mr-2" />
+                                <h3 className="font-bold text-xs text-navy-700 uppercase tracking-widest">Hasil Pencarian ({globalResults.length})</h3>
                             </div>
                             <div className="divide-y divide-navy-50 max-h-64 overflow-y-auto">
-                                {petugasResults.map((p, i) => (
-                                    <div key={i} className="flex items-center px-4 py-3 hover:bg-navy-50/30 transition-colors">
+                                {globalResults.map((p, i) => (
+                                    <div key={i} 
+                                         onClick={() => p.action && p.action()}
+                                         className={`flex items-center px-4 py-3 hover:bg-navy-50/30 transition-colors ${p.action ? 'cursor-pointer' : ''}`}>
                                         {p.img ? (
                                             <img src={p.img} alt={p.nama} className="w-9 h-9 rounded-lg object-cover border border-navy-100 mr-3 shrink-0" />
+                                        ) : p.icon ? (
+                                            <div className="w-9 h-9 rounded-lg bg-navy-50 flex items-center justify-center mr-3 shrink-0 text-navy-600">
+                                                <Icon name={p.icon} className="w-5 h-5" />
+                                            </div>
                                         ) : (
-                                            <div className="w-9 h-9 rounded-lg bg-navy-50 flex items-center justify-center mr-3 shrink-0">
-                                                <Icon name="Users" className="w-4 h-4 text-navy-400" />
+                                            <div className="w-9 h-9 rounded-lg bg-navy-50 flex items-center justify-center mr-3 shrink-0 text-navy-400">
+                                                <Icon name="Users" className="w-4 h-4" />
                                             </div>
                                         )}
                                         <div className="flex-1 min-w-0">
@@ -511,7 +551,7 @@
                     {/* Feature Grid */}
                     <div className={`grid ${filteredItems.length < 3 ? 'grid-cols-2' : 'grid-cols-3'} gap-3 md:gap-5 mb-5 md:mb-8`}>
                         {filteredItems.map(item => renderFeatureCard(item))}
-                        {searchQuery.trim() && filteredItems.length === 0 && petugasResults.length === 0 && (
+                        {searchQuery.trim() && filteredItems.length === 0 && globalResults.length === 0 && (
                             <div className="col-span-3 text-center py-8 text-navy-400 font-medium text-sm">
                                 <Icon name="Search" className="w-8 h-8 mx-auto mb-2 text-navy-300" />
                                 Tidak ditemukan hasil untuk "{searchQuery}"
