@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#0b1a30">
     <link rel="apple-touch-icon" href="./art1s-bg.svg">
@@ -231,9 +232,9 @@
                             </div>
                             <h3 className="font-black text-xl text-navy-900 tracking-tight">Instal di iOS</h3>
                             <p className="text-sm text-navy-600 px-2 leading-relaxed">
-                                Untuk menginstal aplikasi di iPhone/iPad: <br/><br/>
-                                1. Tekan ikon <b>Share</b> <Icon name="Share" className="w-4 h-4 inline" /> di menu bawah Safari.<br/>
-                                2. Gulir ke bawah dan pilih <br/><b className="text-navy-900">Tambahkan ke Layar Utama</b> (Add to Home Screen).
+                                Untuk menginstal aplikasi di iPhone/iPad: <br /><br />
+                                1. Tekan ikon <b>Share</b> <Icon name="Share" className="w-4 h-4 inline" /> di menu bawah Safari.<br />
+                                2. Gulir ke bawah dan pilih <br /><b className="text-navy-900">Tambahkan ke Layar Utama</b> (Add to Home Screen).
                             </p>
                             <button onClick={onClose} className="w-full bg-navy-900 text-gold-400 font-bold py-3.5 rounded-xl transition-all shadow-md mt-4">Saya Mengerti</button>
                         </div>
@@ -520,9 +521,9 @@
                             </div>
                             <div className="divide-y divide-navy-50 max-h-64 overflow-y-auto">
                                 {globalResults.map((p, i) => (
-                                    <div key={i} 
-                                         onClick={() => p.action && p.action()}
-                                         className={`flex items-center px-4 py-3 hover:bg-navy-50/30 transition-colors ${p.action ? 'cursor-pointer' : ''}`}>
+                                    <div key={i}
+                                        onClick={() => p.action && p.action()}
+                                        className={`flex items-center px-4 py-3 hover:bg-navy-50/30 transition-colors ${p.action ? 'cursor-pointer' : ''}`}>
                                         {p.img ? (
                                             <img src={p.img} alt={p.nama} className="w-9 h-9 rounded-lg object-cover border border-navy-100 mr-3 shrink-0" />
                                         ) : p.icon ? (
@@ -585,7 +586,7 @@
                             <h3 className="font-bold text-[1.15rem] text-navy-900">Podcast Kita</h3>
                         </div>
                         <div className="w-full flex justify-center">
-                            <iframe data-testid="embed-iframe" style={{ borderRadius: '1rem' }} src="https://open.spotify.com/embed/show/6PcT9H7ksbbJjsnl1qUfKB/video?utm_source=generator" width="100%" height="152" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                            <iframe data-testid="embed-iframe" style={{ borderRadius: '1rem' }} src="https://open.spotify.com/embed/show/6PcT9H7ksbbJjsnl1qUfKB/video?utm_source=generator" width="100%" height="100%" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                         </div>
                     </div>
 
@@ -664,11 +665,11 @@
                                         <>
                                             {renderItem("Lagu Pengantar", "LS 205")}
                                             {renderItem("Pemimpin Acara", getOfficer(activeSabat.sekolahSabat, "Pembawa Acara"))}
-                                    {renderItem("Lagu Buka", susunan.ssLaguBuka)}
-                                    {renderItem("Ayat Inti & Doa Buka", getOfficer(activeSabat.sekolahSabat, "Ayat Inti & Doa Buka"))}
-                                    {renderItem("Berita Misi", getOfficer(activeSabat.sekolahSabat, "Berita Misi"))}
-                                    {renderItem("Diskusi Sekolah Sabat", "Kelas Pemuda 1, Kelas Dewasa, Kelas Pemuda 2, Kelas Anak-anak")}
-                                    {renderItem("Pelayanan Perorangan", getOfficer(activeSabat.sekolahSabat, "Pelayanan Perorangan"))}
+                                            {renderItem("Lagu Buka", susunan.ssLaguBuka)}
+                                            {renderItem("Ayat Inti & Doa Buka", getOfficer(activeSabat.sekolahSabat, "Ayat Inti & Doa Buka"))}
+                                            {renderItem("Berita Misi", getOfficer(activeSabat.sekolahSabat, "Berita Misi"))}
+                                            {renderItem("Diskusi Sekolah Sabat", "Kelas Pemuda 1, Kelas Dewasa, Kelas Pemuda 2, Kelas Anak-anak")}
+                                            {renderItem("Pelayanan Perorangan", getOfficer(activeSabat.sekolahSabat, "Pelayanan Perorangan"))}
                                             {renderItem("Lagu Tutup", susunan.ssLaguTutup)}
                                             {renderItem("Doa Tutup", getOfficer(activeSabat.sekolahSabat, "Pelayanan Perorangan"))}
                                         </>
@@ -687,18 +688,18 @@
                                             {renderItem("Doa Buka", getOfficer(activeSabat.khotbah, "Khotbah"))}
                                             {renderItem("Ayat Bersahutan", susunan.kAyatBersahutan)}
                                             {renderItem("Lagu Buka", susunan.kLaguBuka)}
-                                    {renderItem("Doa Syafaat", getOfficer(activeSabat.khotbah, "Pendamping 1"))}
-                                    {susunan.kLaguPujian1_show && renderItem("Lagu Pujian", susunan.kLaguPujian1_judul, true)}
-                                    {renderItem("Bacaan Persembahan", getOfficer(activeSabat.khotbah, "Pendamping 2"))}
-                                    {renderItem("Lagu Persembahan", "LS 260 - Bawa Persembahanmu")}
-                                    {renderItem("Doa Persembahan", getOfficer(activeSabat.khotbah, "Pendamping 2"))}
-                                    {susunan.kLaguPujian2_show && renderItem("Lagu Pujian", susunan.kLaguPujian2_judul, true)}
-                                    {renderItem("Cerita Anak-anak", getOfficer(activeSabat.khotbah, "Cerita Anak-anak"))}
-                                    {susunan.kLaguPujian3_show && renderItem("Lagu Pujian", susunan.kLaguPujian3_judul, true)}
-                                    {renderItem("Ayat Inti", susunan.kAyatInti)}
-                                    {renderItem("Lagu Tema", "Misi Kita")}
-                                    {renderItem("Khotbah", getOfficer(activeSabat.khotbah, "Khotbah"), true)}
-                                    {renderItem("Lagu Tutup", susunan.kLaguTutup)}
+                                            {renderItem("Doa Syafaat", getOfficer(activeSabat.khotbah, "Pendamping 1"))}
+                                            {susunan.kLaguPujian1_show && renderItem("Lagu Pujian", susunan.kLaguPujian1_judul, true)}
+                                            {renderItem("Bacaan Persembahan", getOfficer(activeSabat.khotbah, "Pendamping 2"))}
+                                            {renderItem("Lagu Persembahan", "LS 260 - Bawa Persembahanmu")}
+                                            {renderItem("Doa Persembahan", getOfficer(activeSabat.khotbah, "Pendamping 2"))}
+                                            {susunan.kLaguPujian2_show && renderItem("Lagu Pujian", susunan.kLaguPujian2_judul, true)}
+                                            {renderItem("Cerita Anak-anak", getOfficer(activeSabat.khotbah, "Cerita Anak-anak"))}
+                                            {susunan.kLaguPujian3_show && renderItem("Lagu Pujian", susunan.kLaguPujian3_judul, true)}
+                                            {renderItem("Ayat Inti", susunan.kAyatInti)}
+                                            {renderItem("Lagu Tema", "Misi Kita")}
+                                            {renderItem("Khotbah", getOfficer(activeSabat.khotbah, "Khotbah"), true)}
+                                            {renderItem("Lagu Tutup", susunan.kLaguTutup)}
                                             {renderItem("Doa Berkat", "Pdt. David Indra Utomo")}
                                             {renderItem("Lagu Berkat", "LS 60 - Pada Akhir Kebaktian")}
                                             {renderItem("Pengumuman", "Dept. Komunikasi")}
