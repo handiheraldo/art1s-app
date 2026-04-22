@@ -560,14 +560,14 @@
                         )}
                     </div>
 
-                    <div className="bg-white p-5 md:p-7 rounded-[1.5rem] shadow-sm border border-navy-100/60 hover:shadow-md transition-shadow mb-5 md:mb-8">
-                        <h2 className="text-[1.15rem] font-bold mb-4 text-navy-900 flex items-center">
+                    <div className="mb-6 md:mb-10">
+                        <h2 className="text-[1.15rem] font-bold mb-4 text-navy-900 flex items-center px-1">
                             <Icon name="Video" className="w-[1.15rem] h-[1.15rem] mr-2 text-gold-500" /> Video Terbaru
                         </h2>
                         {isLoading ? (
-                            <div className="relative w-full overflow-hidden rounded-[1rem] bg-navy-200 animate-pulse" style={{ paddingTop: '56.25%' }}></div>
+                            <div className="relative w-full overflow-hidden rounded-[1.25rem] md:rounded-[1.5rem] bg-navy-200 animate-pulse" style={{ paddingTop: '56.25%' }}></div>
                         ) : (
-                            <div className="relative w-full overflow-hidden rounded-[1rem] shadow-sm border border-navy-50" style={{ paddingTop: '56.25%' }}>
+                            <div className="relative w-full overflow-hidden rounded-[1.25rem] md:rounded-[1.5rem] shadow-sm" style={{ paddingTop: '56.25%' }}>
                                 <iframe
                                     className="absolute top-0 left-0 w-full h-full"
                                     src={youtubeUrl}
@@ -580,13 +580,21 @@
                         )}
                     </div>
 
-                    <div className="bg-white p-5 md:p-7 rounded-[1.5rem] shadow-sm border border-navy-100/60 hover:shadow-md transition-shadow mb-5 md:mb-8">
-                        <div className="flex items-center space-x-2 mb-4">
+                    <div className="mb-6 md:mb-10">
+                        <div className="flex items-center space-x-2 mb-4 px-1">
                             <Icon name="Headphones" className="w-[1.15rem] h-[1.15rem] text-gold-500" />
                             <h3 className="font-bold text-[1.15rem] text-navy-900">Podcast Kita</h3>
                         </div>
-                        <div className="w-full flex justify-center">
-                            <iframe data-testid="embed-iframe" style={{ borderRadius: '1rem' }} src="https://open.spotify.com/embed/show/6PcT9H7ksbbJjsnl1qUfKB/video?utm_source=generator" width="100%" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        <div className="relative w-full overflow-hidden rounded-[1.25rem] md:rounded-[1.5rem] shadow-sm" style={{ paddingTop: '56.25%' }}>
+                            <iframe 
+                                className="absolute top-0 left-0 w-full h-full" 
+                                data-testid="embed-iframe" 
+                                src="https://open.spotify.com/embed/show/6PcT9H7ksbbJjsnl1qUfKB/video?utm_source=generator" 
+                                frameBorder="0" 
+                                allowFullScreen="" 
+                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                                loading="lazy">
+                            </iframe>
                         </div>
                     </div>
 
