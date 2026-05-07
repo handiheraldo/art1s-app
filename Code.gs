@@ -3,7 +3,7 @@
 // Menyimpan peta antara nama Tab di Sheets dengan format data di Web App
 // =========================================================================
 var SCHEDULE_CONFIGS = [
-  { sheetName: "Jadwal Rabu", key: "petugas", headers: ["Tanggal", "Pemimpin Acara", "Renungan", "Doa Syafaat", "Diakon"] },
+  { sheetName: "Jadwal Rabu", key: "petugas", headers: ["Tanggal", "Pianis", "Pemimpin Acara", "Renungan", "Doa Syafaat", "Diakon"] },
   { sheetName: "Jadwal SS", key: "sekolahSabat", headers: ["Tanggal", "Pianist", "Pembawa Acara", "Ayat Inti & Doa Buka", "Berita Misi", "Pelayanan Perorangan"] },
   { sheetName: "Jadwal Khotbah", key: "khotbah", headers: ["Tanggal", "Khotbah", "Pendamping 1", "Pendamping 2", "Cerita Anak-anak", "Song Leader", "Lagu Pujian"] },
   { sheetName: "Jadwal Diakon", key: "diakon", headers: ["Tanggal", "Diakon 1", "Diakon 2", "Diakones 1", "Diakones 2"] },
