@@ -2568,15 +2568,14 @@
                         {renderContent()}
                     </main>
 
-                    <nav className="fixed bottom-5 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-lg bg-white/90 backdrop-blur-xl border border-navy-100/50 rounded-3xl pb-safe z-50 shadow-[0_8px_30px_rgb(11,26,48,0.08)]">
-                        <div className="flex justify-around items-center p-2">
+                    <nav className="fixed bottom-0 w-full bg-white/95 backdrop-blur-xl border-t border-navy-100/50 pb-safe z-50 shadow-[0_-8px_30px_rgb(11,26,48,0.04)]">
+                        <div className="flex justify-around items-center p-2 max-w-lg mx-auto">
                             {tabs.map(tab => {
                                 const isActive = activeTab.startsWith(tab.id);
                                 return (
-                                    <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`relative flex flex-col items-center flex-1 py-[10px] px-1 transition-all duration-300 rounded-[1.25rem] ${isActive ? 'text-navy-900 bg-gold-400/10' : 'text-navy-400 hover:text-navy-600'}`}>
-                                        <Icon name={tab.icon} className={`w-[1.4rem] h-[1.4rem] mb-1.5 transition-all duration-300 ${isActive ? 'text-gold-500 stroke-[2.5px] -translate-y-0.5' : 'stroke-[2px]'}`} />
+                                    <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`relative flex flex-col items-center flex-1 py-2.5 px-1 mx-1 transition-all duration-300 rounded-xl ${isActive ? 'text-white bg-navy-900 shadow-md scale-105' : 'text-navy-400 hover:text-navy-600 hover:bg-navy-50/50'}`}>
+                                        <Icon name={tab.icon} className={`w-5 h-5 mb-1 transition-all duration-300 ${isActive ? 'stroke-[2.5px]' : 'stroke-[2px]'}`} />
                                         <span className={`text-[10px] font-bold tracking-wide transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-70'}`}>{tab.label}</span>
-                                        {isActive && <div className="absolute -bottom-0 w-1 h-1 rounded-full bg-gold-500"></div>}
                                     </button>
                                 );
                             })}
