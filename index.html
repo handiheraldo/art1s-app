@@ -704,7 +704,7 @@
                                             {renderItem("Lagu Pengantar", "LS 515 - Tuhan Ada Dalam Bait Allah")}
                                             {renderItem("Lagu Sambutan", "LS 1 - Di Hadapan Hadirat-Mu")}
                                             {renderItem("Doa Buka", getOfficer(activeSabat.khotbah, "Khotbah"))}
-                                            {renderItem("Ayat Bersahutan", susunan.kAyatBersahutan)}
+                                            {renderItem("Ayat Bersahutan", getOfficer(activeSabat.khotbah, "Pendamping 1") + " - " + susunan.kAyatBersahutan)}
                                             {renderItem("Lagu Buka", susunan.kLaguBuka)}
                                             {renderItem("Doa Syafaat", getOfficer(activeSabat.khotbah, "Pendamping 1"))}
                                             {susunan.kLaguPujian1_show && renderItem("Lagu Pujian", susunan.kLaguPujian1_judul, true)}
