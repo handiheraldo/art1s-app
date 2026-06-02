@@ -358,7 +358,7 @@
         );
 
         // --- COMPONENTS ---
-        const Home = ({ setActiveTab, youtubeUrl, heroImageUrl, jadwalDB, dataPejabat, isLoading }) => {
+        const Home = ({ setActiveTab, youtubeUrl, isLiveYoutube, youtubeTitle, heroImageUrl, jadwalDB, dataPejabat, isLoading }) => {
             const [searchQuery, setSearchQuery] = React.useState('');
 
             // Listen for search events from the mobile header
@@ -571,21 +571,36 @@
                     </div>
 
                     <div className="mb-6 md:mb-10">
-                        <h2 className="text-[1.15rem] font-bold mb-4 text-navy-900 flex items-center px-1">
-                            <Icon name="Video" className="w-[1.15rem] h-[1.15rem] mr-2 text-gold-500" /> Video Terbaru
-                        </h2>
+                        <div className="flex items-center justify-between mb-4 px-1 flex-wrap gap-2">
+                            <h2 className="text-[1.15rem] font-bold text-navy-900 flex items-center">
+                                <Icon name="Video" className="w-[1.15rem] h-[1.15rem] mr-2 text-gold-500" />
+                                {isLiveYoutube ? "Sedang Siaran Langsung" : "Video Terbaru"}
+                            </h2>
+                            {isLiveYoutube && (
+                                <span className="flex items-center bg-red-500 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider animate-pulse shadow-sm">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-white mr-1.5"></span> LIVE NOW
+                                </span>
+                            )}
+                        </div>
                         {isLoading ? (
                             <div className="relative w-full overflow-hidden rounded-[1.25rem] md:rounded-[1.5rem] bg-navy-200 animate-pulse" style={{ paddingTop: '56.25%' }}></div>
                         ) : (
-                            <div className="relative w-full overflow-hidden rounded-[1.25rem] md:rounded-[1.5rem] shadow-sm" style={{ paddingTop: '56.25%' }}>
-                                <iframe
-                                    className="absolute top-0 left-0 w-full h-full"
-                                    src={youtubeUrl}
-                                    title="YouTube video player"
-                                    frameBorder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen>
-                                </iframe>
+                            <div className="space-y-3">
+                                <div className="relative w-full overflow-hidden rounded-[1.25rem] md:rounded-[1.5rem] shadow-sm" style={{ paddingTop: '56.25%' }}>
+                                    <iframe
+                                        className="absolute top-0 left-0 w-full h-full"
+                                        src={youtubeUrl}
+                                        title="YouTube video player"
+                                        frameBorder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen>
+                                    </iframe>
+                                </div>
+                                {youtubeTitle && (
+                                    <p className="text-xs font-bold text-navy-700 px-1 leading-snug">
+                                        {isLiveYoutube ? "🔴 " : ""} {youtubeTitle}
+                                    </p>
+                                )}
                             </div>
                         )}
                     </div>
@@ -1004,7 +1019,7 @@
             </div>
         );
 
-        const Live = ({ setActiveTab, activeRabu, activeSabat, rabuYMD, sabatYMD, showPerjamuan, perjamuanYMD, activePerjamuan, youtubeUrl, isLoading }) => {
+        const Live = ({ setActiveTab, activeRabu, activeSabat, rabuYMD, sabatYMD, showPerjamuan, perjamuanYMD, activePerjamuan, youtubeUrl, isLiveYoutube, youtubeTitle, isLoading }) => {
             const today = new Date();
             const todayDay = today.getDay();
 
@@ -1029,8 +1044,14 @@
                                 <iframe className="absolute top-0 left-0 w-full h-full" src={youtubeUrl} title="YouTube Live Stream" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
                             </div>
                         )}
-                        <div className="pt-4 pb-2 px-2 text-white flex justify-center w-full">
-                            <div className="font-bold text-sm tracking-widest flex items-center bg-gold-400/20 px-5 py-2.5 rounded-full border border-gold-400/30 text-gold-400 uppercase"><span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse mr-2.5"></span> Live Streaming ART1STV</div>
+                        <div className="pt-4 pb-2 px-3 text-white flex flex-col items-center w-full gap-2 text-center">
+                            <div className={`font-bold text-xs tracking-widest flex items-center px-5 py-2.5 rounded-full border uppercase ${isLiveYoutube ? 'bg-red-500/20 border-red-500/30 text-red-400' : 'bg-gold-400/20 border-gold-400/30 text-gold-400'}`}>
+                                <span className={`w-2.5 h-2.5 rounded-full mr-2.5 ${isLiveYoutube ? 'bg-red-500 animate-pulse' : 'bg-gray-400'}`}></span>
+                                {isLiveYoutube ? '🔴 SEDANG LIVE STREAMING' : 'SIARAN ULANG / VIDEO TERBARU'}
+                            </div>
+                            {youtubeTitle && (
+                                <p className="text-navy-100 text-xs font-bold mt-1 px-4 max-w-lg leading-relaxed">{youtubeTitle}</p>
+                            )}
                         </div>
                     </div>
 
@@ -1435,7 +1456,7 @@
             );
         };
 
-        const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, adminToken, setAdminToken, youtubeUrl, setYoutubeUrl, kategoriPejabat, setKategoriPejabat, heroImageUrl, setHeroImageUrl }) => {
+        const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, adminToken, setAdminToken, youtubeUrl, setYoutubeUrl, autoDetectYoutube, setAutoDetectYoutube, youtubeTitle, isLiveYoutube, kategoriPejabat, setKategoriPejabat, heroImageUrl, setHeroImageUrl }) => {
             const [adminTab, setAdminTab] = React.useState('jadwal'); // jadwal, pelayan, pengaturan
             const [viewMonth, setViewMonth] = React.useState(new Date().getMonth());
             const [viewYear, setViewYear] = React.useState(new Date().getFullYear());
@@ -1454,7 +1475,16 @@
 
             // State URL YouTube
             const [editYoutubeUrl, setEditYoutubeUrl] = React.useState(youtubeUrl);
+            const [editAutoDetect, setEditAutoDetect] = React.useState(autoDetectYoutube);
             const [isSavingUrl, setIsSavingUrl] = React.useState(false);
+
+            React.useEffect(() => {
+                setEditAutoDetect(autoDetectYoutube);
+            }, [autoDetectYoutube]);
+
+            React.useEffect(() => {
+                setEditYoutubeUrl(youtubeUrl);
+            }, [youtubeUrl]);
 
             // State Hero Image
             const [editHeroUrl, setEditHeroUrl] = React.useState(heroImageUrl);
@@ -1683,21 +1713,22 @@
                 setIsChangingPass(false);
             };
 
-            // SIMPAN YOUTUBE URL
-            const handleSaveYoutubeUrl = async (e) => {
+            // SIMPAN YOUTUBE URL & DETEKSI OTOMATIS
+            const handleSaveYoutubeSettings = async (e) => {
                 e.preventDefault();
                 setIsSavingUrl(true);
                 try {
                     const res = await fetch(GAS_API_URL, {
                         method: 'POST',
-                        body: JSON.stringify({ action: 'saveYoutubeUrl', password: adminToken, url: editYoutubeUrl })
+                        body: JSON.stringify({ action: 'saveYoutubeSettings', password: adminToken, url: editYoutubeUrl, autoDetect: editAutoDetect })
                     });
                     const result = await res.json();
                     if (result.success) {
-                        alert("URL YouTube berhasil diperbarui!");
+                        alert("Pengaturan YouTube berhasil diperbarui!");
                         setYoutubeUrl(editYoutubeUrl);
+                        setAutoDetectYoutube(editAutoDetect);
                     } else {
-                        alert("Gagal merubah URL: " + (result.message || "Akses ditolak."));
+                        alert("Gagal merubah pengaturan: " + (result.message || "Akses ditolak."));
                     }
                 } catch (err) {
                     alert("Gagal terhubung ke server.");
@@ -2083,16 +2114,48 @@
                                     <div className="bg-white border border-navy-100/60 rounded-[1.5rem] p-6 shadow-sm">
                                         <div className="flex items-center space-x-4 mb-6 border-b border-navy-50 pb-5">
                                             <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center text-red-500 shadow-inner"><Icon name="Video" className="w-6 h-6" /></div>
-                                            <div><h3 className="font-black text-navy-900 text-lg tracking-tight">URL YouTube Embed</h3><p className="text-xs text-navy-500 font-bold uppercase tracking-widest mt-1">Live Streaming Acara</p></div>
+                                            <div><h3 className="font-black text-navy-900 text-lg tracking-tight">Pengaturan YouTube</h3><p className="text-xs text-navy-500 font-bold uppercase tracking-widest mt-1">Live Streaming & Video</p></div>
                                         </div>
-                                        <form onSubmit={handleSaveYoutubeUrl} className="space-y-5">
-                                            <div>
-                                                <label className="block text-xs font-bold text-navy-700 mb-2 uppercase tracking-widest">Tautan Video Embed</label>
-                                                <textarea value={editYoutubeUrl} onChange={e => setEditYoutubeUrl(e.target.value)} required rows="3" className="w-full p-3.5 border border-navy-200 rounded-xl focus:border-gold-500 outline-none transition-colors bg-navy-50/50 text-sm font-mono font-medium shadow-sm leading-relaxed"></textarea>
-                                                <p className="text-[10px] text-navy-500 mt-2 font-bold leading-relaxed bg-navy-50 p-2.5 rounded-lg border border-navy-100">Pastikan URL diawali dengan <br /><span className="text-gold-600">https://www.youtube.com/embed/</span>... atau <br /><span className="text-gold-600">https://www.youtube-nocookie.com/embed/</span>...</p>
+                                        <form onSubmit={handleSaveYoutubeSettings} className="space-y-5">
+                                            {/* Toggle Auto Detect */}
+                                            <div className="flex items-center justify-between p-3.5 bg-navy-50/50 border border-navy-100 rounded-xl">
+                                                <div className="pr-4">
+                                                    <span className="block text-sm font-bold text-navy-900">Deteksi Otomatis Channel</span>
+                                                    <span className="block text-[11px] text-navy-500 mt-0.5">Otomatis deteksi siaran langsung atau video terbaru dari @art1stv</span>
+                                                </div>
+                                                <label className="relative inline-flex items-center cursor-pointer">
+                                                    <input type="checkbox" checked={editAutoDetect} onChange={e => setEditAutoDetect(e.target.checked)} className="sr-only peer" />
+                                                    <div className="w-11 h-6 bg-navy-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-navy-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold-500"></div>
+                                                </label>
                                             </div>
+
+                                            {editAutoDetect ? (
+                                                <div className="p-4 rounded-xl bg-gold-50/50 border border-gold-200 space-y-2">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-[10px] uppercase tracking-widest font-bold text-gold-600">Status Terdeteksi</span>
+                                                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${isLiveYoutube ? 'bg-red-500 text-white animate-pulse' : 'bg-navy-100 text-navy-700'}`}>
+                                                            {isLiveYoutube ? '🔴 SEDANG LIVE' : 'REKAMAN / OFFLINE'}
+                                                        </span>
+                                                    </div>
+                                                    <div className="text-sm font-bold text-navy-900 leading-snug">
+                                                        {youtubeTitle || "Tidak dapat membaca judul"}
+                                                    </div>
+                                                    <div className="text-[10px] font-mono text-navy-500 truncate mt-1">
+                                                        {youtubeUrl}
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="space-y-4">
+                                                    <div>
+                                                        <label className="block text-xs font-bold text-navy-700 mb-2 uppercase tracking-widest">Tautan Video Embed Manual</label>
+                                                        <textarea value={editYoutubeUrl} onChange={e => setEditYoutubeUrl(e.target.value)} required rows="3" className="w-full p-3.5 border border-navy-200 rounded-xl focus:border-gold-500 outline-none transition-colors bg-navy-50/50 text-sm font-mono font-medium shadow-sm leading-relaxed"></textarea>
+                                                        <p className="text-[10px] text-navy-500 mt-2 font-bold leading-relaxed bg-navy-50 p-2.5 rounded-lg border border-navy-100">Pastikan URL diawali dengan <br /><span className="text-gold-600">https://www.youtube.com/embed/</span>... atau <br /><span className="text-gold-600">https://www.youtube-nocookie.com/embed/</span>...</p>
+                                                    </div>
+                                                </div>
+                                            )}
+
                                             <button type="submit" disabled={isSavingUrl} className={`w-full ${isSavingUrl ? 'bg-navy-300 text-navy-500 cursor-not-allowed' : 'bg-navy-900 hover:bg-navy-800 text-gold-400 shadow-md hover:shadow-lg'} font-bold py-3.5 rounded-xl transition-all mt-6 flex justify-center items-center`}>
-                                                {isSavingUrl ? <><span className="w-4 h-4 border-2 border-navy-500 border-t-white rounded-full animate-spin mr-2"></span> Menyimpan...</> : 'Simpan URL Baru'}
+                                                {isSavingUrl ? <><span className="w-4 h-4 border-2 border-navy-500 border-t-white rounded-full animate-spin mr-2"></span> Menyimpan...</> : 'Simpan Pengaturan'}
                                             </button>
                                         </form>
                                     </div>
@@ -2401,7 +2464,10 @@
             const [jadwalDB, setJadwalDB] = React.useState({});
             const [dataPejabat, setDataPejabat] = React.useState(initialDataPejabat);
             const [kategoriPejabat, setKategoriPejabat] = React.useState(["Kepemimpinan", "Keuangan", "Departemen & Pelayanan", "Lainnya"]);
-            const [youtubeUrl, setYoutubeUrl] = React.useState("https://www.youtube-nocookie.com/embed?listType=playlist&list=UUz6rQ_5zP0Y0c8V7aKx2jLQ");
+            const [youtubeUrl, setYoutubeUrl] = React.useState("https://www.youtube-nocookie.com/embed?listType=playlist&list=UUNwVpE7CqpcKVcaUnZhUWTQ");
+            const [isLiveYoutube, setIsLiveYoutube] = React.useState(false);
+            const [youtubeTitle, setYoutubeTitle] = React.useState("");
+            const [autoDetectYoutube, setAutoDetectYoutube] = React.useState(true);
             const [heroImageUrl, setHeroImageUrl] = React.useState("./hero-default.jpg");
 
             // Token Admin (berisi password valid setelah login)
@@ -2459,9 +2525,7 @@
 
             const jadwalKhususRabu = jadwalDB[displayRabuYMD] || initialJadwalRabu;
             const jadwalKhususSabat = jadwalDB[displaySabatYMD] || initialJadwalSabat;
-            // ----------------------------------------------------------------------
-
-            // MENGAMBIL DATA DARI REST API GOOGLE APPS SCRIPT
+            // ------------------------------             // MENGAMBIL DATA DARI REST API GOOGLE APPS SCRIPT
             React.useEffect(() => {
                 fetch(`${GAS_API_URL}?action=getData`)
                     .then(response => {
@@ -2474,6 +2538,9 @@
                         if (data.dataPejabat) setDataPejabat(data.dataPejabat);
                         if (data.jadwalDB) setJadwalDB(data.jadwalDB);
                         if (data.youtubeUrl) setYoutubeUrl(data.youtubeUrl);
+                        if (data.isLiveYoutube !== undefined) setIsLiveYoutube(data.isLiveYoutube);
+                        if (data.youtubeTitle !== undefined) setYoutubeTitle(data.youtubeTitle);
+                        if (data.autoDetectYoutube !== undefined) setAutoDetectYoutube(data.autoDetectYoutube);
                         if (data.kategoriPejabat) setKategoriPejabat(data.kategoriPejabat);
                         if (data.heroImageUrl) setHeroImageUrl(data.heroImageUrl);
                         setIsAppLoading(false);
@@ -2508,12 +2575,12 @@
 
             const renderContent = () => {
                 switch (activeTab) {
-                    case 'home': return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
+                    case 'home': return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'belajar': return <Belajar setActiveTab={setActiveTab} />;
                     case 'belajar_alkitab': return <DetailAlkitab setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'belajar_28dasar': return <Detail28Dasar setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'belajar_egw': return <DetailEGW setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
-                    case 'live': return <Live setActiveTab={setActiveTab} activeRabu={activeRabu} activeSabat={activeSabat} rabuYMD={rabuYMD} sabatYMD={sabatYMD} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} activePerjamuan={activePerjamuan} youtubeUrl={youtubeUrl} isLoading={isAppLoading} />;
+                    case 'live': return <Live setActiveTab={setActiveTab} activeRabu={activeRabu} activeSabat={activeSabat} rabuYMD={rabuYMD} sabatYMD={sabatYMD} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} activePerjamuan={activePerjamuan} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} isLoading={isAppLoading} />;
                     case 'jadwal': return <Jadwal activeRabu={jadwalKhususRabu} activeSabat={jadwalKhususSabat} rabuYMD={displayRabuYMD} sabatYMD={displaySabatYMD} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} activePerjamuan={activePerjamuan} isLoading={isAppLoading} />;
                     case 'persembahan': return <Persembahan dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'keanggotaan': return <Keanggotaan setActiveTab={setActiveTab} />;
@@ -2522,9 +2589,9 @@
                     case 'hubungi': return <Hubungi setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'form_acms': return <FormACMS setActiveTab={setActiveTab} />;
                     case 'susunan_ibadah': return <SusunanIbadah setActiveTab={setActiveTab} activeSabat={activeSabat} sabatYMD={sabatYMD} isLoading={isAppLoading} />;
-                    case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} heroImageUrl={heroImageUrl} setHeroImageUrl={setHeroImageUrl} /> : <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
+                    case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} autoDetectYoutube={autoDetectYoutube} setAutoDetectYoutube={setAutoDetectYoutube} youtubeTitle={youtubeTitle} isLiveYoutube={isLiveYoutube} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} heroImageUrl={heroImageUrl} setHeroImageUrl={setHeroImageUrl} /> : <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'search': return <Search setActiveTab={setActiveTab} jadwalDB={jadwalDB} rabuYMD={rabuYMD} sabatYMD={sabatYMD} tabs={tabs} dataPejabat={dataPejabat} />;
-                    default: return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
+                    default: return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                 }
             };
 

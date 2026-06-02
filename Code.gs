@@ -33,9 +33,22 @@ function checkAndInitSheets() {
     sPengaturan.appendRow(["Konfigurasi", "Nilai"]);
     sPengaturan.appendRow(["PASSWORD", "admin"]);
     sPengaturan.appendRow(["YOUTUBE_URL", "https://www.youtube-nocookie.com/embed?listType=playlist&list=UUz6rQ_5zP0Y0c8V7aKx2jLQ"]);
+    sPengaturan.appendRow(["AUTO_DETECT_YOUTUBE", "YA"]);
     sPengaturan.getRange("A1:B1").setFontWeight("bold");
     sPengaturan.setColumnWidth(1, 150);
     sPengaturan.setColumnWidth(2, 400);
+  } else {
+    var data = sPengaturan.getDataRange().getValues();
+    var hasAutoDetect = false;
+    for (var i = 0; i < data.length; i++) {
+      if (data[i][0] === "AUTO_DETECT_YOUTUBE") {
+        hasAutoDetect = true;
+        break;
+      }
+    }
+    if (!hasAutoDetect) {
+      sPengaturan.appendRow(["AUTO_DETECT_YOUTUBE", "YA"]);
+    }
   }
   
   // 2. Sheet Pejabat
@@ -81,6 +94,103 @@ function checkAndInitSheets() {
 }
 
 // =========================================================================
+// MENDETEKSI LIVE STREAM ATAU VIDEO TERBARU SECARA OTOMATIS
+// =========================================================================
+function getLatestYoutubeVideo() {
+  var cache = CacheService.getScriptCache();
+  var cached = cache.get("latest_youtube_video_data");
+  if (cached) {
+    try {
+      return JSON.parse(cached);
+    } catch (e) {}
+  }
+
+  var fallbackData = {
+    videoId: "kdBIXxl3pfM",
+    title: "Live Streaming ART1STV",
+    isLive: false,
+    url: "https://www.youtube.com/embed/kdBIXxl3pfM"
+  };
+
+  try {
+    var channelUrl = "https://www.youtube.com/@art1stv/live";
+    var response = UrlFetchApp.fetch(channelUrl, {
+      muteHttpExceptions: true,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+      }
+    });
+
+    if (response.getResponseCode() !== 200) {
+      return fallbackData;
+    }
+
+    var html = response.getContentText();
+    var startText = "ytInitialData = ";
+    var startIndex = html.indexOf(startText);
+    if (startIndex !== -1) {
+      var start = startIndex + startText.length;
+      var end = html.indexOf(";</script>", start);
+      if (end === -1) {
+        end = html.indexOf(";\n", start);
+      }
+      if (end !== -1) {
+        var jsonStr = html.substring(start, end);
+        var data = JSON.parse(jsonStr);
+        
+        var videos = [];
+        function findLockups(obj) {
+          if (!obj || typeof obj !== 'object') return;
+          if (obj.lockupViewModel) {
+            videos.push(obj.lockupViewModel);
+          }
+          for (var key in obj) {
+            if (obj.hasOwnProperty(key)) {
+              findLockups(obj[key]);
+            }
+          }
+        }
+        findLockups(data);
+        
+        if (videos.length > 0) {
+          var firstVideo = videos[0];
+          var videoId = firstVideo.contentId;
+          var title = firstVideo.metadata && firstVideo.metadata.lockupMetadataViewModel && firstVideo.metadata.lockupMetadataViewModel.title && firstVideo.metadata.lockupMetadataViewModel.title.content || "";
+          
+          var isLive = false;
+          var overlays = firstVideo.contentImage && firstVideo.contentImage.thumbnailViewModel && firstVideo.contentImage.thumbnailViewModel.overlays;
+          if (overlays && Array.isArray(overlays)) {
+            for (var i = 0; i < overlays.length; i++) {
+              var badge = overlays[i].thumbnailBottomOverlayViewModel && overlays[i].thumbnailBottomOverlayViewModel.badges && overlays[i].thumbnailBottomOverlayViewModel.badges[0] && overlays[i].thumbnailBottomOverlayViewModel.badges[0].thumbnailBadgeViewModel;
+              if (badge) {
+                if (badge.badgeStyle === 'THUMBNAIL_OVERLAY_BADGE_STYLE_LIVE') {
+                  isLive = true;
+                }
+              }
+            }
+          }
+          
+          var result = {
+            videoId: videoId,
+            title: title,
+            isLive: isLive,
+            url: "https://www.youtube.com/embed/" + videoId
+          };
+          
+          // Cache the result for 5 minutes (300 seconds)
+          cache.put("latest_youtube_video_data", JSON.stringify(result), 300);
+          return result;
+        }
+      }
+    }
+  } catch (err) {
+    Logger.log("Error in getLatestYoutubeVideo: " + err.toString());
+  }
+
+  return fallbackData;
+}
+
+// =========================================================================
 // MENGAMBIL DATA: Membaca tabel dan mengubahnya jadi objek JSON ke Web
 // =========================================================================
 function doGet(e) {
@@ -92,15 +202,27 @@ function doGet(e) {
   var youtubeUrl = "https://www.youtube-nocookie.com/embed?listType=playlist&list=UUz6rQ_5zP0Y0c8V7aKx2jLQ";
   var heroImageUrl = "";
   var kategoriPejabat = ["Kepemimpinan", "Keuangan", "Departemen & Pelayanan", "Lainnya"];
+  var autoDetectYoutube = true;
   
   for (var i = 1; i < pengData.length; i++) {
     if (pengData[i][0] === "YOUTUBE_URL") youtubeUrl = pengData[i][1].toString();
     if (pengData[i][0] === "HERO_IMAGE_URL") heroImageUrl = pengData[i][1].toString();
+    if (pengData[i][0] === "AUTO_DETECT_YOUTUBE") autoDetectYoutube = pengData[i][1].toString() === "YA";
     if (pengData[i][0] === "KATEGORI_PEJABAT") {
       try {
         kategoriPejabat = JSON.parse(pengData[i][1].toString());
       } catch (e) {}
     }
+  }
+
+  var isLiveYoutube = false;
+  var youtubeTitle = "";
+  
+  if (autoDetectYoutube) {
+    var ytData = getLatestYoutubeVideo();
+    youtubeUrl = ytData.url;
+    isLiveYoutube = ytData.isLive;
+    youtubeTitle = ytData.title;
   }
   
   // --- Baca Data Pejabat ---
@@ -199,6 +321,9 @@ function doGet(e) {
     dataPejabat: dataPejabat,
     jadwalDB: jadwalDB,
     youtubeUrl: youtubeUrl,
+    isLiveYoutube: isLiveYoutube,
+    youtubeTitle: youtubeTitle,
+    autoDetectYoutube: autoDetectYoutube,
     heroImageUrl: heroImageUrl,
     kategoriPejabat: kategoriPejabat
   })).setMimeType(ContentService.MimeType.JSON);
@@ -234,20 +359,38 @@ function doPost(e) {
     }
   }
 
-  // --- Aksi: Simpan URL YouTube ---
-  if (action === "saveYoutubeUrl") {
+  // --- Aksi: Simpan URL/Pengaturan YouTube ---
+  if (action === "saveYoutubeUrl" || action === "saveYoutubeSettings") {
     if (payload.password !== currentPassword) { return ContentService.createTextOutput(JSON.stringify({success: false, message: "Akses Ditolak"})).setMimeType(ContentService.MimeType.JSON); }
     
     var pengData = sPengaturan.getDataRange().getValues();
-    var found = false;
-    for (var i = 1; i < pengData.length; i++) {
-      if (pengData[i][0] === "YOUTUBE_URL") {
-        sPengaturan.getRange(i + 1, 2).setValue(payload.url);
-        found = true;
-        break;
+    
+    // Simpan YOUTUBE_URL jika diberikan
+    if (payload.url !== undefined) {
+      var foundUrl = false;
+      for (var i = 1; i < pengData.length; i++) {
+        if (pengData[i][0] === "YOUTUBE_URL") {
+          sPengaturan.getRange(i + 1, 2).setValue(payload.url);
+          foundUrl = true;
+          break;
+        }
       }
+      if (!foundUrl) { sPengaturan.appendRow(["YOUTUBE_URL", payload.url]); }
     }
-    if (!found) { sPengaturan.appendRow(["YOUTUBE_URL", payload.url]); }
+    
+    // Simpan AUTO_DETECT_YOUTUBE jika diberikan
+    if (payload.autoDetect !== undefined) {
+      var val = payload.autoDetect ? "YA" : "TIDAK";
+      var foundAuto = false;
+      for (var i = 1; i < pengData.length; i++) {
+        if (pengData[i][0] === "AUTO_DETECT_YOUTUBE") {
+          sPengaturan.getRange(i + 1, 2).setValue(val);
+          foundAuto = true;
+          break;
+        }
+      }
+      if (!foundAuto) { sPengaturan.appendRow(["AUTO_DETECT_YOUTUBE", val]); }
+    }
     
     return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
   }
