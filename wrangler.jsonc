@@ -8,16 +8,9 @@
   },
   "assets": {
     "directory": ".",
-    "binding": "ASSETS",
-    "run_worker_first": true
+    "binding": "ASSETS"
   },
   "compatibility_flags": [
     "nodejs_compat"
-  ],
-  "r2_buckets": [
-    {
-      "binding": "MULTIMEDIA_BUCKET",
-      "bucket_name": "art1s-multimedia"
-    }
   ]
 }

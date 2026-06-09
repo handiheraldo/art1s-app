@@ -90,19 +90,7 @@ function checkAndInitSheets() {
   // Jika Sheet JSON lama bernama "Jadwal" masih ada, biarkan saja (jangan dihapus otomatis demi keamanan), 
   // admin bisa menghapusnya secara manual nanti di Google Sheets.
 
-  // 4. Sheet Multimedia (untuk menyimpan metadata file kiriman jemaat)
-  var sMultimedia = ss.getSheetByName("Multimedia");
-  if (!sMultimedia) {
-    sMultimedia = ss.insertSheet("Multimedia");
-    sMultimedia.appendRow(["ID", "Nama File", "Keperluan", "Ukuran", "Ukuran (Bytes)", "Tipe", "URL Download", "R2 Key", "Waktu Upload", "Kedaluwarsa", "Status"]);
-    sMultimedia.getRange("A1:K1").setFontWeight("bold").setBackground("#e0e7ff");
-    sMultimedia.setFrozenRows(1);
-    sMultimedia.setColumnWidth(1, 160);
-    sMultimedia.setColumnWidth(2, 220);
-    sMultimedia.setColumnWidth(3, 200);
-    sMultimedia.setColumnWidth(7, 300);
-    sMultimedia.setColumnWidth(8, 260);
-  }
+
   
   return ss;
 }
@@ -331,38 +319,6 @@ function doGet(e) {
     }
   }
   
-  // --- Baca Data Multimedia Files ---
-  var sMultimedia = ss.getSheetByName("Multimedia");
-  var multimediaFiles = [];
-  var multimediaNewCount = 0;
-  if (sMultimedia && sMultimedia.getLastRow() > 1) {
-    var mData = sMultimedia.getDataRange().getValues();
-    var now = new Date();
-    for (var i = 1; i < mData.length; i++) {
-      var row = mData[i];
-      if (!row[0]) continue; // skip empty rows
-      var status = row[10] ? row[10].toString() : "baru";
-      var fileObj = {
-        id: row[0].toString(),
-        namaFile: row[1].toString(),
-        keperluan: row[2].toString(),
-        ukuranFormatted: row[3].toString(),
-        ukuran: row[4] ? Number(row[4]) : 0,
-        mimeType: row[5].toString(),
-        downloadUrl: row[6].toString(),
-        r2Key: row[7].toString(),
-        uploadedAt: row[8] ? row[8].toString() : "",
-        expiresAt: row[9] ? row[9].toString() : "",
-        status: status,
-        rowIndex: i + 1
-      };
-      multimediaFiles.push(fileObj);
-      if (status === "baru") multimediaNewCount++;
-    }
-    // Sort newest first
-    multimediaFiles.sort(function(a, b) { return b.id.localeCompare(a.id); });
-  }
-
   return ContentService.createTextOutput(JSON.stringify({
     dataPejabat: dataPejabat,
     jadwalDB: jadwalDB,
@@ -371,9 +327,7 @@ function doGet(e) {
     youtubeTitle: youtubeTitle,
     autoDetectYoutube: autoDetectYoutube,
     heroImageUrl: heroImageUrl,
-    kategoriPejabat: kategoriPejabat,
-    multimediaFiles: multimediaFiles,
-    multimediaNewCount: multimediaNewCount
+    kategoriPejabat: kategoriPejabat
   })).setMimeType(ContentService.MimeType.JSON);
 }
 
@@ -566,62 +520,7 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
   }
   
-  // --- Aksi: Simpan Metadata File Multimedia (dipanggil oleh Cloudflare Worker) ---
-  if (action === "saveMultimediaFile") {
-    var sMultimedia = ss.getSheetByName("Multimedia");
-    if (!sMultimedia) {
-      checkAndInitSheets(); // ensure sheet exists
-      sMultimedia = ss.getSheetByName("Multimedia");
-    }
-    var fileData = payload.data;
-    var fileId = fileData.r2Key || ("" + Date.now());
-    sMultimedia.appendRow([
-      fileId,
-      fileData.originalName || "",
-      fileData.keperluan || "",
-      fileData.ukuranFormatted || "",
-      fileData.ukuran || 0,
-      fileData.mimeType || "",
-      fileData.downloadUrl || "",
-      fileData.r2Key || "",
-      fileData.uploadedAt || new Date().toISOString(),
-      fileData.expiresAt || "",
-      "baru"
-    ]);
-    return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
-  }
 
-  // --- Aksi: Update Status File Multimedia ---
-  if (action === "updateMultimediaStatus") {
-    if (payload.password !== currentPassword) { return ContentService.createTextOutput(JSON.stringify({success: false, message: "Akses Ditolak"})).setMimeType(ContentService.MimeType.JSON); }
-    var sMultimedia = ss.getSheetByName("Multimedia");
-    if (sMultimedia) {
-      var mData = sMultimedia.getDataRange().getValues();
-      for (var i = 1; i < mData.length; i++) {
-        if (mData[i][0].toString() === payload.id) {
-          sMultimedia.getRange(i + 1, 11).setValue(payload.status);
-          break;
-        }
-      }
-    }
-    return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
-  }
-
-  // --- Aksi: Hapus Record File Multimedia dari Sheet ---
-  if (action === "deleteMultimediaFile") {
-    if (payload.password !== currentPassword) { return ContentService.createTextOutput(JSON.stringify({success: false, message: "Akses Ditolak"})).setMimeType(ContentService.MimeType.JSON); }
-    var sMultimedia = ss.getSheetByName("Multimedia");
-    if (sMultimedia) {
-      var mData = sMultimedia.getDataRange().getValues();
-      for (var i = mData.length - 1; i >= 1; i--) {
-        if (mData[i][7].toString() === payload.r2Key || mData[i][0].toString() === payload.r2Key) {
-          sMultimedia.deleteRow(i + 1);
-          break;
-        }
-      }
-    }
-    return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
-  }
 
   return ContentService.createTextOutput(JSON.stringify({success: false, message: "Aksi tidak dikenali"})).setMimeType(ContentService.MimeType.JSON);
 }
