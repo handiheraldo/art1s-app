@@ -1,4 +1,4 @@
-const CACHE_NAME = 'art1s-store-v2';
+const CACHE_NAME = 'art1s-store-v3';
 const urlsToCache = [
   './',
   './index.html',
@@ -30,6 +30,11 @@ self.addEventListener('activate', (e) => {
 });
 
 self.addEventListener('fetch', (e) => {
+  // Hanya tangani request GET (bypass POST, PUT, DELETE, dll. agar langsung ke network)
+  if (e.request.method !== 'GET') {
+    return;
+  }
+
   // Bypass cache untuk API ke Google Apps Script
   if (e.request.url.includes('script.google.com')) {
     e.respondWith(fetch(e.request));

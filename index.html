@@ -2438,7 +2438,9 @@
         };
 
         // --- COMPONENT: KIRIM MULTIMEDIA ---
-        const WORKER_BASE_URL = window.location.origin; // Same origin — Worker serves the app
+        const WORKER_BASE_URL = window.location.origin.startsWith('http') && !window.location.origin.includes('localhost') && !window.location.origin.includes('127.0.0.1')
+            ? window.location.origin
+            : 'https://app.art1s.workers.dev';
 
         const KirimMultimedia = ({ setActiveTab }) => {
             const [keperluan, setKeperluan] = React.useState('');
@@ -2760,7 +2762,7 @@
                 setDeletingKey(r2Key);
                 try {
                     // Send to Cloudflare Worker (which handles deleting from R2 and then calls GAS to delete sheet record)
-                    const response = await fetch('/api/files/delete', {
+                    const response = await fetch(`${WORKER_BASE_URL}/api/files/delete`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
