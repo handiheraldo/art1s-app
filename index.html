@@ -374,7 +374,8 @@
                 { id: 'hubungi', label: 'Hubungi Kami', icon: 'Phone' },
                 { id: 'lagu_sion', label: 'Lagu Sion', icon: 'Music', isExternal: true, link: 'https://play.lagusion.org/' },
                 { id: 'susunan_ibadah', label: 'Susunan Ibadah', icon: 'List' },
-                { id: 'persembahan', label: 'Persembahan & Perpuluhan', icon: 'Gift' }
+                { id: 'persembahan', label: 'Persembahan & Perpuluhan', icon: 'Gift' },
+                { id: 'kirim_multimedia', label: 'Kirim ke Multimedia', icon: 'Upload' }
             ];
 
             const filteredItems = searchQuery.trim()
@@ -404,7 +405,8 @@
                     { id: 'belajar_28dasar', title: '28 Dasar Kepercayaan', desc: 'Doktrin gereja Masehi Advent Hari Ketujuh', icon: 'List' },
                     { id: 'belajar_egw', title: 'Ellen G. White', desc: 'Mengenal tulisan roh nubuat', icon: 'BookOpen' },
                     { id: 'sekolah_sabat', title: 'Sekolah Sabat', desc: 'Akses pelajaran harian Sekolah Sabat', icon: 'BookOpen', isExternal: true, link: 'https://sabbath-school.adventech.io/in' },
-                    { id: 'lagu_sion', title: 'Lagu Sion', desc: 'Buku nyanyian Lagu Sion online', icon: 'Music', isExternal: true, link: 'https://play.lagusion.org/' }
+                    { id: 'lagu_sion', title: 'Lagu Sion', desc: 'Buku nyanyian Lagu Sion online', icon: 'Music', isExternal: true, link: 'https://play.lagusion.org/' },
+                    { id: 'kirim_multimedia', title: 'Kirim ke Multimedia', desc: 'Kirim file foto/video/dokumen ke tim multimedia', icon: 'Upload' }
                 ];
 
                 appPages.forEach(page => {
@@ -1675,7 +1677,7 @@
             );
         };
 
-        const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, adminToken, setAdminToken, youtubeUrl, setYoutubeUrl, autoDetectYoutube, setAutoDetectYoutube, youtubeTitle, isLiveYoutube, kategoriPejabat, setKategoriPejabat, heroImageUrl, setHeroImageUrl }) => {
+        const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, adminToken, setAdminToken, youtubeUrl, setYoutubeUrl, autoDetectYoutube, setAutoDetectYoutube, youtubeTitle, isLiveYoutube, kategoriPejabat, setKategoriPejabat, heroImageUrl, setHeroImageUrl, multimediaFiles, setMultimediaFiles, multimediaNewCount, setMultimediaNewCount }) => {
             const [adminTab, setAdminTab] = React.useState('jadwal'); // jadwal, pelayan, pengaturan
             const [viewMonth, setViewMonth] = React.useState(new Date().getMonth());
             const [viewYear, setViewYear] = React.useState(new Date().getFullYear());
@@ -2048,10 +2050,18 @@
                         <div className="flex flex-col sm:flex-row border-b border-navy-50 bg-navy-50/20">
                             <button onClick={() => setAdminTab('jadwal')} className={`flex-1 py-4 font-bold text-sm md:text-base text-center transition-colors ${adminTab === 'jadwal' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Kelola Jadwal</button>
                             <button onClick={() => setAdminTab('pelayan')} className={`flex-1 py-4 font-bold text-sm md:text-base text-center transition-colors border-l sm:border-t-0 border-t border-navy-50 ${adminTab === 'pelayan' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Kelola Pejabat</button>
+                            <button onClick={() => setAdminTab('multimedia')} className={`flex-1 py-4 font-bold text-sm md:text-base text-center transition-colors border-l sm:border-t-0 border-t border-navy-50 relative ${adminTab === 'multimedia' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>
+                                Kiriman Multimedia
+                                {multimediaNewCount > 0 && (
+                                    <span className="ml-1.5 bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider animate-pulse">
+                                        {multimediaNewCount}
+                                    </span>
+                                )}
+                            </button>
                             <button onClick={() => setAdminTab('pengaturan')} className={`flex-1 py-4 font-bold text-sm md:text-base text-center transition-colors border-l sm:border-t-0 border-t border-navy-50 ${adminTab === 'pengaturan' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Pengaturan Admin</button>
                         </div>
 
-                        <div className={`p-4 md:p-6 ${adminTab === 'jadwal' ? 'bg-navy-50/30' : 'bg-white'}`}>
+                        <div className={`p-4 md:p-6 ${adminTab === 'jadwal' || adminTab === 'multimedia' ? 'bg-navy-50/30' : 'bg-white'}`}>
                             {adminTab === 'jadwal' && (
                                 <div className="animate-fade-in space-y-4">
                                     <div className="flex items-center gap-2">
@@ -2302,6 +2312,16 @@
                                 </div>
                             )}
 
+                            {adminTab === 'multimedia' && (
+                                <AdminMultimedia
+                                    multimediaFiles={multimediaFiles}
+                                    setMultimediaFiles={setMultimediaFiles}
+                                    multimediaNewCount={multimediaNewCount}
+                                    setMultimediaNewCount={setMultimediaNewCount}
+                                    adminToken={adminToken}
+                                />
+                            )}
+
                             {adminTab === 'pengaturan' && (
                                 <div className="max-w-md mx-auto animate-fade-in space-y-6">
                                     <div className="bg-white border border-navy-100/60 rounded-[1.5rem] p-6 shadow-sm">
@@ -2417,6 +2437,470 @@
             );
         };
 
+        // --- COMPONENT: KIRIM MULTIMEDIA ---
+        const WORKER_BASE_URL = window.location.origin; // Same origin — Worker serves the app
+
+        const KirimMultimedia = ({ setActiveTab }) => {
+            const [keperluan, setKeperluan] = React.useState('');
+            const [file, setFile] = React.useState(null);
+            const [isDragging, setIsDragging] = React.useState(false);
+            const [uploadProgress, setUploadProgress] = React.useState(0);
+            const [uploadState, setUploadState] = React.useState('idle'); // idle | uploading | success | error
+            const [errorMsg, setErrorMsg] = React.useState('');
+            const fileInputRef = React.useRef(null);
+
+            const MAX_SIZE = 100 * 1024 * 1024; // 100MB
+            const ALLOWED_EXT = ['.jpg','.jpeg','.png','.gif','.webp','.svg','.bmp',
+                                  '.mp4','.mov','.avi','.mkv','.webm','.mpg',
+                                  '.mp3','.wav','.m4a','.aac','.ogg','.flac',
+                                  '.pdf','.doc','.docx','.xls','.xlsx','.ppt','.pptx','.txt','.zip'];
+
+            const formatBytes = (bytes) => {
+                if (bytes < 1024) return bytes + ' B';
+                if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+                return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+            };
+
+            const getFileIcon = (filename) => {
+                const ext = (filename.split('.').pop() || '').toLowerCase();
+                if (['jpg','jpeg','png','gif','webp','svg','bmp'].includes(ext)) return 'Image';
+                if (['mp4','mov','avi','mkv','webm','mpg'].includes(ext)) return 'Video';
+                if (['mp3','wav','m4a','aac','ogg','flac'].includes(ext)) return 'Headphones';
+                return 'Download';
+            };
+
+            const validateFile = (f) => {
+                const ext = '.' + (f.name.split('.').pop() || '').toLowerCase();
+                if (!ALLOWED_EXT.includes(ext)) {
+                    return 'Tipe file tidak diizinkan. Gunakan gambar, video, dokumen, atau audio.';
+                }
+                if (f.size > MAX_SIZE) {
+                    return `File terlalu besar. Maksimum 100 MB (ukuran file: ${formatBytes(f.size)}).`;
+                }
+                return null;
+            };
+
+            const handleFileSelect = (selectedFile) => {
+                if (!selectedFile) return;
+                const err = validateFile(selectedFile);
+                if (err) { setErrorMsg(err); setFile(null); setUploadState('error'); return; }
+                setFile(selectedFile);
+                setUploadState('idle');
+                setErrorMsg('');
+            };
+
+            const handleDrop = (e) => {
+                e.preventDefault();
+                setIsDragging(false);
+                const dropped = e.dataTransfer.files[0];
+                if (dropped) handleFileSelect(dropped);
+            };
+
+            const handleSubmit = () => {
+                if (!file) { setErrorMsg('Pilih file terlebih dahulu.'); setUploadState('error'); return; }
+                setUploadState('uploading');
+                setUploadProgress(0);
+                setErrorMsg('');
+
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('keperluan', keperluan);
+
+                const xhr = new XMLHttpRequest();
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        setUploadProgress(Math.round((e.loaded / e.total) * 100));
+                    }
+                });
+                xhr.addEventListener('load', () => {
+                    if (xhr.status === 200) {
+                        try {
+                            const res = JSON.parse(xhr.responseText);
+                            if (res.success) {
+                                setUploadState('success');
+                                setFile(null);
+                                setKeperluan('');
+                                setUploadProgress(100);
+                                return;
+                            }
+                            setErrorMsg(res.message || 'Upload gagal. Coba lagi.');
+                        } catch (e) {
+                            setErrorMsg('Respons server tidak valid.');
+                        }
+                    } else {
+                        setErrorMsg(`Upload gagal (${xhr.status}). Coba lagi.`);
+                    }
+                    setUploadState('error');
+                });
+                xhr.addEventListener('error', () => {
+                    setErrorMsg('Koneksi gagal. Periksa internet Anda dan coba lagi.');
+                    setUploadState('error');
+                });
+                xhr.open('POST', `${WORKER_BASE_URL}/api/upload`);
+                xhr.send(formData);
+            };
+
+            const handleReset = () => {
+                setFile(null);
+                setKeperluan('');
+                setUploadProgress(0);
+                setUploadState('idle');
+                setErrorMsg('');
+            };
+
+            const isUploading = uploadState === 'uploading';
+
+            return (
+                <div className="animate-fade-in pb-8">
+                    {/* Header */}
+                    <div className="text-center py-6">
+                        <div className="w-16 h-16 bg-navy-900 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                            <Icon name="Upload" className="w-8 h-8 text-gold-400" />
+                        </div>
+                        <h1 className="text-xl font-black text-navy-900 tracking-tight">Kirim ke Tim Multimedia</h1>
+                        <p className="text-sm text-navy-500 font-medium mt-1 px-4">File akan langsung diterima oleh tim multimedia gereja</p>
+                    </div>
+
+                    {/* Success State */}
+                    {uploadState === 'success' && (
+                        <div className="mb-6 bg-green-50 border border-green-200 rounded-[1.25rem] p-6 text-center animate-fade-in">
+                            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Icon name="Check" className="w-8 h-8 text-green-600" />
+                            </div>
+                            <h2 className="font-black text-lg text-green-800 mb-2">Berhasil Dikirim! 🎉</h2>
+                            <p className="text-sm text-green-700 font-medium leading-relaxed">
+                                File Anda sudah diterima oleh tim multimedia.<br />
+                                Mereka akan segera memprosesnya.
+                            </p>
+                            <button
+                                onClick={handleReset}
+                                className="mt-5 bg-navy-900 text-gold-400 font-bold py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-all"
+                            >
+                                Kirim File Lain
+                            </button>
+                        </div>
+                    )}
+
+                    {uploadState !== 'success' && (
+                        <div className="space-y-4">
+                            {/* Drop zone */}
+                            <div
+                                onClick={() => !isUploading && fileInputRef.current?.click()}
+                                onDragOver={(e) => { e.preventDefault(); if (!isUploading) setIsDragging(true); }}
+                                onDragLeave={() => setIsDragging(false)}
+                                onDrop={!isUploading ? handleDrop : undefined}
+                                className={`
+                                    relative border-2 border-dashed rounded-[1.25rem] p-8 text-center cursor-pointer transition-all duration-300
+                                    ${isDragging ? 'border-gold-500 bg-gold-50 scale-[1.01]' : 'border-navy-200 bg-white hover:border-navy-400 hover:bg-navy-50/30'}
+                                    ${isUploading ? 'cursor-not-allowed opacity-70' : ''}
+                                    ${file ? 'border-navy-300' : ''}
+                                `}
+                            >
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    className="hidden"
+                                    onChange={(e) => handleFileSelect(e.target.files?.[0])}
+                                    disabled={isUploading}
+                                    accept=".jpg,.jpeg,.png,.gif,.webp,.svg,.bmp,.mp4,.mov,.avi,.mkv,.webm,.mp3,.wav,.m4a,.aac,.ogg,.flac,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip"
+                                />
+
+                                {file ? (
+                                    /* File selected preview */
+                                    <div className="flex flex-col items-center">
+                                        <div className="w-14 h-14 bg-navy-100 rounded-2xl flex items-center justify-center mb-3">
+                                            <Icon name={getFileIcon(file.name)} className="w-7 h-7 text-navy-600" />
+                                        </div>
+                                        <p className="font-bold text-navy-900 text-base break-all leading-snug px-2">{file.name}</p>
+                                        <p className="text-sm text-navy-500 font-medium mt-1">{formatBytes(file.size)}</p>
+                                        {!isUploading && (
+                                            <p className="text-xs text-navy-400 mt-2">Ketuk untuk ganti file</p>
+                                        )}
+                                    </div>
+                                ) : (
+                                    /* Empty drop zone */
+                                    <div className="flex flex-col items-center py-2">
+                                        <div className="w-16 h-16 bg-navy-100 rounded-2xl flex items-center justify-center mb-4">
+                                            <Icon name="Upload" className="w-8 h-8 text-navy-400" />
+                                        </div>
+                                        <p className="font-black text-navy-800 text-lg mb-1">Pilih atau Tarik File</p>
+                                        <p className="text-sm text-navy-500 font-medium">Ketuk di sini untuk memilih file dari HP atau komputer Anda</p>
+                                        <div className="mt-4 flex flex-wrap justify-center gap-1.5">
+                                            {['JPG', 'PNG', 'MP4', 'MOV', 'MP3', 'PDF', 'PPT', 'DOCX', 'ZIP'].map(t => (
+                                                <span key={t} className="text-[10px] px-2 py-0.5 bg-navy-100 text-navy-600 rounded-md font-bold">{t}</span>
+                                            ))}
+                                        </div>
+                                        <p className="text-xs text-navy-400 mt-3 font-medium">Maksimum 100 MB</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Progress bar */}
+                            {isUploading && (
+                                <div className="bg-white rounded-[1.25rem] border border-navy-100 p-5 animate-fade-in shadow-sm">
+                                    <div className="flex justify-between items-center mb-3">
+                                        <span className="text-sm font-bold text-navy-700">Sedang mengirim...</span>
+                                        <span className="text-sm font-black text-navy-900">{uploadProgress}%</span>
+                                    </div>
+                                    <div className="w-full bg-navy-100 rounded-full h-3 overflow-hidden">
+                                        <div
+                                            className="h-full bg-gradient-to-r from-navy-700 to-gold-500 rounded-full transition-all duration-300"
+                                            style={{ width: `${uploadProgress}%` }}
+                                        />
+                                    </div>
+                                    <p className="text-xs text-navy-400 font-medium mt-2 text-center">Jangan tutup halaman ini</p>
+                                </div>
+                            )}
+
+                            {/* Keperluan (optional) */}
+                            {!isUploading && (
+                                <div className="bg-white rounded-[1.25rem] border border-navy-100 p-5 shadow-sm">
+                                    <label className="block text-xs font-black text-navy-600 uppercase tracking-widest mb-2">
+                                        Keterangan <span className="font-medium text-navy-400 normal-case tracking-normal">(opsional)</span>
+                                    </label>
+                                    <textarea
+                                        value={keperluan}
+                                        onChange={e => setKeperluan(e.target.value)}
+                                        placeholder="Contoh: Foto keluarga untuk ditampilkan saat ibadah ulang tahun jemaat..."
+                                        rows={3}
+                                        maxLength={300}
+                                        className="w-full p-3.5 border border-navy-200 rounded-xl text-sm text-navy-900 font-medium outline-none focus:border-gold-500 transition-colors resize-none bg-navy-50/50 placeholder-navy-300 leading-relaxed"
+                                    />
+                                    <p className="text-[11px] text-navy-400 font-medium mt-1.5 text-right">{keperluan.length}/300</p>
+                                </div>
+                            )}
+
+                            {/* Error message */}
+                            {uploadState === 'error' && errorMsg && (
+                                <div className="bg-red-50 border border-red-200 rounded-[1.25rem] p-4 flex items-start animate-fade-in">
+                                    <Icon name="Info" className="w-5 h-5 text-red-500 mr-3 mt-0.5 shrink-0" />
+                                    <p className="text-sm text-red-700 font-medium leading-relaxed">{errorMsg}</p>
+                                </div>
+                            )}
+
+                            {/* Info note */}
+                            {!isUploading && (
+                                <div className="bg-navy-50/70 rounded-[1.25rem] border border-navy-100 p-4 flex items-start">
+                                    <Icon name="Info" className="w-4 h-4 text-navy-400 mr-3 mt-0.5 shrink-0" />
+                                    <p className="text-xs text-navy-500 font-medium leading-relaxed">
+                                        File akan tersimpan selama <strong>30 hari</strong> dan hanya bisa diakses oleh tim multimedia gereja.
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Submit button */}
+                            {!isUploading && (
+                                <button
+                                    id="kirim-multimedia-submit-btn"
+                                    onClick={handleSubmit}
+                                    disabled={!file || isUploading}
+                                    className={`
+                                        w-full py-4 rounded-[1.25rem] font-black text-lg transition-all duration-300 flex items-center justify-center shadow-md
+                                        ${file
+                                            ? 'bg-navy-900 hover:bg-navy-800 text-gold-400 hover:shadow-xl hover:-translate-y-0.5 active:scale-95'
+                                            : 'bg-navy-200 text-navy-400 cursor-not-allowed'}
+                                    `}
+                                >
+                                    <Icon name="Upload" className="w-6 h-6 mr-3" />
+                                    Kirim Sekarang
+                                </button>
+                            )}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // --- COMPONENT: ADMIN MULTIMEDIA ---
+        const AdminMultimedia = ({ multimediaFiles, setMultimediaFiles, multimediaNewCount, setMultimediaNewCount, adminToken }) => {
+            const [filter, setFilter] = React.useState('semua'); // semua, baru, diproses, selesai
+            const [updatingId, setUpdatingId] = React.useState(null);
+            const [deletingKey, setDeletingKey] = React.useState(null);
+
+            const handleUpdateStatus = async (id, currentStatus) => {
+                let nextStatus = 'diproses';
+                if (currentStatus === 'baru') nextStatus = 'diproses';
+                else if (currentStatus === 'diproses') nextStatus = 'selesai';
+                else if (currentStatus === 'selesai') nextStatus = 'baru';
+
+                setUpdatingId(id);
+                try {
+                    const response = await fetch(GAS_API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            action: 'updateMultimediaStatus',
+                            password: adminToken,
+                            id: id,
+                            status: nextStatus
+                        })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        // Update local state
+                        const updatedFiles = multimediaFiles.map(f => f.id === id ? { ...f, status: nextStatus } : f);
+                        setMultimediaFiles(updatedFiles);
+                        
+                        // Recalculate badge
+                        const newCount = updatedFiles.filter(f => f.status === 'baru').length;
+                        setMultimediaNewCount(newCount);
+                    } else {
+                        alert("Gagal memperbarui status: " + (result.message || "Akses ditolak."));
+                    }
+                } catch (err) {
+                    alert("Gagal terhubung ke server.");
+                }
+                setUpdatingId(null);
+            };
+
+            const handleDeleteFile = async (r2Key) => {
+                if (!window.confirm("Apakah Anda yakin ingin menghapus berkas ini secara permanen dari Cloudflare R2 dan data Sheets?")) {
+                    return;
+                }
+
+                setDeletingKey(r2Key);
+                try {
+                    // Send to Cloudflare Worker (which handles deleting from R2 and then calls GAS to delete sheet record)
+                    const response = await fetch('/api/files/delete', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            r2Key: r2Key,
+                            password: adminToken
+                        })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        // Update local state
+                        const updatedFiles = multimediaFiles.filter(f => f.r2Key !== r2Key);
+                        setMultimediaFiles(updatedFiles);
+
+                        // Recalculate badge
+                        const newCount = updatedFiles.filter(f => f.status === 'baru').length;
+                        setMultimediaNewCount(newCount);
+                    } else {
+                        alert("Gagal menghapus file: " + (result.message || "Terjadi kesalahan."));
+                    }
+                } catch (err) {
+                    alert("Gagal terhubung ke server.");
+                }
+                setDeletingKey(null);
+            };
+
+            const filteredFiles = filter === 'semua' 
+                ? multimediaFiles 
+                : multimediaFiles.filter(f => f.status === filter);
+
+            const getStatusBadge = (status) => {
+                if (status === 'baru') return <span className="px-2.5 py-1 rounded-full text-xs font-black bg-blue-100 text-blue-800 border border-blue-200">BARU</span>;
+                if (status === 'diproses') return <span className="px-2.5 py-1 rounded-full text-xs font-black bg-yellow-100 text-yellow-800 border border-yellow-200">DIPROSES</span>;
+                return <span className="px-2.5 py-1 rounded-full text-xs font-black bg-green-100 text-green-800 border border-green-200">SELESAI</span>;
+            };
+
+            const formatBytes = (bytes) => {
+                if (bytes < 1024) return bytes + " B";
+                if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+                return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+            };
+
+            const formatDate = (dateString) => {
+                if (!dateString) return '';
+                const d = new Date(dateString);
+                if (isNaN(d.getTime())) return dateString;
+                return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' WIB';
+            };
+
+            return (
+                <div className="space-y-6 animate-fade-in bg-white p-2 md:p-4 rounded-xl">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-navy-50 pb-4 gap-4">
+                        <div>
+                            <h3 className="text-lg font-black text-navy-900">Kiriman File Multimedia</h3>
+                            <p className="text-xs text-navy-500 font-bold uppercase tracking-widest mt-0.5">Daftar file masuk dari Jemaat</p>
+                        </div>
+                        {/* Filter Buttons */}
+                        <div className="flex border border-navy-100 rounded-xl overflow-hidden shadow-sm bg-white shrink-0">
+                            {['semua', 'baru', 'diproses', 'selesai'].map(f => (
+                                <button 
+                                    key={f} 
+                                    onClick={() => setFilter(f)} 
+                                    className={`px-4 py-2 text-xs font-bold capitalize transition-colors ${filter === f ? 'bg-navy-900 text-gold-400' : 'text-navy-600 hover:bg-navy-50 hover:text-navy-900'}`}
+                                >
+                                    {f === 'semua' ? 'Semua' : f}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {filteredFiles.length === 0 ? (
+                        <div className="text-center py-16 border border-dashed border-navy-200 rounded-[1.5rem] bg-navy-50/10 text-navy-400 font-bold">
+                            <Icon name="Upload" className="w-12 h-12 mx-auto mb-3 text-navy-200" />
+                            Tidak ada berkas yang masuk dalam filter ini.
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {filteredFiles.map(file => (
+                                <div key={file.id} className="bg-white border border-navy-100 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between relative group border border-navy-100/60">
+                                    <div className="absolute top-4 right-4 flex items-center space-x-2">
+                                        {getStatusBadge(file.status)}
+                                    </div>
+                                    
+                                    <div className="space-y-4">
+                                        <div>
+                                            <p className="text-[10px] text-navy-400 font-bold uppercase tracking-wider">{formatDate(file.uploadedAt)}</p>
+                                            <h4 className="font-black text-navy-900 text-base leading-snug mt-1 break-all pr-16">{file.namaFile}</h4>
+                                            <p className="text-xs text-navy-500 font-medium mt-1">{file.ukuranFormatted || formatBytes(file.ukuran)} • {file.mimeType}</p>
+                                        </div>
+
+                                        <div className="bg-navy-50/50 p-3 rounded-xl border border-navy-100/50">
+                                            <p className="text-[10px] text-navy-400 font-black uppercase tracking-wider">Keperluan / Keterangan</p>
+                                            <p className="text-sm font-medium text-navy-800 mt-1 whitespace-pre-line leading-relaxed">
+                                                {file.keperluan ? file.keperluan : <span className="text-navy-300 italic">Tidak ada keterangan keperluan</span>}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center justify-between mt-6 pt-4 border-t border-navy-50 gap-2">
+                                        <div className="flex gap-2">
+                                            <a 
+                                                href={file.downloadUrl} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer" 
+                                                className="bg-navy-900 hover:bg-navy-800 text-gold-400 text-xs font-bold py-2.5 px-4 rounded-xl transition shadow flex items-center whitespace-nowrap"
+                                            >
+                                                <Icon name="Download" className="w-3.5 h-3.5 mr-1.5" /> Unduh
+                                            </a>
+                                            <button 
+                                                onClick={() => handleUpdateStatus(file.id, file.status)}
+                                                disabled={updatingId === file.id}
+                                                className="bg-navy-50 hover:bg-navy-100 border border-navy-100 text-navy-700 text-xs font-bold py-2.5 px-4 rounded-xl transition flex items-center"
+                                            >
+                                                {updatingId === file.id ? (
+                                                    <span className="w-3 h-3 border-2 border-navy-500 border-t-white rounded-full animate-spin mr-1"></span>
+                                                ) : null}
+                                                Status: {file.status === 'baru' ? 'Proses' : file.status === 'diproses' ? 'Selesai' : 'Baru'}
+                                            </button>
+                                        </div>
+
+                                        <button 
+                                            onClick={() => handleDeleteFile(file.r2Key)}
+                                            disabled={deletingKey === file.r2Key}
+                                            className="p-2.5 text-red-500 hover:text-white hover:bg-red-500 border border-transparent hover:border-red-600 rounded-xl transition-all shadow-sm"
+                                            title="Hapus Berkas"
+                                        >
+                                            {deletingKey === file.r2Key ? (
+                                                <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                            ) : (
+                                                <Icon name="Trash" className="w-4 h-4" />
+                                            )}
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
         // --- COMPONENT: SEARCH ---
         const Search = ({ setActiveTab, jadwalDB, rabuYMD, sabatYMD, tabs, dataPejabat }) => {
             const [query, setQuery] = React.useState('');
@@ -2440,7 +2924,8 @@
                 { id: 'belajar_28dasar', title: '28 Dasar Kepercayaan', desc: 'Doktrin gereja Masehi Advent Hari Ketujuh', icon: 'List' },
                 { id: 'belajar_egw', title: 'Ellen G. White', desc: 'Mengenal tulisan roh nubuat', icon: 'BookOpen' },
                 { id: 'sekolah_sabat', title: 'Sekolah Sabat', desc: 'Akses pelajaran harian Sekolah Sabat', icon: 'BookOpen', isExternal: true, link: 'https://sabbath-school.adventech.io/in' },
-                { id: 'lagu_sion', title: 'Lagu Sion', desc: 'Buku nyanyian Lagu Sion online', icon: 'Music', isExternal: true, link: 'https://play.lagusion.org/' }
+                { id: 'lagu_sion', title: 'Lagu Sion', desc: 'Buku nyanyian Lagu Sion online', icon: 'Music', isExternal: true, link: 'https://play.lagusion.org/' },
+                { id: 'kirim_multimedia', title: 'Kirim ke Multimedia', desc: 'Kirim file foto/video/dokumen ke tim multimedia', icon: 'Upload' }
             ];
 
             const filteredMenus = query.trim() ? appPages.filter(m => m.title.toLowerCase().includes(query.toLowerCase()) || m.desc.toLowerCase().includes(query.toLowerCase())) : [];
@@ -2688,6 +3173,8 @@
             const [youtubeTitle, setYoutubeTitle] = React.useState("");
             const [autoDetectYoutube, setAutoDetectYoutube] = React.useState(true);
             const [heroImageUrl, setHeroImageUrl] = React.useState("./hero-default.jpg");
+            const [multimediaFiles, setMultimediaFiles] = React.useState([]);
+            const [multimediaNewCount, setMultimediaNewCount] = React.useState(0);
 
             // Token Admin (berisi password valid setelah login)
             const [adminToken, setAdminToken] = React.useState('');
@@ -2762,6 +3249,8 @@
                         if (data.autoDetectYoutube !== undefined) setAutoDetectYoutube(data.autoDetectYoutube);
                         if (data.kategoriPejabat) setKategoriPejabat(data.kategoriPejabat);
                         if (data.heroImageUrl) setHeroImageUrl(data.heroImageUrl);
+                        if (data.multimediaFiles) setMultimediaFiles(data.multimediaFiles);
+                        if (data.multimediaNewCount !== undefined) setMultimediaNewCount(data.multimediaNewCount);
                         setIsAppLoading(false);
                     })
                     .catch(error => {
@@ -2808,7 +3297,8 @@
                     case 'hubungi': return <Hubungi setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'form_acms': return <FormACMS setActiveTab={setActiveTab} />;
                     case 'susunan_ibadah': return <SusunanIbadah setActiveTab={setActiveTab} activeSabat={activeSabat} sabatYMD={sabatYMD} isLoading={isAppLoading} />;
-                    case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} autoDetectYoutube={autoDetectYoutube} setAutoDetectYoutube={setAutoDetectYoutube} youtubeTitle={youtubeTitle} isLiveYoutube={isLiveYoutube} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} heroImageUrl={heroImageUrl} setHeroImageUrl={setHeroImageUrl} /> : <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
+                    case 'kirim_multimedia': return <KirimMultimedia setActiveTab={setActiveTab} />;
+                    case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} autoDetectYoutube={autoDetectYoutube} setAutoDetectYoutube={setAutoDetectYoutube} youtubeTitle={youtubeTitle} isLiveYoutube={isLiveYoutube} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} heroImageUrl={heroImageUrl} setHeroImageUrl={setHeroImageUrl} multimediaFiles={multimediaFiles} setMultimediaFiles={setMultimediaFiles} multimediaNewCount={multimediaNewCount} setMultimediaNewCount={setMultimediaNewCount} /> : <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'search': return <Search setActiveTab={setActiveTab} jadwalDB={jadwalDB} rabuYMD={rabuYMD} sabatYMD={sabatYMD} tabs={tabs} dataPejabat={dataPejabat} />;
                     default: return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                 }

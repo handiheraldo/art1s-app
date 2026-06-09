@@ -2,13 +2,21 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "app",
   "compatibility_date": "2026-06-01",
+  "main": "worker.js",
   "observability": {
     "enabled": true
   },
   "assets": {
-    "directory": "."
+    "directory": ".",
+    "binding": "ASSETS"
   },
   "compatibility_flags": [
     "nodejs_compat"
+  ],
+  "r2_buckets": [
+    {
+      "binding": "MULTIMEDIA_BUCKET",
+      "bucket_name": "art1s-multimedia"
+    }
   ]
 }
