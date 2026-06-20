@@ -193,6 +193,43 @@
             ]
         };
 
+        const defaultKeuangan = {
+            kasOps: [
+                { bulan: 'Des', tahun: '2025', saldoAwal: 10611132, debet: 10855000, kredit: 11805150, saldo: 9660982 },
+                { bulan: 'Jan', tahun: '2026', saldoAwal: 9660982, debet: 10615496, kredit: 7859322, saldo: 12417156 },
+                { bulan: 'Feb', tahun: '2026', saldoAwal: 12417156, debet: 11464300, kredit: 8944386, saldo: 14937070 },
+                { bulan: 'Mar', tahun: '2026', saldoAwal: 14937070, debet: 8255225, kredit: 11823456, saldo: 11368839 },
+                { bulan: 'Apr', tahun: '2026', saldoAwal: 11368839, debet: 7986200, kredit: 8159786, saldo: 11195253 },
+                { bulan: 'Mei', tahun: '2026', saldoAwal: 11195253, debet: 11778000, kredit: 9114626, saldo: 13858627 },
+            ],
+            kasTotal: [
+                { nama: 'Kas Operasional Gereja', saldo: 13858627 },
+                { nama: 'Kas Pembangunan Gereja', saldo: 3760725 },
+                { nama: 'Kas PA (Bukan Kas Gereja)', saldo: 11227954 },
+                { nama: 'Kas Kursus Gratis', saldo: 5725998 },
+                { nama: 'Kas SSA', saldo: 1503967 },
+                { nama: 'Kas Dana Sosial', saldo: 1227200 },
+                { nama: 'Kas BWA', saldo: 4073000 },
+                { nama: 'Kas Penginjilan', saldo: 2824750 },
+                { nama: 'Kas Administrasi Gereja', saldo: 28500000 },
+                { nama: 'Kas ART1S Senior', saldo: 812500 },
+                { nama: 'Kas Pembelian Angklung', saldo: 250000 },
+                { nama: 'Kas Choir ART1S Pemuda', saldo: 618000 },
+                { nama: 'Kas Pembelian A/C', saldo: 1000000 },
+            ],
+            kjktRows: [
+                { tgl: '02/05', ket: 'Persembahan SS & Khotbah', perpuluhan: null, terpadu: 831500, jumlah: 831500 },
+                { tgl: '09/05', ket: 'Persembahan SS & Khotbah', perpuluhan: null, terpadu: 759500, jumlah: 759500 },
+                { tgl: '16/05', ket: 'Persembahan SS & Khotbah', perpuluhan: null, terpadu: 706000, jumlah: 706000 },
+                { tgl: '23/05', ket: 'Persembahan SS & Khotbah', perpuluhan: null, terpadu: 866000, jumlah: 866000 },
+                { tgl: '30/05', ket: 'Persembahan SS & Khotbah', perpuluhan: null, terpadu: 486000, jumlah: 486000 },
+                { tgl: '', ket: "Perpuluhan & Persembahan Mei '26 (Amplop Persan & Tf.)", perpuluhan: 19122500, terpadu: 828000, jumlah: 19950500 },
+            ],
+            saldoPembukuan: 98982221,
+            saldoBca: 98984480,
+            signatures: "Ditandatangani: Ketua Jemaat — Septha Domona • Gembala Jemaat — Pdt. David Indra Utomo • Bendahara — Ari Wattimena"
+        };
+
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -395,6 +432,7 @@
                     { id: 'jadwal', title: 'Jadwal Pelayanan', desc: 'Jadwal petugas ibadah lengkap', icon: 'Calendar' },
                     { id: 'live', title: 'Live Streaming / YouTube', desc: 'Ibadah online dan siaran langsung', icon: 'Video' },
                     { id: 'persembahan', title: 'Persembahan & Perpuluhan', desc: 'Informasi donasi, QRIS, dan rekening', icon: 'Gift' },
+                    { id: 'laporan_keuangan', title: 'Laporan Keuangan', desc: 'Transparansi keuangan gereja: kas, chart, dan persembahan', icon: 'Eye' },
                     { id: 'keanggotaan', title: 'Layanan Anggota', desc: 'Informasi keanggotaan dan mutasi', icon: 'Users' },
                     { id: 'member_baru', title: 'Member Baru', desc: 'Pendaftaran anggota baru', icon: 'Users' },
                     { id: 'pindah_masuk', title: 'Pindah Masuk ACMS', desc: 'Prosedur pindah keanggotaan', icon: 'BookOpen' },
@@ -1235,7 +1273,7 @@
             );
         };
 
-        const Persembahan = ({ dataPejabat, isLoading }) => {
+        const Persembahan = ({ dataPejabat, isLoading, setActiveTab }) => {
             const bendaharas = dataPejabat.filter(p => (p.jabatan && p.jabatan.toLowerCase().includes('bendahara')) || (p.kategori && p.kategori.toLowerCase() === 'keuangan'));
             const qrisUrl = "https://images.spr.so/cdn-cgi/imagedelivery/j42No7y-dcokJuNgXeA0ig/811ba11f-520e-4307-89d3-34cd3011d3c8/WhatsApp_Image_2025-05-16_at_12.01.55_65684299/w=1920,quality=90,fit=scale-down";
             return (
@@ -1274,6 +1312,269 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    {/* CTA Laporan Keuangan */}
+                    <div className="bg-gradient-to-br from-navy-900 to-navy-800 p-5 md:p-6 rounded-[1.25rem] shadow-lg border border-navy-700/50 flex flex-col sm:flex-row items-center justify-between gap-4 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-gold-400/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                        <div className="absolute bottom-0 left-0 w-24 h-24 bg-gold-400/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+                        <div className="relative z-10 text-center sm:text-left">
+                            <div className="flex items-center justify-center sm:justify-start space-x-2 mb-2">
+                                <span className="text-xl">📊</span>
+                                <h3 className="font-black text-white text-[1.1rem] tracking-tight">Laporan Keuangan Gereja</h3>
+                            </div>
+                            <p className="text-xs text-navy-200 font-medium leading-relaxed">Lihat transparansi keuangan gereja: rangkuman kas, chart operasional, dan laporan persembahan.</p>
+                        </div>
+                        <button onClick={() => setActiveTab('laporan_keuangan')} className="relative z-10 bg-gold-400 hover:bg-gold-300 text-navy-900 px-6 py-3 rounded-xl text-sm font-black shadow-md hover:shadow-lg transition-all shrink-0 w-full sm:w-auto flex items-center justify-center">
+                            <Icon name="Eye" className="w-4 h-4 mr-2" /> Lihat Laporan
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        const LaporanKeuangan = ({ setActiveTab, keuanganData }) => {
+            const formatRp = (n) => 'Rp ' + n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            const formatRpJt = (n) => {
+                if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + ' jt';
+                if (n >= 1000) return (n / 1000).toFixed(0) + ' rb';
+                return n.toString();
+            };
+
+            const data = keuanganData || defaultKeuangan;
+            const kasOps = data.kasOps || defaultKeuangan.kasOps;
+            const kasTotal = data.kasTotal || defaultKeuangan.kasTotal;
+            const kjktRows = data.kjktRows || defaultKeuangan.kjktRows;
+            const saldoPembukuan = data.saldoPembukuan !== undefined ? data.saldoPembukuan : defaultKeuangan.saldoPembukuan;
+            const saldoBca = data.saldoBca !== undefined ? data.saldoBca : defaultKeuangan.saldoBca;
+            const signatures = data.signatures || defaultKeuangan.signatures;
+
+            const avgKredit = kasOps.length > 0 ? (kasOps.reduce((s, d) => s + d.kredit, 0) / kasOps.length) : 0;
+            const batasKas = Math.round(avgKredit * 3);
+            const maxVal = kasOps.length > 0 ? Math.max(batasKas * 1.15, ...kasOps.map(d => d.saldo)) : 100000;
+            const chartH = 220;
+
+            const getPeriodeText = () => {
+                if (kasOps.length === 0) return '';
+                const first = kasOps[0];
+                const last = kasOps[kasOps.length - 1];
+                return `Periode ${first.bulan} ${first.tahun} s/d ${last.bulan} ${last.tahun}`;
+            };
+
+            return (
+                <div className="space-y-6 md:space-y-8 animate-fade-in relative z-10">
+                    {/* Header */}
+                    <div className="bg-white p-6 md:p-8 rounded-[1.5rem] shadow-sm border border-navy-100/60">
+                        <div className="flex items-center space-x-3 mb-1">
+                            <span className="text-2xl">📊</span>
+                            <h1 className="text-2xl font-extrabold text-navy-900 tracking-tight">Laporan Keuangan</h1>
+                        </div>
+                        <p className="text-sm text-navy-500 font-medium mt-1">GMAHK Tidar 1 Surabaya — {getPeriodeText()}</p>
+                    </div>
+
+                    {/* Chart Section: Kas Operasional */}
+                    <div className="bg-white p-5 md:p-7 rounded-[1.5rem] shadow-sm border border-navy-100/60">
+                        <div className="mb-5 border-b pb-4 border-navy-50">
+                            <h2 className="text-lg font-bold text-navy-900 tracking-tight flex items-center">
+                                <span className="text-xl mr-2">💰</span>Kas Operasional Gereja
+                            </h2>
+                            <p className="text-xs text-navy-500 font-medium mt-1">Saldo akhir per bulan — 6 bulan terakhir</p>
+                        </div>
+
+                        {/* Bar Chart */}
+                        <div className="bg-navy-50/40 rounded-2xl p-4 md:p-6 border border-navy-100/30">
+                            <div className="relative" style={{ height: chartH + 'px' }}>
+                                {/* Threshold line */}
+                                <div className="absolute left-0 right-0 z-10 flex items-center pointer-events-none" style={{ bottom: Math.round((batasKas / maxVal) * chartH) + 'px' }}>
+                                    <div className="flex-1 border-t-2 border-dashed border-red-400/60"></div>
+                                    <span className="text-[9px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full ml-1 border border-red-200 whitespace-nowrap shadow-sm">Batas: {formatRpJt(batasKas)}</span>
+                                </div>
+
+                                {/* Bars */}
+                                <div className="flex items-end justify-around h-full gap-1.5 md:gap-3 relative z-0">
+                                    {kasOps.map((d, i) => {
+                                        const h = Math.max(Math.round((d.saldo / maxVal) * chartH), 24);
+                                        const above = d.saldo >= batasKas;
+                                        return (
+                                            <div key={i} className="flex flex-col items-center flex-1 justify-end h-full group">
+                                                <span className="text-[8px] md:text-[10px] font-bold text-navy-600 mb-1.5 opacity-80 group-hover:opacity-100 transition">{formatRpJt(d.saldo)}</span>
+                                                <div
+                                                    className={`w-full max-w-[3.5rem] rounded-t-xl shadow-lg transition-all duration-300 ${above ? 'bg-gradient-to-t from-emerald-600 to-emerald-400 shadow-emerald-200/40' : 'bg-gradient-to-t from-red-600 to-red-400 shadow-red-200/40'} group-hover:scale-[1.04] group-hover:shadow-xl`}
+                                                    style={{ height: h + 'px' }}
+                                                ></div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Month labels */}
+                            <div className="flex justify-around gap-1.5 md:gap-3 mt-3 border-t border-navy-100/40 pt-3">
+                                {kasOps.map((d, i) => (
+                                    <div key={i} className="flex-1 text-center">
+                                        <span className="text-[10px] md:text-xs font-bold text-navy-700 block">{d.bulan}</span>
+                                        <span className="text-[8px] text-navy-400 font-medium">{d.tahun}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Legend */}
+                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 text-[10px] md:text-xs">
+                            <span className="flex items-center"><span className="w-3 h-3 rounded bg-gradient-to-t from-emerald-600 to-emerald-400 mr-1.5 inline-block shadow-sm"></span><span className="font-bold text-navy-600">Di atas batas</span></span>
+                            <span className="flex items-center"><span className="w-3 h-3 rounded bg-gradient-to-t from-red-600 to-red-400 mr-1.5 inline-block shadow-sm"></span><span className="font-bold text-navy-600">Di bawah batas</span></span>
+                            <span className="flex items-center"><span className="w-6 border-t-2 border-dashed border-red-400/60 mr-1.5 inline-block"></span><span className="font-bold text-navy-600">Batas aman ({formatRp(batasKas)})</span></span>
+                        </div>
+
+                        {/* Detail Table: Kas Operasional */}
+                        <div className="mt-6 overflow-x-auto -mx-2">
+                            <table className="w-full text-xs border-collapse min-w-[500px]">
+                                <thead>
+                                    <tr className="bg-navy-50/50">
+                                        <th className="text-left p-2.5 font-bold text-navy-700 uppercase tracking-wider text-[10px]">Bulan</th>
+                                        <th className="text-right p-2.5 font-bold text-navy-700 uppercase tracking-wider text-[10px]">Saldo Awal</th>
+                                        <th className="text-right p-2.5 font-bold text-navy-700 uppercase tracking-wider text-[10px]">Pemasukan</th>
+                                        <th className="text-right p-2.5 font-bold text-navy-700 uppercase tracking-wider text-[10px]">Pengeluaran</th>
+                                        <th className="text-right p-2.5 font-bold text-navy-700 uppercase tracking-wider text-[10px]">Saldo Akhir</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {kasOps.map((d, i) => (
+                                        <tr key={i} className="border-b border-navy-50 hover:bg-navy-50/30 transition-colors">
+                                            <td className="p-2.5 font-bold text-navy-800">{d.bulan} {d.tahun}</td>
+                                            <td className="p-2.5 text-right text-navy-600 font-medium">{formatRp(d.saldoAwal)}</td>
+                                            <td className="p-2.5 text-right text-emerald-600 font-bold">{formatRp(d.debet)}</td>
+                                            <td className="p-2.5 text-right text-red-600 font-bold">{formatRp(d.kredit)}</td>
+                                            <td className={`p-2.5 text-right font-black ${d.saldo >= batasKas ? 'text-emerald-600' : 'text-red-600'}`}>{formatRp(d.saldo)}</td>
+                                        </tr>
+                                    ))}
+                                    {kasOps.length > 0 && (
+                                        <tr className="bg-navy-50/70 font-bold">
+                                            <td className="p-2.5 text-navy-900">Rata-rata</td>
+                                            <td className="p-2.5"></td>
+                                            <td className="p-2.5 text-right text-emerald-700">{formatRp(Math.round(kasOps.reduce((s,d) => s + d.debet, 0) / kasOps.length))}</td>
+                                            <td className="p-2.5 text-right text-red-700">{formatRp(Math.round(avgKredit))}</td>
+                                            <td className="p-2.5"></td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Footnote for chart */}
+                        <div className="mt-4 bg-gold-50/50 border border-gold-200/50 rounded-xl p-3.5">
+                            <p className="text-[10px] md:text-[11px] text-navy-600 font-medium leading-relaxed">
+                                <span className="font-bold text-navy-800">ⓘ Batas Kas Operasional</span> dihitung dari rata-rata pengeluaran bulanan ({formatRp(Math.round(avgKredit))}/bulan) dikali 3 = <span className="font-bold text-navy-900">{formatRp(batasKas)}</span>. Angka ini merepresentasikan cadangan dana operasional minimal yang ideal untuk 3 bulan ke depan.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Rangkuman Kas Total */}
+                    <div className="bg-white p-5 md:p-7 rounded-[1.5rem] shadow-sm border border-navy-100/60">
+                        <div className="mb-5 border-b pb-4 border-navy-50">
+                            <h2 className="text-lg font-bold text-navy-900 tracking-tight flex items-center"><span className="text-xl mr-2">🏦</span>Rangkuman Kas Total</h2>
+                            <p className="text-xs text-navy-500 font-medium mt-1">GMAHK Tidar 1 Surabaya</p>
+                        </div>
+                        <div className="overflow-x-auto -mx-2">
+                            <table className="w-full text-xs border-collapse">
+                                <thead>
+                                    <tr className="bg-navy-50/50">
+                                        <th className="text-left p-2.5 font-bold text-navy-700 uppercase tracking-wider text-[10px]">Keterangan</th>
+                                        <th className="text-right p-2.5 font-bold text-navy-700 uppercase tracking-wider text-[10px]">Saldo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {kasTotal.map((d, i) => (
+                                        <tr key={i} className="border-b border-navy-50 hover:bg-navy-50/30 transition-colors">
+                                            <td className="p-2.5 font-medium text-navy-700">{d.nama}</td>
+                                            <td className="p-2.5 text-right font-bold text-navy-900">{formatRp(d.saldo)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                                <tfoot>
+                                    <tr className="bg-navy-900 text-white">
+                                        <td className="p-3 font-black text-sm rounded-bl-lg">TOTAL KAS GMAHK TIDAR 1</td>
+                                        <td className="p-3 text-right font-black text-sm text-gold-400 rounded-br-lg">{formatRp(kasTotal.reduce((sum, item) => sum + item.saldo, 0))}</td>
+                                    </tr>
+                                    <tr className="bg-navy-50/70">
+                                        <td className="p-2.5 font-bold text-navy-700">Saldo Pembukuan</td>
+                                        <td className="p-2.5 text-right font-bold text-navy-900">{formatRp(saldoPembukuan)}</td>
+                                    </tr>
+                                    <tr className="bg-navy-50/70 border-t border-navy-100">
+                                        <td className="p-2.5 font-bold text-navy-700">Saldo BCA</td>
+                                        <td className="p-2.5 text-right font-bold text-navy-900">{formatRp(saldoBca)}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    {/* Persembahan & Perpuluhan KJKT */}
+                    <div className="bg-white p-5 md:p-7 rounded-[1.5rem] shadow-sm border border-navy-100/60">
+                        <div className="mb-5 border-b pb-4 border-navy-50">
+                            <h2 className="text-lg font-bold text-navy-900 tracking-tight flex items-center"><span className="text-xl mr-2">🎁</span>Persembahan & Perpuluhan KJKT</h2>
+                            <p className="text-xs text-navy-500 font-medium mt-1">GMAHK Tidar 1 Surabaya</p>
+                        </div>
+                        <div className="overflow-x-auto -mx-2">
+                            <table className="w-full text-xs border-collapse min-w-[480px]">
+                                <thead>
+                                    <tr className="bg-navy-50/50">
+                                        <th className="text-left p-2.5 font-bold text-navy-700 uppercase tracking-wider text-[10px]">Tgl.</th>
+                                        <th className="text-left p-2.5 font-bold text-navy-700 uppercase tracking-wider text-[10px]">Keterangan</th>
+                                        <th className="text-right p-2.5 font-bold text-navy-700 uppercase tracking-wider text-[10px]">Perpuluhan</th>
+                                        <th className="text-right p-2.5 font-bold text-navy-700 uppercase tracking-wider text-[10px]">Terpadu</th>
+                                        <th className="text-right p-2.5 font-bold text-navy-700 uppercase tracking-wider text-[10px]">Jumlah</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {kjktRows.map((d, i) => (
+                                        <tr key={i} className="border-b border-navy-50 hover:bg-navy-50/30 transition-colors">
+                                            <td className="p-2.5 font-medium text-navy-600 whitespace-nowrap">{d.tgl || '-'}</td>
+                                            <td className="p-2.5 font-medium text-navy-700">{d.ket}</td>
+                                            <td className="p-2.5 text-right font-bold text-navy-800">{d.perpuluhan ? formatRp(d.perpuluhan) : '-'}</td>
+                                            <td className="p-2.5 text-right font-bold text-navy-800">{d.terpadu ? formatRp(d.terpadu) : '-'}</td>
+                                            <td className="p-2.5 text-right font-bold text-navy-900">{formatRp(d.jumlah)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                                <tfoot>
+                                    <tr className="bg-navy-900 text-white">
+                                        <td colSpan="4" className="p-3 font-black text-sm rounded-bl-lg">TOTAL DIKIRIM KE KJKT</td>
+                                        <td className="p-3 text-right font-black text-sm text-gold-400 rounded-br-lg">{formatRp(kjktRows.reduce((sum, item) => sum + item.jumlah, 0))}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div className="mt-4 text-[10px] text-navy-500 font-bold leading-relaxed">
+                            <p>{signatures}</p>
+                        </div>
+                    </div>
+
+                    {/* Google Drive Link Button */}
+                    <div className="flex justify-center my-6 md:my-8 px-4">
+                        <a
+                            href="https://drive.google.com/drive/folders/1r1-r2J_oGfPbj9VxOsGoIk8LTV9jQTOB?usp=drive_link"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-navy-900 hover:bg-navy-800 text-gold-400 hover:text-gold-300 font-bold px-6 py-4 rounded-xl text-xs md:text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center space-x-2 w-full sm:w-auto transform hover:-translate-y-0.5 border border-navy-700/50"
+                        >
+                            <Icon name="Folder" className="w-5 h-5 text-gold-400 mr-2" />
+                            <span>Lihat Selengkapnya di Google Drive</span>
+                        </a>
+                    </div>
+
+                    {/* Catatan Kaki */}
+                    <div className="bg-navy-50/50 p-5 md:p-6 rounded-[1.5rem] border border-navy-100/40">
+                        <h3 className="font-bold text-navy-800 text-sm mb-3 flex items-center">
+                            <Icon name="Info" className="w-4 h-4 mr-2 text-navy-500" />Catatan Kaki
+                        </h3>
+                        <ol className="space-y-2 text-[10px] md:text-[11px] text-navy-600 font-medium leading-relaxed list-decimal list-inside">
+                            <li>Data keuangan bersumber dari laporan Bendahara GMAHK Tidar 1 Surabaya yang telah diverifikasi.</li>
+                            <li><strong>Batas kas operasional</strong> dihitung dengan rumus: <em>rata-rata pengeluaran bulanan × 3</em>. Angka ini merepresentasikan cadangan dana operasional ideal untuk mengcover kebutuhan minimal 3 bulan ke depan tanpa pemasukan.</li>
+                            <li>Jika saldo kas operasional berada <strong className="text-red-600">di bawah batas</strong>, gereja perlu memperhatikan arus kas masuk agar kebutuhan operasional tetap terpenuhi.</li>
+                            <li>Laporan ini dipublikasikan demi transparansi dan akuntabilitas keuangan gereja kepada seluruh jemaat.</li>
+                            <li>Untuk pertanyaan lebih lanjut mengenai laporan keuangan, silakan menghubungi Bendahara Jemaat.</li>
+                        </ol>
                     </div>
                 </div>
             );
@@ -1675,7 +1976,7 @@
             );
         };
 
-        const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, adminToken, setAdminToken, youtubeUrl, setYoutubeUrl, autoDetectYoutube, setAutoDetectYoutube, youtubeTitle, isLiveYoutube, kategoriPejabat, setKategoriPejabat, heroImageUrl, setHeroImageUrl }) => {
+        const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, adminToken, setAdminToken, youtubeUrl, setYoutubeUrl, autoDetectYoutube, setAutoDetectYoutube, youtubeTitle, isLiveYoutube, kategoriPejabat, setKategoriPejabat, heroImageUrl, setHeroImageUrl, keuanganData, setKeuanganData }) => {
             const [adminTab, setAdminTab] = React.useState('jadwal'); // jadwal, pelayan, pengaturan
             const [viewMonth, setViewMonth] = React.useState(new Date().getMonth());
             const [viewYear, setViewYear] = React.useState(new Date().getFullYear());
@@ -1709,6 +2010,102 @@
             const [editHeroUrl, setEditHeroUrl] = React.useState(heroImageUrl);
             const [isSavingHero, setIsSavingHero] = React.useState(false);
             const [heroPreview, setHeroPreview] = React.useState(heroImageUrl);
+
+            // State Kelola Keuangan
+            const [keuanganSubTab, setKeuanganSubTab] = React.useState('ops');
+            const [tempKeuangan, setTempKeuangan] = React.useState(null);
+            const [isSavingKeuangan, setIsSavingKeuangan] = React.useState(false);
+
+            React.useEffect(() => {
+                if (keuanganData) {
+                    setTempKeuangan(JSON.parse(JSON.stringify(keuanganData)));
+                } else {
+                    setTempKeuangan(JSON.parse(JSON.stringify(defaultKeuangan)));
+                }
+            }, [keuanganData]);
+
+            const handleUpdateKasOpsField = (idx, field, value) => {
+                const updated = [...tempKeuangan.kasOps];
+                updated[idx][field] = value;
+                if (field === 'saldoAwal' || field === 'debet' || field === 'kredit') {
+                    updated[idx].saldo = (updated[idx].saldoAwal || 0) + (updated[idx].debet || 0) - (updated[idx].kredit || 0);
+                }
+                setTempKeuangan({ ...tempKeuangan, kasOps: updated });
+            };
+
+            const handleAddKasOpsRow = () => {
+                const newRow = { bulan: 'Bln', tahun: '2026', saldoAwal: 0, debet: 0, kredit: 0, saldo: 0 };
+                setTempKeuangan({ ...tempKeuangan, kasOps: [...tempKeuangan.kasOps, newRow] });
+            };
+
+            const handleDeleteKasOpsRow = (idx) => {
+                const updated = tempKeuangan.kasOps.filter((_, i) => i !== idx);
+                setTempKeuangan({ ...tempKeuangan, kasOps: updated });
+            };
+
+            const handleUpdateKasTotalField = (idx, field, value) => {
+                const updated = [...tempKeuangan.kasTotal];
+                updated[idx][field] = value;
+                setTempKeuangan({ ...tempKeuangan, kasTotal: updated });
+            };
+
+            const handleAddKasTotalRow = () => {
+                const newRow = { nama: 'Nama Kas Baru', saldo: 0 };
+                setTempKeuangan({ ...tempKeuangan, kasTotal: [...tempKeuangan.kasTotal, newRow] });
+            };
+
+            const handleDeleteKasTotalRow = (idx) => {
+                const updated = tempKeuangan.kasTotal.filter((_, i) => i !== idx);
+                setTempKeuangan({ ...tempKeuangan, kasTotal: updated });
+            };
+
+            const handleUpdateKjktField = (idx, field, value) => {
+                const updated = [...tempKeuangan.kjktRows];
+                updated[idx][field] = value;
+                if (field === 'perpuluhan' || field === 'terpadu') {
+                    const perp = updated[idx].perpuluhan || 0;
+                    const terp = updated[idx].terpadu || 0;
+                    updated[idx].jumlah = perp + terp;
+                }
+                setTempKeuangan({ ...tempKeuangan, kjktRows: updated });
+            };
+
+            const handleAddKjktRow = () => {
+                const newRow = { tgl: 'tgl/bln', ket: 'Keterangan Baru', perpuluhan: null, terpadu: 0, jumlah: 0 };
+                setTempKeuangan({ ...tempKeuangan, kjktRows: [...tempKeuangan.kjktRows, newRow] });
+            };
+
+            const handleDeleteKjktRow = (idx) => {
+                const updated = tempKeuangan.kjktRows.filter((_, i) => i !== idx);
+                setTempKeuangan({ ...tempKeuangan, kjktRows: updated });
+            };
+
+            const handleSimpanKeuangan = () => {
+                if (!tempKeuangan) return;
+                setIsSavingKeuangan(true);
+                fetch(GAS_API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'saveKeuangan',
+                        password: adminToken,
+                        data: tempKeuangan
+                    })
+                })
+                    .then(res => res.json())
+                    .then(result => {
+                        setIsSavingKeuangan(false);
+                        if (result.success) {
+                            setKeuanganData(tempKeuangan);
+                            alert("Berhasil! Laporan Keuangan tersimpan di Google Sheets.");
+                        } else {
+                            alert("Gagal menyimpan: " + (result.message || "Akses ditolak."));
+                        }
+                    })
+                    .catch(err => {
+                        alert("Gagal terhubung ke server.");
+                        setIsSavingKeuangan(false);
+                    });
+            };
 
             // Drag and Drop States
             const [draggedItem, setDraggedItem] = React.useState(null);
@@ -2046,9 +2443,10 @@
                 <div className="space-y-6 animate-fade-in relative z-10">
                     <div className="bg-white rounded-[1.5rem] shadow-sm border border-navy-100/60 overflow-hidden">
                         <div className="flex flex-col sm:flex-row border-b border-navy-50 bg-navy-50/20">
-                            <button onClick={() => setAdminTab('jadwal')} className={`flex-1 py-4 font-bold text-sm md:text-base text-center transition-colors ${adminTab === 'jadwal' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Kelola Jadwal</button>
-                            <button onClick={() => setAdminTab('pelayan')} className={`flex-1 py-4 font-bold text-sm md:text-base text-center transition-colors border-l sm:border-t-0 border-t border-navy-50 ${adminTab === 'pelayan' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Kelola Pejabat</button>
-                            <button onClick={() => setAdminTab('pengaturan')} className={`flex-1 py-4 font-bold text-sm md:text-base text-center transition-colors border-l sm:border-t-0 border-t border-navy-50 ${adminTab === 'pengaturan' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Pengaturan Admin</button>
+                            <button onClick={() => setAdminTab('jadwal')} className={`flex-1 py-4 font-bold text-sm md:text-xs lg:text-base text-center transition-colors ${adminTab === 'jadwal' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Kelola Jadwal</button>
+                            <button onClick={() => setAdminTab('pelayan')} className={`flex-1 py-4 font-bold text-sm md:text-xs lg:text-base text-center transition-colors border-l sm:border-t-0 border-t border-navy-50 ${adminTab === 'pelayan' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Kelola Pejabat</button>
+                            <button onClick={() => setAdminTab('keuangan')} className={`flex-1 py-4 font-bold text-sm md:text-xs lg:text-base text-center transition-colors border-l sm:border-t-0 border-t border-navy-50 ${adminTab === 'keuangan' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Kelola Keuangan</button>
+                            <button onClick={() => setAdminTab('pengaturan')} className={`flex-1 py-4 font-bold text-sm md:text-xs lg:text-base text-center transition-colors border-l sm:border-t-0 border-t border-navy-50 ${adminTab === 'pengaturan' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Pengaturan Admin</button>
                         </div>
 
                         <div className={`p-4 md:p-6 ${adminTab === 'jadwal' ? 'bg-navy-50/30' : 'bg-white'}`}>
@@ -2412,6 +2810,172 @@
                                     </div>
                                 </div>
                             )}
+
+                            {adminTab === 'keuangan' && tempKeuangan && (
+                                <div className="animate-fade-in space-y-6">
+                                    {/* Header/Controls bar */}
+                                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gold-50 p-5 rounded-[1.5rem] border border-gold-200 shadow-sm gap-4">
+                                        <div className="w-full sm:w-2/3">
+                                            <h3 className="text-lg font-black text-navy-900 mb-1">Manajemen Laporan Keuangan</h3>
+                                            <p className="text-xs md:text-sm text-navy-800 font-medium leading-relaxed">Kelola data Kas Operasional, Kas Total, dan Persembahan KJKT. Klik tombol Simpan untuk menerapkan perubahan ke Google Sheets.</p>
+                                        </div>
+                                        <button onClick={handleSimpanKeuangan} disabled={isSavingKeuangan} className={`${isSavingKeuangan ? 'bg-navy-300 text-navy-500 cursor-not-allowed' : 'bg-navy-900 hover:bg-navy-800 text-gold-400 shadow-md'} font-bold py-3 px-6 rounded-xl transition-all flex items-center shrink-0 w-full sm:w-auto justify-center`}>
+                                            <Icon name="Save" className="w-4 h-4 mr-2" />
+                                            {isSavingKeuangan ? 'Menyimpan...' : 'Simpan Keuangan'}
+                                        </button>
+                                    </div>
+
+                                    {/* Sub-navigation inside Keuangan */}
+                                    <div className="bg-white rounded-[1.25rem] flex overflow-x-auto border border-navy-100/50 p-2 gap-2 hide-scrollbar shadow-sm">
+                                        {['ops', 'total', 'kjkt', 'meta'].map(sub => (
+                                            <button key={sub} onClick={() => setKeuanganSubTab(sub)} className={`px-4 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-colors whitespace-nowrap ${keuanganSubTab === sub ? 'bg-navy-900 text-gold-400' : 'text-navy-500 hover:bg-navy-50'}`}>
+                                                {sub === 'ops' && 'Kas Operasional'}
+                                                {sub === 'total' && 'Rangkuman Kas Total'}
+                                                {sub === 'kjkt' && 'Persembahan KJKT'}
+                                                {sub === 'meta' && 'Pengaturan Saldo & TTD'}
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    {/* Sub-tab: Kas Operasional */}
+                                    {keuanganSubTab === 'ops' && (
+                                        <div className="bg-white border border-navy-100/60 rounded-2xl shadow-sm overflow-hidden p-4 md:p-6 space-y-4 animate-fade-in">
+                                            <div className="flex justify-between items-center border-b pb-3">
+                                                <h4 className="font-bold text-navy-900">Data Kas Operasional Per Bulan</h4>
+                                                <button onClick={handleAddKasOpsRow} className="bg-gold-400 hover:bg-gold-500 text-navy-900 text-xs font-bold py-2 px-3 rounded-lg flex items-center transition shadow-sm">
+                                                    <Icon name="Plus" className="w-3.5 h-3.5 mr-1" /> Tambah Bulan
+                                                </button>
+                                            </div>
+                                            <div className="overflow-x-auto">
+                                                <table className="w-full text-xs text-left border-collapse min-w-[700px]">
+                                                    <thead>
+                                                        <tr className="bg-navy-50/50">
+                                                            <th className="p-2.5 border-b font-bold text-navy-700">Bulan</th>
+                                                            <th className="p-2.5 border-b font-bold text-navy-700">Tahun</th>
+                                                            <th className="p-2.5 border-b font-bold text-navy-700">Saldo Awal</th>
+                                                            <th className="p-2.5 border-b font-bold text-navy-700">Pemasukan (Debet)</th>
+                                                            <th className="p-2.5 border-b font-bold text-navy-700">Pengeluaran (Kredit)</th>
+                                                            <th className="p-2.5 border-b font-bold text-navy-700">Saldo Akhir</th>
+                                                            <th className="p-2.5 border-b text-center w-16 font-bold text-navy-700">Aksi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {tempKeuangan.kasOps.map((row, idx) => (
+                                                            <tr key={idx} className="border-b hover:bg-navy-50/20">
+                                                                <td className="p-2"><input type="text" value={row.bulan} onChange={e => handleUpdateKasOpsField(idx, 'bulan', e.target.value)} className="w-16 p-2 border border-navy-200 rounded font-bold text-navy-900" placeholder="Des" /></td>
+                                                                <td className="p-2"><input type="text" value={row.tahun} onChange={e => handleUpdateKasOpsField(idx, 'tahun', e.target.value)} className="w-16 p-2 border border-navy-200 rounded text-navy-900" placeholder="2025" /></td>
+                                                                <td className="p-2"><input type="number" value={row.saldoAwal} onChange={e => handleUpdateKasOpsField(idx, 'saldoAwal', parseInt(e.target.value) || 0)} className="w-28 p-2 border border-navy-200 rounded text-navy-900 font-semibold" /></td>
+                                                                <td className="p-2"><input type="number" value={row.debet} onChange={e => handleUpdateKasOpsField(idx, 'debet', parseInt(e.target.value) || 0)} className="w-28 p-2 border border-navy-200 rounded text-emerald-600 font-bold" /></td>
+                                                                <td className="p-2"><input type="number" value={row.kredit} onChange={e => handleUpdateKasOpsField(idx, 'kredit', parseInt(e.target.value) || 0)} className="w-28 p-2 border border-navy-200 rounded text-red-600 font-bold" /></td>
+                                                                <td className="p-2"><input type="number" value={row.saldo} onChange={e => handleUpdateKasOpsField(idx, 'saldo', parseInt(e.target.value) || 0)} className="w-28 p-2 border border-navy-200 rounded text-navy-900 font-black bg-navy-50" /></td>
+                                                                <td className="p-2 text-center">
+                                                                    <button onClick={() => handleDeleteKasOpsRow(idx)} className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition" title="Hapus"><Icon name="Trash" className="w-4 h-4" /></button>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Sub-tab: Rangkuman Kas Total */}
+                                    {keuanganSubTab === 'total' && (
+                                        <div className="bg-white border border-navy-100/60 rounded-2xl shadow-sm overflow-hidden p-4 md:p-6 space-y-4 animate-fade-in">
+                                            <div className="flex justify-between items-center border-b pb-3">
+                                                <h4 className="font-bold text-navy-900">Rangkuman Kas Total per Sub-Akun</h4>
+                                                <button onClick={handleAddKasTotalRow} className="bg-gold-400 hover:bg-gold-500 text-navy-900 text-xs font-bold py-2 px-3 rounded-lg flex items-center transition shadow-sm">
+                                                    <Icon name="Plus" className="w-3.5 h-3.5 mr-1" /> Tambah Kas
+                                                </button>
+                                            </div>
+                                            <div className="overflow-x-auto">
+                                                <table className="w-full text-xs text-left border-collapse min-w-[500px]">
+                                                    <thead>
+                                                        <tr className="bg-navy-50/50">
+                                                            <th className="p-2.5 border-b font-bold text-navy-700">Nama Sub-Akun Kas</th>
+                                                            <th className="p-2.5 border-b font-bold text-navy-700">Saldo Kas (Rp)</th>
+                                                            <th className="p-2.5 border-b text-center w-16 font-bold text-navy-700">Aksi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {tempKeuangan.kasTotal.map((row, idx) => (
+                                                            <tr key={idx} className="border-b hover:bg-navy-50/20">
+                                                                <td className="p-2"><input type="text" value={row.nama} onChange={e => handleUpdateKasTotalField(idx, 'nama', e.target.value)} className="w-full max-w-md p-2 border border-navy-200 rounded font-semibold text-navy-900" placeholder="Nama Kas" /></td>
+                                                                <td className="p-2"><input type="number" value={row.saldo} onChange={e => handleUpdateKasTotalField(idx, 'saldo', parseInt(e.target.value) || 0)} className="w-48 p-2 border border-navy-200 rounded font-bold text-navy-900" /></td>
+                                                                <td className="p-2 text-center">
+                                                                    <button onClick={() => handleDeleteKasTotalRow(idx)} className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition" title="Hapus"><Icon name="Trash" className="w-4 h-4" /></button>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Sub-tab: Persembahan KJKT */}
+                                    {keuanganSubTab === 'kjkt' && (
+                                        <div className="bg-white border border-navy-100/60 rounded-2xl shadow-sm overflow-hidden p-4 md:p-6 space-y-4 animate-fade-in">
+                                            <div className="flex justify-between items-center border-b pb-3">
+                                                <h4 className="font-bold text-navy-900">Detail Persembahan & Perpuluhan KJKT</h4>
+                                                <button onClick={handleAddKjktRow} className="bg-gold-400 hover:bg-gold-500 text-navy-900 text-xs font-bold py-2 px-3 rounded-lg flex items-center transition shadow-sm">
+                                                    <Icon name="Plus" className="w-3.5 h-3.5 mr-1" /> Tambah Baris
+                                                </button>
+                                            </div>
+                                            <div className="overflow-x-auto">
+                                                <table className="w-full text-xs text-left border-collapse min-w-[650px]">
+                                                    <thead>
+                                                        <tr className="bg-navy-50/50">
+                                                            <th className="p-2.5 border-b font-bold text-navy-700">Tanggal (dd/mm)</th>
+                                                            <th className="p-2.5 border-b font-bold text-navy-700">Keterangan</th>
+                                                            <th className="p-2.5 border-b font-bold text-navy-700">Perpuluhan (Rp)</th>
+                                                            <th className="p-2.5 border-b font-bold text-navy-700">Terpadu (Rp)</th>
+                                                            <th className="p-2.5 border-b font-bold text-navy-700">Jumlah (Rp)</th>
+                                                            <th className="p-2.5 border-b text-center w-16 font-bold text-navy-700">Aksi</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {tempKeuangan.kjktRows.map((row, idx) => (
+                                                            <tr key={idx} className="border-b hover:bg-navy-50/20">
+                                                                <td className="p-2"><input type="text" value={row.tgl || ''} onChange={e => handleUpdateKjktField(idx, 'tgl', e.target.value)} className="w-20 p-2 border border-navy-200 rounded font-semibold text-navy-900" placeholder="02/05" /></td>
+                                                                <td className="p-2"><input type="text" value={row.ket} onChange={e => handleUpdateKjktField(idx, 'ket', e.target.value)} className="w-full p-2 border border-navy-200 rounded font-semibold text-navy-900" placeholder="Keterangan" /></td>
+                                                                <td className="p-2"><input type="number" value={row.perpuluhan === null ? '' : row.perpuluhan} onChange={e => handleUpdateKjktField(idx, 'perpuluhan', e.target.value === '' ? null : parseInt(e.target.value))} className="w-28 p-2 border border-navy-200 rounded text-navy-900" placeholder="-" /></td>
+                                                                <td className="p-2"><input type="number" value={row.terpadu === null ? '' : row.terpadu} onChange={e => handleUpdateKjktField(idx, 'terpadu', e.target.value === '' ? null : parseInt(e.target.value))} className="w-28 p-2 border border-navy-200 rounded text-navy-900" placeholder="-" /></td>
+                                                                <td className="p-2"><input type="number" value={row.jumlah} onChange={e => handleUpdateKjktField(idx, 'jumlah', parseInt(e.target.value) || 0)} className="w-28 p-2 border border-navy-200 rounded font-bold text-navy-900 bg-navy-50" /></td>
+                                                                <td className="p-2 text-center">
+                                                                    <button onClick={() => handleDeleteKjktRow(idx)} className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition" title="Hapus"><Icon name="Trash" className="w-4 h-4" /></button>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Sub-tab: Pengaturan Saldo & TTD */}
+                                    {keuanganSubTab === 'meta' && (
+                                        <div className="bg-white border border-navy-100/60 rounded-[1.5rem] p-6 shadow-sm max-w-md mx-auto space-y-5 animate-fade-in">
+                                            <h4 className="font-black text-navy-900 text-base border-b pb-2 flex items-center">
+                                                <Icon name="Settings" className="w-5 h-5 text-gold-500 mr-2" />
+                                                Pengaturan Saldo & Tanda Tangan
+                                            </h4>
+                                            <div>
+                                                <label className="block text-xs font-bold text-navy-700 mb-2 uppercase tracking-widest">Saldo Pembukuan (Rp)</label>
+                                                <input type="number" value={tempKeuangan.saldoPembukuan} onChange={e => setTempKeuangan({ ...tempKeuangan, saldoPembukuan: parseInt(e.target.value) || 0 })} className="w-full p-3 border border-navy-200 rounded-xl focus:border-gold-500 outline-none bg-navy-50/50 text-sm font-bold shadow-sm" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-navy-700 mb-2 uppercase tracking-widest">Saldo BCA (Rp)</label>
+                                                <input type="number" value={tempKeuangan.saldoBca} onChange={e => setTempKeuangan({ ...tempKeuangan, saldoBca: parseInt(e.target.value) || 0 })} className="w-full p-3 border border-navy-200 rounded-xl focus:border-gold-500 outline-none bg-navy-50/50 text-sm font-bold shadow-sm" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-bold text-navy-700 mb-2 uppercase tracking-widest">Tanda Tangan Laporan (Satu Baris)</label>
+                                                <textarea value={tempKeuangan.signatures} onChange={e => setTempKeuangan({ ...tempKeuangan, signatures: e.target.value })} className="w-full p-3 border border-navy-200 rounded-xl focus:border-gold-500 outline-none bg-navy-50/50 text-sm font-medium shadow-sm leading-relaxed" rows="3" placeholder="Contoh: Ditandatangani: ..."></textarea>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -2434,6 +2998,7 @@
                 { id: 'jadwal', title: 'Jadwal Pelayanan', desc: 'Jadwal petugas ibadah lengkap', icon: 'Calendar' },
                 { id: 'live', title: 'Live Streaming / YouTube', desc: 'Ibadah online dan siaran langsung', icon: 'Video' },
                 { id: 'persembahan', title: 'Persembahan & Perpuluhan', desc: 'Informasi donasi, QRIS, dan rekening', icon: 'Gift' },
+                { id: 'laporan_keuangan', title: 'Laporan Keuangan', desc: 'Transparansi keuangan gereja: kas, chart, dan persembahan', icon: 'Eye' },
                 { id: 'keanggotaan', title: 'Layanan Anggota', desc: 'Informasi keanggotaan dan mutasi', icon: 'Users' },
                 { id: 'member_baru', title: 'Member Baru', desc: 'Pendaftaran anggota baru', icon: 'Users' },
                 { id: 'pindah_masuk', title: 'Pindah Masuk ACMS', desc: 'Prosedur pindah keanggotaan', icon: 'BookOpen' },
@@ -2663,6 +3228,8 @@
                                     nextTab = 'belajar';
                                 } else if (currentTab === 'member_baru' || currentTab === 'pindah_masuk' || currentTab === 'form_acms') {
                                     nextTab = 'keanggotaan';
+                                } else if (currentTab === 'laporan_keuangan') {
+                                    nextTab = 'persembahan';
                                 } else {
                                     nextTab = 'home';
                                 }
@@ -2691,6 +3258,7 @@
             const [youtubeTitle, setYoutubeTitle] = React.useState("");
             const [autoDetectYoutube, setAutoDetectYoutube] = React.useState(true);
             const [heroImageUrl, setHeroImageUrl] = React.useState("./hero-default.jpg");
+            const [keuanganData, setKeuanganData] = React.useState(null);
 
             // Token Admin (berisi password valid setelah login)
             const [adminToken, setAdminToken] = React.useState('');
@@ -2765,6 +3333,7 @@
                         if (data.autoDetectYoutube !== undefined) setAutoDetectYoutube(data.autoDetectYoutube);
                         if (data.kategoriPejabat) setKategoriPejabat(data.kategoriPejabat);
                         if (data.heroImageUrl) setHeroImageUrl(data.heroImageUrl);
+                        if (data.keuangan) setKeuanganData(data.keuangan);
                         setIsAppLoading(false);
                     })
                     .catch(error => {
@@ -2804,14 +3373,15 @@
                     case 'belajar_egw': return <DetailEGW setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'live': return <Live setActiveTab={setActiveTab} activeRabu={activeRabu} activeSabat={activeSabat} rabuYMD={rabuYMD} sabatYMD={sabatYMD} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} activePerjamuan={activePerjamuan} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} isLoading={isAppLoading} />;
                     case 'jadwal': return <Jadwal activeRabu={jadwalKhususRabu} activeSabat={jadwalKhususSabat} rabuYMD={displayRabuYMD} sabatYMD={displaySabatYMD} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} activePerjamuan={activePerjamuan} isLoading={isAppLoading} />;
-                    case 'persembahan': return <Persembahan dataPejabat={dataPejabat} isLoading={isAppLoading} />;
+                    case 'persembahan': return <Persembahan dataPejabat={dataPejabat} isLoading={isAppLoading} setActiveTab={setActiveTab} />;
+                    case 'laporan_keuangan': return <LaporanKeuangan setActiveTab={setActiveTab} keuanganData={keuanganData} />;
                     case 'keanggotaan': return <Keanggotaan setActiveTab={setActiveTab} />;
                     case 'member_baru': return <MemberBaru setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'pindah_masuk': return <PindahMasuk setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'hubungi': return <Hubungi setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'form_acms': return <FormACMS setActiveTab={setActiveTab} />;
                     case 'susunan_ibadah': return <SusunanIbadah setActiveTab={setActiveTab} activeSabat={activeSabat} sabatYMD={sabatYMD} isLoading={isAppLoading} />;
-                    case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} autoDetectYoutube={autoDetectYoutube} setAutoDetectYoutube={setAutoDetectYoutube} youtubeTitle={youtubeTitle} isLiveYoutube={isLiveYoutube} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} heroImageUrl={heroImageUrl} setHeroImageUrl={setHeroImageUrl} /> : <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
+                    case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} autoDetectYoutube={autoDetectYoutube} setAutoDetectYoutube={setAutoDetectYoutube} youtubeTitle={youtubeTitle} isLiveYoutube={isLiveYoutube} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} heroImageUrl={heroImageUrl} setHeroImageUrl={setHeroImageUrl} keuanganData={keuanganData} setKeuanganData={setKeuanganData} /> : <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'search': return <Search setActiveTab={setActiveTab} jadwalDB={jadwalDB} rabuYMD={rabuYMD} sabatYMD={sabatYMD} tabs={tabs} dataPejabat={dataPejabat} />;
                     default: return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                 }
