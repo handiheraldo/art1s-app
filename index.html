@@ -337,7 +337,8 @@
                 Save: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>,
                 Info: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg>,
                 Share: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>,
-                Shield: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                Shield: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>,
+                Copy: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>
             };
             return icons[name] || null;
         };
@@ -1277,6 +1278,40 @@
         };
 
         const Persembahan = ({ dataPejabat, isLoading, setActiveTab }) => {
+            const [copied, setCopied] = React.useState(false);
+
+            const handleCopy = () => {
+                const textToCopy = "5114477778";
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                    }).catch(() => {
+                        fallbackCopy(textToCopy);
+                    });
+                } else {
+                    fallbackCopy(textToCopy);
+                }
+            };
+
+            const fallbackCopy = (text) => {
+                const textArea = document.createElement("textarea");
+                textArea.value = text;
+                textArea.style.position = "fixed";
+                textArea.style.opacity = "0";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                } catch (err) {
+                    console.error('Fallback copy failed', err);
+                }
+                document.body.removeChild(textArea);
+            };
+
             const bendaharas = dataPejabat.filter(p => (p.jabatan && p.jabatan.toLowerCase().includes('bendahara')) || (p.kategori && p.kategori.toLowerCase() === 'keuangan'));
             const qrisUrl = "https://images.spr.so/cdn-cgi/imagedelivery/j42No7y-dcokJuNgXeA0ig/811ba11f-520e-4307-89d3-34cd3011d3c8/WhatsApp_Image_2025-05-16_at_12.01.55_65684299/w=1920,quality=90,fit=scale-down";
             return (
@@ -1289,7 +1324,33 @@
                                 <a href={qrisUrl} target="_blank" rel="noopener noreferrer" download="QRIS_GMAHK_Tidar1.jpg" className="bg-navy-900 hover:bg-navy-800 text-gold-400 px-5 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-2 shadow"><Icon name="Download" className="w-3.5 h-3.5" /><span>Download QRIS</span></a>
                             </div>
                             <div className="flex flex-col justify-center text-center p-6 bg-navy-900 border border-gold-300 rounded-2xl h-full shadow-sm text-gold-400">
-                                <p className="text-xs md:text-sm font-bold mb-1 tracking-wide uppercase">Atau Transfer Bank ke:</p><p className="font-extrabold text-2xl md:text-3xl tracking-widest my-2 font-mono">511-44-7777-8</p><p className="text-xs md:text-sm font-bold opacity-90">BCA a/n GMAHK Tidar 1 Surabaya</p>
+                                <p className="text-xs md:text-sm font-bold mb-1 tracking-wide uppercase">Atau Transfer Bank ke:</p>
+                                <div className="flex items-center justify-center space-x-2 my-1 select-all relative">
+                                    <span className="font-extrabold text-2xl md:text-3xl tracking-widest font-mono">511-44-7777-8</span>
+                                    <button
+                                        onClick={handleCopy}
+                                        className="p-1.5 md:p-2 rounded-lg bg-navy-800 hover:bg-navy-700 active:scale-95 transition-all text-gold-400 border border-gold-400/20 hover:border-gold-400/50 flex items-center justify-center focus:outline-none relative group"
+                                        title="Salin Nomor Rekening (Hanya Angka)"
+                                    >
+                                        {copied ? (
+                                            <Icon name="Check" className="w-4 h-4 md:w-5 md:h-5 text-emerald-400 animate-[pulse_1s_infinite]" />
+                                        ) : (
+                                            <Icon name="Copy" className="w-4 h-4 md:w-5 md:h-5" />
+                                        )}
+
+                                        {copied && (
+                                            <span className="absolute bottom-full mb-2 bg-emerald-600 text-white text-[10px] py-1 px-2.5 rounded-lg shadow-lg font-bold whitespace-nowrap animate-fade-in z-20">
+                                                Tersalin!
+                                            </span>
+                                        )}
+                                    </button>
+                                </div>
+                                {copied && (
+                                    <span className="text-[10px] text-emerald-400 font-bold animate-fade-in block mb-1">
+                                        Nomor rekening berhasil disalin tanpa tanda hubung!
+                                    </span>
+                                )}
+                                <p className="text-xs md:text-sm font-bold opacity-90">BCA a/n GMAHK Tidar 1 Surabaya</p>
                             </div>
                         </div>
                         <div className="bg-white/60 p-5 md:p-6 rounded-2xl border border-navy-100/50 space-y-6 shadow-sm">
@@ -1455,7 +1516,7 @@
                                         <tr className="bg-navy-50/70 font-bold">
                                             <td className="p-2.5 text-navy-900">Rata-rata</td>
                                             <td className="p-2.5"></td>
-                                            <td className="p-2.5 text-right text-emerald-700">{formatRp(Math.round(kasOps.reduce((s,d) => s + d.debet, 0) / kasOps.length))}</td>
+                                            <td className="p-2.5 text-right text-emerald-700">{formatRp(Math.round(kasOps.reduce((s, d) => s + d.debet, 0) / kasOps.length))}</td>
                                             <td className="p-2.5 text-right text-red-700">{formatRp(Math.round(avgKredit))}</td>
                                             <td className="p-2.5"></td>
                                         </tr>
