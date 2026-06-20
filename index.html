@@ -155,33 +155,64 @@
 
         // --- INITIAL DATA ---
         const defaultSusunan = {
-            ssLaguBuka: "LS ...",
-            ssLaguTutup: "LS ...",
-            kAyatBersahutan: "No. ...",
-            kLaguBuka: "LS ...",
+            ssLaguBuka: "",
+            ssLaguTutup: "",
+            kAyatBersahutan: "",
+            kLaguBuka: "",
             kLaguPujian1_show: false,
-            kLaguPujian1_judul: "Koor / Vocal Group",
+            kLaguPujian1_judul: "",
             kLaguPujian2_show: false,
-            kLaguPujian2_judul: "Koor / Vocal Group",
+            kLaguPujian2_judul: "",
             kLaguPujian3_show: false,
-            kLaguPujian3_judul: "Koor / Vocal Group",
-            kAyatInti: "...",
-            kLaguTutup: "LS ..."
+            kLaguPujian3_judul: "",
+            kAyatInti: "",
+            kLaguTutup: ""
         };
 
         const initialJadwalRabu = {
             title: "Ibadah Permintaan Doa (Rabu)", time: "19:00 WIB - selesai",
-            petugas: [{ tugas: "Pianis", nama: "Sdri. Grace" }, { tugas: "Pemimpin Acara", nama: "Bpk. Budi Santoso" }, { tugas: "Renungan", nama: "Pdt. Samuel" }, { tugas: "Doa Syafaat", nama: "Ibu Maria" }, { tugas: "Diakon", nama: "Sdr. Joshua" }]
+            petugas: [
+                { tugas: "Pianis", nama: "" },
+                { tugas: "Pemimpin Acara", nama: "" },
+                { tugas: "Renungan", nama: "" },
+                { tugas: "Doa Syafaat", nama: "" },
+                { tugas: "Diakon", nama: "" }
+            ]
         };
 
         const initialJadwalSabat = {
             title: "Ibadah Sabat (Sabtu)", time: "09:00 - 12:00 WIB",
             sekolahSabatTime: "09:00 - 10:30 WIB",
-            sekolahSabat: [{ tugas: "Pianis", nama: "Sdri. Grace" }, { tugas: "Pembawa Acara", nama: "Bpk. Andi" }, { tugas: "Ayat Inti & Doa Buka", nama: "Bpk. Yohanes" }, { tugas: "Berita Misi", nama: "Ibu Lina" }, { tugas: "Pelayanan Perorangan", nama: "Bpk. Sitorus" }],
+            sekolahSabat: [
+                { tugas: "Pianis", nama: "" },
+                { tugas: "Pembawa Acara", nama: "" },
+                { tugas: "Ayat Inti & Doa Buka", nama: "" },
+                { tugas: "Berita Misi", nama: "" },
+                { tugas: "Pelayanan Perorangan", nama: "" }
+            ],
             khotbahTime: "10:30 - 12:00 WIB",
-            khotbah: [{ tugas: "Khotbah", nama: "Pdt. David Siregar" }, { tugas: "Pendamping 1", nama: "Bpk. Daniel" }, { tugas: "Pendamping 2", nama: "Sdr. Kevin" }, { tugas: "Cerita Anak-anak", nama: "Ibu Sarah" }, { tugas: "Song Leader", nama: "Sdr. Joshua" }, { tugas: "Lagu Pujian", nama: "Koor Pemuda" }],
-            diakon: [{ tugas: "Diakon 1", nama: "Bpk. Sitorus" }, { tugas: "Diakon 2", nama: "Bpk. Tambunan" }, { tugas: "Diakones 1", nama: "Ibu Sitorus" }, { tugas: "Diakones 2", nama: "Ibu Tambunan" }],
-            musik: [{ tugas: "Pianis", nama: "Sdri. Grace" }, { tugas: "Keyboardis", nama: "Sdr. Kevin" }, { tugas: "Gitaris", nama: "Sdr. Alex" }, { tugas: "Bassist", nama: "Sdr. Brian" }, { tugas: "Saxophonist", nama: "Bpk. Anton" }, { tugas: "Violinist", nama: "Sdri. Clara" }],
+            khotbah: [
+                { tugas: "Khotbah", nama: "" },
+                { tugas: "Pendamping 1", nama: "" },
+                { tugas: "Pendamping 2", nama: "" },
+                { tugas: "Cerita Anak-anak", nama: "" },
+                { tugas: "Song Leader", nama: "" },
+                { tugas: "Lagu Pujian", nama: "" }
+            ],
+            diakon: [
+                { tugas: "Diakon 1", nama: "" },
+                { tugas: "Diakon 2", nama: "" },
+                { tugas: "Diakones 1", nama: "" },
+                { tugas: "Diakones 2", nama: "" }
+            ],
+            musik: [
+                { tugas: "Pianis", nama: "" },
+                { tugas: "Keyboardis", nama: "" },
+                { tugas: "Gitaris", nama: "" },
+                { tugas: "Bassist", nama: "" },
+                { tugas: "Saxophonist", nama: "" },
+                { tugas: "Violinist", nama: "" }
+            ],
             susunan: defaultSusunan,
             perjamuan: [
                 { tugas: "P. Roti & Anggur 1", nama: "" }, { tugas: "P. Roti & Anggur 2", nama: "" }, { tugas: "P. Roti & Anggur 3", nama: "" }, { tugas: "P. Roti & Anggur 4", nama: "" }, { tugas: "P. Roti & Anggur 5", nama: "" },
@@ -189,45 +220,17 @@
                 { tugas: "Pelayan Basuh Kaki 1", nama: "" }, { tugas: "Pelayan Basuh Kaki 2", nama: "" }, { tugas: "Pelayan Basuh Kaki 3", nama: "" },
                 { tugas: "Pelayan Perjamuan (L1)", nama: "" }, { tugas: "Pelayan Perjamuan (P1)", nama: "" }, { tugas: "Pelayan Perjamuan (L2)", nama: "" }, { tugas: "Pelayan Perjamuan (P2)", nama: "" },
                 { tugas: "Cuci Baskom 1", nama: "" }, { tugas: "Cuci Baskom 2", nama: "" }, { tugas: "Cuci Baskom 3", nama: "" }, { tugas: "Cuci Baskom 4", nama: "" },
-                { tugas: "Cuci Alat Perjamuan", nama: "Diatur oleh Diakones" }
+                { tugas: "Cuci Alat Perjamuan", nama: "" }
             ]
         };
 
         const defaultKeuangan = {
-            kasOps: [
-                { bulan: 'Des', tahun: '2025', saldoAwal: 10611132, debet: 10855000, kredit: 11805150, saldo: 9660982 },
-                { bulan: 'Jan', tahun: '2026', saldoAwal: 9660982, debet: 10615496, kredit: 7859322, saldo: 12417156 },
-                { bulan: 'Feb', tahun: '2026', saldoAwal: 12417156, debet: 11464300, kredit: 8944386, saldo: 14937070 },
-                { bulan: 'Mar', tahun: '2026', saldoAwal: 14937070, debet: 8255225, kredit: 11823456, saldo: 11368839 },
-                { bulan: 'Apr', tahun: '2026', saldoAwal: 11368839, debet: 7986200, kredit: 8159786, saldo: 11195253 },
-                { bulan: 'Mei', tahun: '2026', saldoAwal: 11195253, debet: 11778000, kredit: 9114626, saldo: 13858627 },
-            ],
-            kasTotal: [
-                { nama: 'Kas Operasional Gereja', saldo: 13858627 },
-                { nama: 'Kas Pembangunan Gereja', saldo: 3760725 },
-                { nama: 'Kas PA (Bukan Kas Gereja)', saldo: 11227954 },
-                { nama: 'Kas Kursus Gratis', saldo: 5725998 },
-                { nama: 'Kas SSA', saldo: 1503967 },
-                { nama: 'Kas Dana Sosial', saldo: 1227200 },
-                { nama: 'Kas BWA', saldo: 4073000 },
-                { nama: 'Kas Penginjilan', saldo: 2824750 },
-                { nama: 'Kas Administrasi Gereja', saldo: 28500000 },
-                { nama: 'Kas ART1S Senior', saldo: 812500 },
-                { nama: 'Kas Pembelian Angklung', saldo: 250000 },
-                { nama: 'Kas Choir ART1S Pemuda', saldo: 618000 },
-                { nama: 'Kas Pembelian A/C', saldo: 1000000 },
-            ],
-            kjktRows: [
-                { tgl: '02/05', ket: 'Persembahan SS & Khotbah', perpuluhan: null, terpadu: 831500, jumlah: 831500 },
-                { tgl: '09/05', ket: 'Persembahan SS & Khotbah', perpuluhan: null, terpadu: 759500, jumlah: 759500 },
-                { tgl: '16/05', ket: 'Persembahan SS & Khotbah', perpuluhan: null, terpadu: 706000, jumlah: 706000 },
-                { tgl: '23/05', ket: 'Persembahan SS & Khotbah', perpuluhan: null, terpadu: 866000, jumlah: 866000 },
-                { tgl: '30/05', ket: 'Persembahan SS & Khotbah', perpuluhan: null, terpadu: 486000, jumlah: 486000 },
-                { tgl: '', ket: "Perpuluhan & Persembahan Mei '26 (Amplop Persan & Tf.)", perpuluhan: 19122500, terpadu: 828000, jumlah: 19950500 },
-            ],
-            saldoPembukuan: 98982221,
-            saldoBca: 98984480,
-            signatures: "Ditandatangani: Ketua Jemaat — Septha Domona • Gembala Jemaat — Pdt. David Indra Utomo • Bendahara — Ari Wattimena"
+            kasOps: [],
+            kasTotal: [],
+            kjktRows: [],
+            saldoPembukuan: 0,
+            saldoBca: 0,
+            signatures: "Ditandatangani: Ketua Jemaat — [Nama Ketua] • Gembala Jemaat — [Nama Gembala] • Bendahara — [Nama Bendahara]"
         };
 
         let deferredPrompt;
@@ -283,17 +286,17 @@
         };
 
         const initialDataPejabat = [
-            { id: 'gembala', jabatan: "Gembala Jemaat", nama: "Pdt. [Nama Gembala]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Gembala+Jemaat&background=eff6ff&color=1e3a8a&size=512", kategori: "Kepemimpinan" },
-            { id: 'ketua1', jabatan: "Ketua Jemaat 1", nama: "Bpk. [Nama Ketua 1]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Ketua+1&background=eff6ff&color=1e3a8a&size=512", kategori: "Kepemimpinan" },
-            { id: 'ketua2', jabatan: "Ketua Jemaat 2", nama: "Bpk. [Nama Ketua 2]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Ketua+2&background=eff6ff&color=1e3a8a&size=512", kategori: "Kepemimpinan" },
-            { id: 'sekretaris1', jabatan: "Sekretaris 1", nama: "Ibu [Nama Sekretaris 1]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Sekretaris+1&background=f0fdf4&color=14532d&size=512", kategori: "Kepemimpinan" },
-            { id: 'sekretaris2', jabatan: "Sekretaris 2", nama: "Bpk. [Nama Sekretaris 2]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Sekretaris+2&background=f0fdf4&color=14532d&size=512", kategori: "Kepemimpinan" },
-            { id: 'bendahara1', jabatan: "Bendahara 1", nama: "Ibu Ari Pahlawani", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Ari+Pahlawani&background=fffbeb&color=78350f&size=512", kategori: "Keuangan" },
-            { id: 'bendahara2', jabatan: "Bendahara 2", nama: "Ibu Kasfia Naibaho", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Kasfia+Naibaho&background=fffbeb&color=78350f&size=512", kategori: "Keuangan" },
-            { id: 'multimedia', jabatan: "Multimedia", nama: "Sdr. [Nama Multimedia]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Multimedia&background=e0e7ff&color=3730a3&size=512", kategori: "Departemen & Pelayanan" },
-            { id: 'sound_system', jabatan: "Sound System", nama: "Sdr. [Nama Sound System]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Sound+System&background=e0e7ff&color=3730a3&size=512", kategori: "Departemen & Pelayanan" },
-            { id: 'diakon', jabatan: "Ketua Diakon & Diakones", nama: "Bpk. [Nama Ketua Diakon]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Diakon+Diakones&background=f3f4f6&color=1f2937&size=512", kategori: "Departemen & Pelayanan" },
-            { id: 'pemuda', jabatan: "Ketua Pemuda", nama: "Sdr. [Nama Ketua Pemuda]", wa: "62800000000", img: "https://ui-avatars.com/api/?name=Ketua+Pemuda&background=faf5ff&color=581c87&size=512", kategori: "Departemen & Pelayanan" }
+            { id: 'gembala', jabatan: "Gembala Jemaat", nama: "Pdt. [Nama Gembala]", wa: "", img: "https://ui-avatars.com/api/?name=Gembala+Jemaat&background=eff6ff&color=1e3a8a&size=512", kategori: "Kepemimpinan" },
+            { id: 'ketua1', jabatan: "Ketua Jemaat 1", nama: "Bpk. [Nama Ketua 1]", wa: "", img: "https://ui-avatars.com/api/?name=Ketua+1&background=eff6ff&color=1e3a8a&size=512", kategori: "Kepemimpinan" },
+            { id: 'ketua2', jabatan: "Ketua Jemaat 2", nama: "Bpk. [Nama Ketua 2]", wa: "", img: "https://ui-avatars.com/api/?name=Ketua+2&background=eff6ff&color=1e3a8a&size=512", kategori: "Kepemimpinan" },
+            { id: 'sekretaris1', jabatan: "Sekretaris 1", nama: "Ibu [Nama Sekretaris 1]", wa: "", img: "https://ui-avatars.com/api/?name=Sekretaris+1&background=f0fdf4&color=14532d&size=512", kategori: "Kepemimpinan" },
+            { id: 'sekretaris2', jabatan: "Sekretaris 2", nama: "Bpk. [Nama Sekretaris 2]", wa: "", img: "https://ui-avatars.com/api/?name=Sekretaris+2&background=f0fdf4&color=14532d&size=512", kategori: "Kepemimpinan" },
+            { id: 'bendahara1', jabatan: "Bendahara 1", nama: "Ibu [Nama Bendahara 1]", wa: "", img: "https://ui-avatars.com/api/?name=Bendahara+1&background=fffbeb&color=78350f&size=512", kategori: "Keuangan" },
+            { id: 'bendahara2', jabatan: "Bendahara 2", nama: "Ibu [Nama Bendahara 2]", wa: "", img: "https://ui-avatars.com/api/?name=Bendahara+2&background=fffbeb&color=78350f&size=512", kategori: "Keuangan" },
+            { id: 'multimedia', jabatan: "Multimedia", nama: "Sdr. [Nama Multimedia]", wa: "", img: "https://ui-avatars.com/api/?name=Multimedia&background=e0e7ff&color=3730a3&size=512", kategori: "Departemen & Pelayanan" },
+            { id: 'sound_system', jabatan: "Sound System", nama: "Sdr. [Nama Sound System]", wa: "", img: "https://ui-avatars.com/api/?name=Sound+System&background=e0e7ff&color=3730a3&size=512", kategori: "Departemen & Pelayanan" },
+            { id: 'diakon', jabatan: "Ketua Diakon & Diakones", nama: "Bpk. [Nama Ketua Diakon]", wa: "", img: "https://ui-avatars.com/api/?name=Diakon+Diakones&background=f3f4f6&color=1f2937&size=512", kategori: "Departemen & Pelayanan" },
+            { id: 'pemuda', jabatan: "Ketua Pemuda", nama: "Sdr. [Nama Ketua Pemuda]", wa: "", img: "https://ui-avatars.com/api/?name=Ketua+Pemuda&background=faf5ff&color=581c87&size=512", kategori: "Departemen & Pelayanan" }
         ];
 
         // --- ICONS (SVG MAPPING) ---
