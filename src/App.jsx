@@ -1255,6 +1255,16 @@ import React from 'react';
                 if (n >= 1000) return (n / 1000).toFixed(0) + ' rb';
                 return n.toString();
             };
+            const formatTgl = (tgl) => {
+                if (!tgl || tgl === '-') return '-';
+                const d = new Date(tgl);
+                if (!isNaN(d.getTime())) {
+                    const dd = String(d.getDate()).padStart(2, '0');
+                    const mm = String(d.getMonth() + 1).padStart(2, '0');
+                    return `${dd}/${mm}`;
+                }
+                return tgl; // sudah format DD/MM, kembalikan apa adanya
+            };
 
             const data = keuanganData || defaultKeuangan;
             const kasOps = data.kasOps || defaultKeuangan.kasOps;
@@ -1444,7 +1454,7 @@ import React from 'react';
                                 <tbody>
                                     {kjktRows.map((d, i) => (
                                         <tr key={i} className="border-b border-navy-50 hover:bg-navy-50/30 transition-colors">
-                                            <td className="p-2.5 font-medium text-navy-600 whitespace-nowrap">{d.tgl || '-'}</td>
+                                            <td className="p-2.5 font-medium text-navy-600 whitespace-nowrap">{formatTgl(d.tgl)}</td>
                                             <td className="p-2.5 font-medium text-navy-700">{d.ket}</td>
                                             <td className="p-2.5 text-right font-bold text-navy-800">{d.perpuluhan ? formatRp(d.perpuluhan) : '-'}</td>
                                             <td className="p-2.5 text-right font-bold text-navy-800">{d.terpadu ? formatRp(d.terpadu) : '-'}</td>
