@@ -1425,7 +1425,7 @@ import React from 'react';
                     </div>
 
                     {/* Persembahan & Perpuluhan KJKT */}
-                    <div className="bg-white p-5 md:p-7 rounded-[1.5rem] shadow-sm border border-navy-100/60">
+                    {false && <div className="bg-white p-5 md:p-7 rounded-[1.5rem] shadow-sm border border-navy-100/60">
                         <div className="mb-5 border-b pb-4 border-navy-50">
                             <h2 className="text-lg font-bold text-navy-900 tracking-tight flex items-center"><span className="text-xl mr-2">🎁</span>Persembahan & Perpuluhan KJKT</h2>
                             <p className="text-xs text-navy-500 font-medium mt-1">GMAHK Tidar 1 Surabaya</p>
@@ -1463,7 +1463,7 @@ import React from 'react';
                         <div className="mt-4 text-[10px] text-navy-500 font-bold leading-relaxed">
                             <p>{signatures}</p>
                         </div>
-                    </div>
+                    </div>}
 
                     {/* Google Drive Link Button */}
                     <div className="flex justify-center my-6 md:my-8 px-4">
