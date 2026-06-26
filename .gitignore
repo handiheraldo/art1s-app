@@ -4,3 +4,8 @@
 !.dev.vars.example
 .env*
 !.env.example
+
+# node / build
+node_modules/
+dist/
+index.html.bak
