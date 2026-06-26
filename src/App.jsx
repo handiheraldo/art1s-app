@@ -251,7 +251,7 @@ import React from 'react';
         );
 
         // --- COMPONENTS ---
-        const Home = ({ setActiveTab, youtubeUrl, isLiveYoutube, youtubeTitle, heroImageUrl, jadwalDB, dataPejabat, isLoading }) => {
+        const Home = ({ setActiveTab, youtubeUrl, isLiveYoutube, youtubeTitle, heroImageUrl, jadwalDB, dataPejabat, isLoading, showPerjamuan, perjamuanYMD, showPerpuluhan, perpuluhanYMD }) => {
             const [searchQuery, setSearchQuery] = React.useState('');
 
             // Listen for search events from the mobile header
@@ -462,6 +462,36 @@ import React from 'react';
                             </div>
                         )}
                     </div>
+
+                    {(showPerjamuan || showPerpuluhan) && (
+                        <div className="space-y-4 mb-6 md:mb-8">
+                            {showPerjamuan && (
+                                <div className="bg-gradient-to-r from-gold-400 to-gold-500 text-navy-900 p-5 md:p-6 rounded-[1.25rem] shadow flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-in border border-gold-300">
+                                    <div className="text-center sm:text-left">
+                                        <h3 className="font-black text-[1.15rem] leading-none uppercase tracking-widest flex items-center justify-center sm:justify-start mb-1.5"><Icon name="Gift" className="w-4 h-4 mr-2" /> Sabat Perjamuan</h3>
+                                        <p className="text-sm text-navy-800 font-bold">{formatIndoDate(perjamuanYMD)}</p>
+                                    </div>
+                                    <button onClick={() => setActiveTab('jadwal')} className="bg-navy-900 text-gold-400 hover:text-gold-300 px-6 py-3 rounded-xl text-sm font-bold shadow hover:bg-navy-800 transition shrink-0 w-full sm:w-auto">Lihat Petugas</button>
+                                </div>
+                            )}
+
+                            {showPerpuluhan && (
+                                <div className="bg-gradient-to-br from-navy-900 to-navy-800 p-5 md:p-6 rounded-[1.25rem] shadow-lg border border-navy-700/50 flex flex-col sm:flex-row items-center justify-between gap-4 relative overflow-hidden animate-fade-in">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-gold-400/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-gold-400/5 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+                                    <div className="relative z-10 text-center sm:text-left">
+                                        <h3 className="font-black text-[1.15rem] leading-none uppercase tracking-widest flex items-center justify-center sm:justify-start mb-1.5 text-gold-400">
+                                            <Icon name="Gift" className="w-4 h-4 mr-2" /> Sabat Perpuluhan
+                                        </h3>
+                                        <p className="text-sm text-navy-200 font-bold">{formatIndoDate(perpuluhanYMD)}</p>
+                                    </div>
+                                    <button onClick={() => setActiveTab('persembahan')} className="relative z-10 bg-gold-400 hover:bg-gold-300 text-navy-900 px-6 py-3 rounded-xl text-sm font-black shadow-md hover:shadow-lg transition-all shrink-0 w-full sm:w-auto">
+                                        Transfer Perpuluhan
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    )}
 
                     <div className="mb-6 md:mb-10">
                         <div className="flex items-center justify-between mb-4 px-1 flex-wrap gap-2">
@@ -1034,7 +1064,7 @@ import React from 'react';
             );
         };
 
-        const Live = ({ setActiveTab, activeRabu, activeSabat, rabuYMD, sabatYMD, showPerjamuan, perjamuanYMD, activePerjamuan, youtubeUrl, isLiveYoutube, youtubeTitle, isLoading }) => {
+        const Live = ({ setActiveTab, activeRabu, activeSabat, rabuYMD, sabatYMD, youtubeUrl, isLiveYoutube, youtubeTitle, isLoading }) => {
             const today = new Date();
             const todayDay = today.getDay();
 
@@ -1069,16 +1099,6 @@ import React from 'react';
                             )}
                         </div>
                     </div>
-
-                    {showPerjamuan && !isRabu && (
-                        <div className="bg-gradient-to-r from-gold-400 to-gold-500 text-navy-900 p-5 md:p-6 rounded-[1.25rem] shadow flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-in border border-gold-300">
-                            <div className="text-center sm:text-left">
-                                <h3 className="font-black text-[1.15rem] leading-none uppercase tracking-widest flex items-center justify-center sm:justify-start mb-1.5"><Icon name="Gift" className="w-4 h-4 mr-2" /> Sabat Perjamuan</h3>
-                                <p className="text-sm text-navy-800 font-bold">{formatIndoDate(perjamuanYMD)}</p>
-                            </div>
-                            <button onClick={() => setActiveTab('jadwal')} className="bg-navy-900 text-gold-400 hover:text-gold-300 px-6 py-3 rounded-xl text-sm font-bold shadow hover:bg-navy-800 transition shrink-0 w-full sm:w-auto">Lihat Petugas</button>
-                        </div>
-                    )}
 
                     <div className="bg-white p-6 md:p-8 rounded-[1.5rem] shadow-sm border border-navy-100/60">
                         <div className="flex justify-between items-start sm:items-center mb-6 flex-col sm:flex-row gap-4 border-b pb-5 border-navy-50">
@@ -3225,6 +3245,38 @@ import React from 'react';
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             const showPerjamuan = diffDays <= 8 && diffDays >= 0;
 
+            const getSecondSaturday = (year, monthIndex) => {
+                const d = new Date(year, monthIndex, 1);
+                const day = d.getDay();
+                const firstSatOffset = (6 - day + 7) % 7;
+                const secondSatDate = 1 + firstSatOffset + 7;
+                return new Date(year, monthIndex, secondSatDate);
+            };
+
+            const getNextPerpuluhan = () => {
+                const year = today.getFullYear();
+                const month = today.getMonth();
+                const secondSatCurrent = getSecondSaturday(year, month);
+                
+                if (today <= secondSatCurrent) {
+                    return secondSatCurrent;
+                } else {
+                    let nextMonth = month + 1;
+                    let nextYear = year;
+                    if (nextMonth > 11) {
+                        nextMonth = 0;
+                        nextYear += 1;
+                    }
+                    return getSecondSaturday(nextYear, nextMonth);
+                }
+            };
+
+            const nextPerpuluhanObj = getNextPerpuluhan();
+            const perpuluhanYMD = toYMD(nextPerpuluhanObj);
+            const diffTimePerpuluhan = nextPerpuluhanObj - today;
+            const diffDaysPerpuluhan = Math.ceil(diffTimePerpuluhan / (1000 * 60 * 60 * 24));
+            const showPerpuluhan = diffDaysPerpuluhan <= 8 && diffDaysPerpuluhan >= 0;
+
             const activeRabu = jadwalDB[rabuYMD] || initialJadwalRabu;
             const activeSabat = jadwalDB[sabatYMD] || initialJadwalSabat;
             const activePerjamuan = jadwalDB[perjamuanYMD]?.perjamuan || initialJadwalSabat.perjamuan;
@@ -3319,12 +3371,12 @@ import React from 'react';
 
             const renderContent = () => {
                 switch (activeTab) {
-                    case 'home': return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
+                    case 'home': return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} showPerpuluhan={showPerpuluhan} perpuluhanYMD={perpuluhanYMD} />;
                     case 'belajar': return <Belajar setActiveTab={setActiveTab} />;
                     case 'belajar_alkitab': return <DetailAlkitab setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'belajar_28dasar': return <Detail28Dasar setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'belajar_egw': return <DetailEGW setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
-                    case 'live': return <Live setActiveTab={setActiveTab} activeRabu={activeRabu} activeSabat={activeSabat} rabuYMD={rabuYMD} sabatYMD={sabatYMD} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} activePerjamuan={activePerjamuan} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} isLoading={isAppLoading} />;
+                    case 'live': return <Live setActiveTab={setActiveTab} activeRabu={activeRabu} activeSabat={activeSabat} rabuYMD={rabuYMD} sabatYMD={sabatYMD} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} isLoading={isAppLoading} />;
                     case 'jadwal': return <Jadwal activeRabu={jadwalKhususRabu} activeSabat={jadwalKhususSabat} rabuYMD={displayRabuYMD} sabatYMD={displaySabatYMD} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} activePerjamuan={activePerjamuan} isLoading={isAppLoading} />;
                     case 'persembahan': return <Persembahan dataPejabat={dataPejabat} isLoading={isAppLoading} setActiveTab={setActiveTab} />;
                     case 'laporan_keuangan': return <LaporanKeuangan setActiveTab={setActiveTab} keuanganData={keuanganData} />;
@@ -3334,9 +3386,9 @@ import React from 'react';
                     case 'hubungi': return <Hubungi setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
                     case 'form_acms': return <FormACMS setActiveTab={setActiveTab} />;
                     case 'susunan_ibadah': return <SusunanIbadah setActiveTab={setActiveTab} activeSabat={activeSabat} sabatYMD={sabatYMD} isLoading={isAppLoading} />;
-                    case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} autoDetectYoutube={autoDetectYoutube} setAutoDetectYoutube={setAutoDetectYoutube} youtubeTitle={youtubeTitle} isLiveYoutube={isLiveYoutube} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} heroImageUrl={heroImageUrl} setHeroImageUrl={setHeroImageUrl} keuanganData={keuanganData} setKeuanganData={setKeuanganData} /> : <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
+                    case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} autoDetectYoutube={autoDetectYoutube} setAutoDetectYoutube={setAutoDetectYoutube} youtubeTitle={youtubeTitle} isLiveYoutube={isLiveYoutube} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} heroImageUrl={heroImageUrl} setHeroImageUrl={setHeroImageUrl} keuanganData={keuanganData} setKeuanganData={setKeuanganData} /> : <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} showPerpuluhan={showPerpuluhan} perpuluhanYMD={perpuluhanYMD} />;
                     case 'search': return <Search setActiveTab={setActiveTab} jadwalDB={jadwalDB} rabuYMD={rabuYMD} sabatYMD={sabatYMD} tabs={tabs} dataPejabat={dataPejabat} />;
-                    default: return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
+                    default: return <Home setActiveTab={setActiveTab} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} showPerpuluhan={showPerpuluhan} perpuluhanYMD={perpuluhanYMD} />;
                 }
             };
 
