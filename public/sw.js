@@ -35,8 +35,8 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Bypass cache for Google Apps Script API calls
-  if (e.request.url.includes('script.google.com')) {
+  // Bypass cache for API calls (both Google Script and local /api)
+  if (e.request.url.includes('script.google.com') || e.request.url.includes('/api')) {
     e.respondWith(fetch(e.request));
     return;
   }

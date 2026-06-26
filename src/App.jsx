@@ -3,7 +3,7 @@ import React from 'react';
 // ========================================================
         // URL WEB APP MILIKMU
         // ========================================================
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbyT8u3ESo5wuQr9w50bUCFd_al5tau5aTTIVtmh7_jDifkoO8Jp_7y86JuFhsNdux3bOg/exec";
+        const GAS_API_URL = "/api";
 
         // --- INITIAL DATA ---
         const defaultSusunan = {
