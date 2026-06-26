@@ -3234,8 +3234,34 @@ import React from 'react';
 
             const jadwalKhususRabu = jadwalDB[displayRabuYMD] || initialJadwalRabu;
             const jadwalKhususSabat = jadwalDB[displaySabatYMD] || initialJadwalSabat;
-            // ------------------------------             // MENGAMBIL DATA DARI REST API GOOGLE APPS SCRIPT
+            // ------------------------------ // MENGAMBIL DATA DARI REST API (Stale-While-Revalidate)
+            const CACHE_KEY = 'art1s_app_data';
+
+            const applyData = React.useCallback((data) => {
+                if (data.dataPejabat) setDataPejabat(data.dataPejabat);
+                if (data.jadwalDB) setJadwalDB(data.jadwalDB);
+                if (data.youtubeUrl) setYoutubeUrl(data.youtubeUrl);
+                if (data.isLiveYoutube !== undefined) setIsLiveYoutube(data.isLiveYoutube);
+                if (data.youtubeTitle !== undefined) setYoutubeTitle(data.youtubeTitle);
+                if (data.autoDetectYoutube !== undefined) setAutoDetectYoutube(data.autoDetectYoutube);
+                if (data.kategoriPejabat) setKategoriPejabat(data.kategoriPejabat);
+                if (data.heroImageUrl) setHeroImageUrl(data.heroImageUrl);
+                if (data.keuangan) setKeuanganData(data.keuangan);
+            }, []);
+
             React.useEffect(() => {
+                // Step 1: Show cached data instantly (no loading spinner)
+                try {
+                    const cached = localStorage.getItem(CACHE_KEY);
+                    if (cached) {
+                        applyData(JSON.parse(cached));
+                        setIsAppLoading(false); // Instant UI from cache
+                    }
+                } catch (e) {
+                    console.warn('Failed to load cached data:', e);
+                }
+
+                // Step 2: Always fetch fresh data in background
                 fetch(`${GAS_API_URL}?action=getData`)
                     .then(response => {
                         if (!response.ok) {
@@ -3244,16 +3270,14 @@ import React from 'react';
                         return response.json();
                     })
                     .then(data => {
-                        if (data.dataPejabat) setDataPejabat(data.dataPejabat);
-                        if (data.jadwalDB) setJadwalDB(data.jadwalDB);
-                        if (data.youtubeUrl) setYoutubeUrl(data.youtubeUrl);
-                        if (data.isLiveYoutube !== undefined) setIsLiveYoutube(data.isLiveYoutube);
-                        if (data.youtubeTitle !== undefined) setYoutubeTitle(data.youtubeTitle);
-                        if (data.autoDetectYoutube !== undefined) setAutoDetectYoutube(data.autoDetectYoutube);
-                        if (data.kategoriPejabat) setKategoriPejabat(data.kategoriPejabat);
-                        if (data.heroImageUrl) setHeroImageUrl(data.heroImageUrl);
-                        if (data.keuangan) setKeuanganData(data.keuangan);
+                        applyData(data);
                         setIsAppLoading(false);
+                        // Save fresh data to localStorage for next visit
+                        try {
+                            localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+                        } catch (e) {
+                            console.warn('Failed to cache data:', e);
+                        }
                     })
                     .catch(error => {
                         console.error('Error fetching data, menggunakan data default:', error);
