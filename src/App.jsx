@@ -2164,6 +2164,33 @@ const BukuTamu = ({ setActiveTab }) => {
     const [isSuccess, setIsSuccess] = React.useState(false);
     const [captcha, setCaptcha] = React.useState({ num1: 0, num2: 0 });
     const [captchaInput, setCaptchaInput] = React.useState('');
+    const [showPublicList, setShowPublicList] = React.useState(false);
+    const [publicList, setPublicList] = React.useState([]);
+    const [isLoadingPublic, setIsLoadingPublic] = React.useState(false);
+
+    const openPublicList = async () => {
+        setShowPublicList(true);
+        setIsLoadingPublic(true);
+        try {
+            const response = await fetch(GAS_API_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'getPublicBukuTamu'
+                })
+            });
+            if (!response.ok) throw new Error('Jaringan bermasalah');
+            const result = await response.json();
+            if (result.success) {
+                setPublicList(result.data || []);
+            } else {
+                console.error('Failed to load public guest list:', result.message);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoadingPublic(false);
+        }
+    };
 
     const generateCaptcha = React.useCallback(() => {
         const n1 = Math.floor(Math.random() * 9) + 1; // 1 to 9
@@ -2249,14 +2276,24 @@ const BukuTamu = ({ setActiveTab }) => {
 
     return (
         <div className="max-w-lg mx-auto bg-white rounded-3xl border border-navy-100/60 shadow-xl overflow-hidden p-6 md:p-8 space-y-6 my-4 animate-fade-in relative z-10">
-            <div className="flex items-center space-x-4 border-b border-navy-50 pb-5">
-                <div className="w-12 h-12 bg-navy-50 rounded-2xl flex items-center justify-center text-navy-900 shadow-inner">
-                    <Icon name="Edit" className="w-6 h-6" />
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-navy-50 pb-5 gap-4">
+                <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-navy-50 rounded-2xl flex items-center justify-center text-navy-900 shadow-inner">
+                        <Icon name="Edit" className="w-6 h-6" />
+                    </div>
+                    <div>
+                        <h2 className="font-black text-navy-900 text-xl tracking-tight">Buku Tamu Jemaat</h2>
+                        <p className="text-xs text-navy-500 font-bold uppercase tracking-widest mt-1">Selamat Datang di GMAHK Tidar 1</p>
+                    </div>
                 </div>
-                <div>
-                    <h2 className="font-black text-navy-900 text-xl tracking-tight">Buku Tamu Jemaat</h2>
-                    <p className="text-xs text-navy-500 font-bold uppercase tracking-widest mt-1">Selamat Datang di GMAHK Tidar 1</p>
-                </div>
+                <button
+                    type="button"
+                    onClick={openPublicList}
+                    className="text-xs font-bold text-navy-600 bg-navy-50 hover:bg-navy-100 hover:text-navy-900 px-3.5 py-2.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 self-start sm:self-auto border border-navy-100/50"
+                >
+                    <Icon name="Users" className="w-4 h-4 text-gold-500" />
+                    Daftar Tamu
+                </button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -2385,6 +2422,62 @@ const BukuTamu = ({ setActiveTab }) => {
                     </button>
                 </div>
             </form>
+
+            {/* Modal Daftar Tamu 7 Hari Terakhir (Public) */}
+            {showPublicList && (
+                <div className="fixed inset-0 bg-navy-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-fade-in" onClick={() => setShowPublicList(false)}>
+                    <div className="bg-white rounded-3xl w-full max-w-md overflow-hidden shadow-2xl animate-slide-up flex flex-col max-h-[80vh]" onClick={e => e.stopPropagation()}>
+                        <div className="p-5 border-b border-navy-50 flex justify-between items-center bg-white sticky top-0">
+                            <div className="flex items-center space-x-3">
+                                <div className="w-10 h-10 bg-navy-50 rounded-xl flex items-center justify-center text-navy-900"><Icon name="Users" className="w-5 h-5 text-gold-500" /></div>
+                                <div className="text-left">
+                                    <h3 className="font-black text-base text-navy-900 tracking-tight">Tamu 7 Hari Terakhir</h3>
+                                    <p className="text-[9px] font-bold text-navy-400 uppercase tracking-widest">Daftar Pengunjung Ibadah</p>
+                                </div>
+                            </div>
+                            <button onClick={() => setShowPublicList(false)} className="text-navy-400 hover:text-red-500 transition-colors bg-navy-50 w-8 h-8 rounded-full flex items-center justify-center font-bold text-xl pb-1">&times;</button>
+                        </div>
+                        <div className="p-5 overflow-y-auto flex-1 space-y-4 bg-navy-50/20 max-h-[50vh]">
+                            {isLoadingPublic ? (
+                                <div className="space-y-3">
+                                    <SkeletonBlock className="h-14 w-full" />
+                                    <SkeletonBlock className="h-14 w-full" />
+                                    <SkeletonBlock className="h-14 w-full" />
+                                </div>
+                            ) : publicList.length > 0 ? (
+                                <div className="space-y-2.5">
+                                    {publicList.map((tamu, i) => (
+                                        <div key={i} className="bg-white border border-navy-100/60 rounded-xl p-4 shadow-sm flex items-center justify-between gap-3 text-left">
+                                            <div className="min-w-0">
+                                                <div className="font-bold text-navy-800 text-sm truncate">{tamu.nama}</div>
+                                                <div className="text-[10px] text-navy-500 font-semibold mt-1">Asal: {tamu.asalJemaat || '—'}</div>
+                                            </div>
+                                            <div className="text-right shrink-0">
+                                                <span className="text-[9px] font-bold bg-navy-50 border border-navy-100 text-navy-500 px-2 py-0.5 rounded-full uppercase tracking-wider block">
+                                                    {formatIndoDateShort(tamu.tanggal)}
+                                                </span>
+                                                <span className="text-[9px] font-bold text-gold-600 block mt-1">
+                                                    {tamu.kunjungan}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-10 border border-dashed border-navy-200 rounded-2xl bg-white/50">
+                                    <Icon name="Users" className="w-10 h-10 mx-auto text-navy-300 mb-2" />
+                                    <p className="text-xs text-navy-500 font-bold">Belum ada tamu terdaftar dalam 7 hari terakhir.</p>
+                                </div>
+                            )}
+                        </div>
+                        <div className="p-4 bg-white border-t border-navy-50">
+                            <button onClick={() => setShowPublicList(false)} className="w-full bg-navy-900 hover:bg-navy-800 text-gold-400 font-bold py-3 rounded-xl transition-all text-sm shadow-md">
+                                Tutup Halaman
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

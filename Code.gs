@@ -624,6 +624,44 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({success: true, id: id})).setMimeType(ContentService.MimeType.JSON);
   }
 
+  // --- Aksi: Ambil Data Buku Tamu Publik 7 Hari Terakhir (Public) ---
+  if (action === "getPublicBukuTamu") {
+    var sBukuTamu = ss.getSheetByName("Buku_Tamu");
+    var data = [];
+    if (sBukuTamu && sBukuTamu.getLastRow() > 1) {
+      var range = sBukuTamu.getDataRange();
+      var values = range.getValues();
+      var sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      sevenDaysAgo.setHours(0, 0, 0, 0);
+      
+      for (var i = 1; i < values.length; i++) {
+        var row = values[i];
+        if (row[0]) {
+          var dateVal = row[1];
+          var dateObj;
+          if (dateVal instanceof Date) {
+            dateObj = dateVal;
+          } else if (dateVal) {
+            dateObj = new Date(String(dateVal).split('T')[0] + "T00:00:00");
+          }
+          
+          if (dateObj && dateObj >= sevenDaysAgo) {
+            var dateString = Utilities.formatDate(dateObj, Session.getScriptTimeZone(), "yyyy-MM-dd");
+            data.push({
+              tanggal: dateString,
+              nama: row[2] ? row[2].toString() : "",
+              asalJemaat: row[4] ? row[4].toString() : "",
+              kunjungan: row[5] ? row[5].toString() : ""
+            });
+          }
+        }
+      }
+    }
+    data.reverse(); // Newest first
+    return ContentService.createTextOutput(JSON.stringify({success: true, data: data})).setMimeType(ContentService.MimeType.JSON);
+  }
+
   // --- Aksi: Ambil Data Buku Tamu (Admin) ---
   if (action === "getBukuTamu") {
     if (payload.password !== currentPassword) { 
