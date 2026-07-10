@@ -109,7 +109,7 @@ function checkAndInitSheets() {
 
   return ss;
 }
-}
+
 
 // =========================================================================
 // MENDETEKSI LIVE STREAM ATAU VIDEO TERBARU SECARA OTOMATIS
