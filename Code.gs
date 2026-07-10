@@ -134,10 +134,12 @@ function getLatestYoutubeVideo(apiKey, channelId) {
     Logger.log("getLatestYoutubeVideo: API Key is empty");
     return fallbackData;
   }
+  apiKey = apiKey.toString().trim();
   
   if (!channelId) {
     channelId = "UCNwVpE7CqpcKVcaUnZhUWTQ";
   }
+  channelId = channelId.toString().trim();
 
   try {
     // 1. Cek apakah ada live stream aktif
@@ -215,6 +217,53 @@ function getLatestYoutubeVideo(apiKey, channelId) {
 function doGet(e) {
   var ss = checkAndInitSheets();
   
+  // --- DEBUG ENDPOINT FOR YOUTUBE ---
+  if (e && e.parameter && e.parameter.debug === "youtube") {
+    var sPengaturan = ss.getSheetByName("Pengaturan");
+    var pengData = sPengaturan.getDataRange().getValues();
+    var apiKey = "";
+    var channelId = "UCNwVpE7CqpcKVcaUnZhUWTQ";
+    for (var i = 1; i < pengData.length; i++) {
+      if (pengData[i][0] === "YOUTUBE_API_KEY") apiKey = pengData[i][1].toString().trim();
+      if (pengData[i][0] === "YOUTUBE_CHANNEL_ID") channelId = pengData[i][1].toString().trim();
+    }
+    
+    var debugInfo = {
+      apiKeyProvided: !!apiKey,
+      apiKeyLength: apiKey.length,
+      channelId: channelId,
+      liveUrlSample: "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + channelId + "&eventType=live&type=video&key=...",
+      liveResponse: "",
+      latestResponse: ""
+    };
+    
+    if (apiKey) {
+      try {
+        var liveUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + channelId + "&eventType=live&type=video&key=" + apiKey;
+        var res = UrlFetchApp.fetch(liveUrl, { muteHttpExceptions: true });
+        debugInfo.liveResponse = {
+          code: res.getResponseCode(),
+          body: JSON.parse(res.getContentText())
+        };
+      } catch (err) {
+        debugInfo.liveResponse = "Error: " + err.toString();
+      }
+      
+      try {
+        var latestUrl = "https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=" + channelId + "&order=date&type=video&maxResults=1&key=" + apiKey;
+        var resLatest = UrlFetchApp.fetch(latestUrl, { muteHttpExceptions: true });
+        debugInfo.latestResponse = {
+          code: resLatest.getResponseCode(),
+          body: JSON.parse(resLatest.getContentText())
+        };
+      } catch (err) {
+        debugInfo.latestResponse = "Error: " + err.toString();
+      }
+    }
+    
+    return ContentService.createTextOutput(JSON.stringify(debugInfo)).setMimeType(ContentService.MimeType.JSON);
+  }
+  
   // --- Baca Pengaturan ---
   var sPengaturan = ss.getSheetByName("Pengaturan");
   var pengData = sPengaturan.getDataRange().getValues();
@@ -227,12 +276,12 @@ function doGet(e) {
   var youtubeChannelId = "UCNwVpE7CqpcKVcaUnZhUWTQ";
   
   for (var i = 1; i < pengData.length; i++) {
-    if (pengData[i][0] === "YOUTUBE_URL") youtubeUrl = pengData[i][1].toString();
-    if (pengData[i][0] === "HERO_IMAGE_URL") heroImageUrl = pengData[i][1].toString();
-    if (pengData[i][0] === "GDRIVE_URL") gdriveUrl = pengData[i][1].toString();
-    if (pengData[i][0] === "AUTO_DETECT_YOUTUBE") autoDetectYoutube = pengData[i][1].toString() === "YA";
-    if (pengData[i][0] === "YOUTUBE_API_KEY") youtubeApiKey = pengData[i][1].toString();
-    if (pengData[i][0] === "YOUTUBE_CHANNEL_ID") youtubeChannelId = pengData[i][1].toString();
+    if (pengData[i][0] === "YOUTUBE_URL") youtubeUrl = pengData[i][1].toString().trim();
+    if (pengData[i][0] === "HERO_IMAGE_URL") heroImageUrl = pengData[i][1].toString().trim();
+    if (pengData[i][0] === "GDRIVE_URL") gdriveUrl = pengData[i][1].toString().trim();
+    if (pengData[i][0] === "AUTO_DETECT_YOUTUBE") autoDetectYoutube = pengData[i][1].toString().trim() === "YA";
+    if (pengData[i][0] === "YOUTUBE_API_KEY") youtubeApiKey = pengData[i][1].toString().trim();
+    if (pengData[i][0] === "YOUTUBE_CHANNEL_ID") youtubeChannelId = pengData[i][1].toString().trim();
     if (pengData[i][0] === "KATEGORI_PEJABAT") {
       try {
         kategoriPejabat = JSON.parse(pengData[i][1].toString());
@@ -455,6 +504,10 @@ function doPost(e) {
       }
       if (!foundChan) { sPengaturan.appendRow(["YOUTUBE_CHANNEL_ID", payload.channelId]); }
     }
+    
+    // Hapus cache agar deteksi YouTube langsung mengambil data terbaru dari API saat di-refresh
+    var cache = CacheService.getScriptCache();
+    cache.remove("latest_youtube_video_data");
     
     return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
   }
@@ -914,5 +967,17 @@ function simpanSusunanAcaraKeTab(ss, tanggal, susunan) {
     sheet.getRange(rowIndex, 1, 1, rowData.length).setValues([rowData]);
   } else {
     sheet.appendRow(rowData);
+  }
+}
+
+// =========================================================================
+// OTORISASI: Jalankan fungsi ini sekali saja di editor Apps Script 
+// untuk memicu izin akses UrlFetchApp (koneksi keluar ke API YouTube)
+// =========================================================================
+function triggerAuthorization() {
+  try {
+    UrlFetchApp.fetch("https://www.googleapis.com/youtube/v3/search");
+  } catch (e) {
+    Logger.log("Otorisasi eksternal berhasil dipicu: " + e.toString());
   }
 }
