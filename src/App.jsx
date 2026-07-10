@@ -1799,7 +1799,7 @@ const SignaturePad = ({ value, onChange }) => {
     );
 };
 
-const FormACMS = ({ setActiveTab }) => {
+const FormACMS = ({ setActiveTab, dataPejabat }) => {
     const [step, setStep] = React.useState('fill');
 
     // Scroll to top of the page when form step changes
@@ -1861,9 +1861,6 @@ const FormACMS = ({ setActiveTab }) => {
 
                 setIsGenerating(false);
                 setStep('success');
-                const subject = encodeURIComponent(`Permohonan Pindah Masuk ACMS - ${formData.namaLengkap}`);
-                const body = encodeURIComponent(`Syalom Admin,\n\nBerikut saya lampirkan dokumen PDF permohonan pindah keanggotaan (ACMS) atas nama ${formData.namaLengkap} yang baru saja saya unduh dari aplikasi ART1S.\n\nTerima kasih.\n\n(Mohon jangan lupa untuk melampirkan file ${filename} yang baru saja terdownload ke dalam email ini)`);
-                window.location.href = `mailto:admin@tidar1.org?subject=${subject}&body=${body}`;
             }).catch((err) => {
                 console.error("PDF generation failed:", err);
                 alert("Gagal membuat PDF. Silakan coba lagi.");
@@ -1877,8 +1874,65 @@ const FormACMS = ({ setActiveTab }) => {
     };
 
     if (step === 'success') {
+        const contacts = dataPejabat ? dataPejabat.filter(p => ['sekretaris1', 'sekretaris2'].includes(p.id)) : [];
+        
+        const handleWhatsAppContact = (p) => {
+            const text = `Syalom ${p.jabatan} ${p.nama},\n\nSaya ingin mengonfirmasi pengajuan permohonan pindah keanggotaan (ACMS) atas nama:\n\n` +
+                `- *Nama Pemohon*: ${formData.namaLengkap}\n` +
+                `- *Jenis Kelamin*: ${formData.jenisKelamin}\n` +
+                `- *Jemaat Asal*: ${formData.jemaatAsalNama}\n\n` +
+                `Saya telah mengunduh file PDF formulir permohonan pindah masuk ACMS. Berikut saya lampirkan dokumennya untuk dapat diproses lebih lanjut. Terima kasih, Tuhan memberkati.`;
+
+            let cleaned = p.wa.replace(/[^0-9]/g, '');
+            if (cleaned.startsWith('0')) {
+                cleaned = '62' + cleaned.slice(1);
+            }
+            window.open(`https://wa.me/${cleaned}?text=${encodeURIComponent(text)}`, '_blank');
+        };
+
         return (
-            <div className="bg-white p-8 md:p-10 rounded-[1.5rem] shadow-sm border border-navy-100/60 text-center animate-fade-in relative z-10"><div className="w-20 h-20 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm"><Icon name="Check" className="w-10 h-10" /></div><h2 className="text-[1.8rem] font-black text-navy-900 mb-3 tracking-tight">Dokumen Berhasil Dibuat!</h2><p className="text-navy-600 mb-8 font-medium">File PDF permohonan Anda telah berhasil <b>diunduh</b> ke perangkat Anda.</p><div className="bg-navy-50/50 p-6 rounded-2xl text-left border border-navy-100 mb-8 shadow-inner"><h3 className="font-bold text-navy-900 mb-2 flex items-center"><Icon name="Info" className="w-5 h-5 mr-2 text-gold-500" /> Langkah Selanjutnya</h3><p className="text-sm text-navy-600 mb-4 leading-relaxed">Aplikasi email standar/bawaan Anda (seperti Gmail atau Mail) akan terbuka secara otomatis.</p><ol className="list-decimal list-outside ml-4 space-y-2 text-sm text-navy-700 font-medium"><li>Temukan file PDF yang baru saja terunduh (biasanya di folder Downloads).</li><li><b>"Attach / Lampirkan"</b> file tersebut ke dalam badan email yang terbuka.</li><li>Klik tombol <b>Kirim</b> untuk mengirimkannya ke Sekretaris Jemaat Tidar 1.</li></ol></div><button onClick={() => setActiveTab('pindah_masuk')} className="bg-navy-900 hover:bg-navy-800 text-gold-400 px-8 py-3.5 rounded-xl font-bold transition shadow hover:shadow-md">Selesai & Kembali</button></div>
+            <div className="max-w-md mx-auto bg-white rounded-3xl border border-navy-100/60 shadow-xl overflow-hidden p-6 md:p-8 text-center space-y-6 my-4 animate-fade-in relative z-10">
+                <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center text-green-500 mx-auto shadow-inner">
+                    <Icon name="Check" className="w-8 h-8" />
+                </div>
+                <h2 className="text-2xl font-black text-navy-900 tracking-tight">Dokumen Berhasil Dibuat!</h2>
+                <p className="text-sm text-navy-600 leading-relaxed font-medium">
+                    File PDF permohonan atas nama <b>{formData.namaLengkap}</b> telah berhasil <b>diunduh</b> ke perangkat Anda.
+                </p>
+                
+                <div className="bg-navy-50/50 p-5 rounded-2xl text-left border border-navy-100 text-xs text-navy-700 space-y-3 shadow-inner">
+                    <h3 className="font-bold text-navy-900 text-sm flex items-center border-b pb-2 border-navy-100/80">
+                        <Icon name="Info" className="w-4.5 h-4.5 mr-1.5 text-gold-500" /> WhatsApp Direct Follow-up
+                    </h3>
+                    <p className="leading-relaxed">
+                        Silakan hubungi Sekretaris Jemaat di bawah ini untuk konfirmasi cepat via WhatsApp. <b>Kirimkan file PDF permohonan yang baru saja diunduh kepada mereka.</b>
+                    </p>
+                    <div className="space-y-2 pt-1">
+                        {contacts.map(p => (
+                            <button
+                                key={p.id}
+                                onClick={() => handleWhatsAppContact(p)}
+                                className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-2.5 px-4 rounded-xl shadow-sm transition-all flex items-center justify-between group"
+                            >
+                                <span className="flex items-center text-left">
+                                    <Icon name="Phone" className="w-4 h-4 mr-2" />
+                                    <span>
+                                        <span className="block text-[10px] uppercase opacity-75 font-semibold leading-tight">{p.jabatan}</span>
+                                        <span className="text-xs font-bold leading-normal">{p.nama}</span>
+                                    </span>
+                                </span>
+                                <span className="text-white font-black text-sm ml-2 transform group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="pt-4 border-t border-navy-50">
+                    <button onClick={() => setActiveTab('pindah_masuk')} className="w-full bg-navy-900 text-gold-400 hover:bg-navy-800 font-bold py-3.5 rounded-xl transition-all shadow-md">
+                        Selesai & Kembali
+                    </button>
+                </div>
+            </div>
         );
     }
 
@@ -2885,7 +2939,7 @@ const Perlawatan = ({ setActiveTab, dataPejabat, isLoading }) => {
         window.open(`https://wa.me/${cleaned}?text=${encodeURIComponent(text)}`, '_blank');
     };
 
-    const contacts = dataPejabat.filter(p => ['gembala', 'ketua1'].includes(p.id));
+    const contacts = dataPejabat.filter(p => ['gembala', 'ketua1', 'ketua2'].includes(p.id));
 
     if (isSuccess) {
         return (
@@ -4597,7 +4651,7 @@ const App = () => {
             case 'member_baru': return <MemberBaru setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
             case 'pindah_masuk': return <PindahMasuk setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
             case 'hubungi': return <Hubungi setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
-            case 'form_acms': return <FormACMS setActiveTab={setActiveTab} />;
+            case 'form_acms': return <FormACMS setActiveTab={setActiveTab} dataPejabat={dataPejabat} />;
             case 'buku_tamu': return <BukuTamu setActiveTab={setActiveTab} />;
             case 'susunan_ibadah': return <SusunanIbadah setActiveTab={setActiveTab} activeSabat={activeSabat} sabatYMD={sabatYMD} isLoading={isAppLoading} />;
             case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} autoDetectYoutube={autoDetectYoutube} setAutoDetectYoutube={setAutoDetectYoutube} youtubeTitle={youtubeTitle} isLiveYoutube={isLiveYoutube} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} heroImageUrl={heroImageUrl} setHeroImageUrl={setHeroImageUrl} gdriveUrl={gdriveUrl} setGdriveUrl={setGdriveUrl} youtubeApiKey={youtubeApiKey} setYoutubeApiKey={setYoutubeApiKey} youtubeChannelId={youtubeChannelId} setYoutubeChannelId={setYoutubeChannelId} /> : <Home setActiveTab={setActiveTab} setJadwalSelectedDate={setJadwalSelectedDate} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} showPerpuluhan={showPerpuluhan} perpuluhanYMD={perpuluhanYMD} />;
