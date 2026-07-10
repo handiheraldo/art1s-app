@@ -2162,6 +2162,19 @@ const BukuTamu = ({ setActiveTab }) => {
     });
     const [isSubmitting, setIsSubmitting] = React.useState(false);
     const [isSuccess, setIsSuccess] = React.useState(false);
+    const [captcha, setCaptcha] = React.useState({ num1: 0, num2: 0 });
+    const [captchaInput, setCaptchaInput] = React.useState('');
+
+    const generateCaptcha = React.useCallback(() => {
+        const n1 = Math.floor(Math.random() * 9) + 1; // 1 to 9
+        const n2 = Math.floor(Math.random() * 9) + 1; // 1 to 9
+        setCaptcha({ num1: n1, num2: n2 });
+        setCaptchaInput('');
+    }, []);
+
+    React.useEffect(() => {
+        generateCaptcha();
+    }, [generateCaptcha]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -2172,6 +2185,10 @@ const BukuTamu = ({ setActiveTab }) => {
         e.preventDefault();
         if (!formData.nama.trim()) {
             alert('Nama Lengkap harus diisi.');
+            return;
+        }
+        if (Number(captchaInput) !== captcha.num1 + captcha.num2) {
+            alert('Jawaban pertanyaan keamanan salah. Silakan hitung kembali.');
             return;
         }
         setIsSubmitting(true);
@@ -2186,7 +2203,10 @@ const BukuTamu = ({ setActiveTab }) => {
                     asalJemaat: formData.asalJemaat,
                     kunjungan: formData.kunjungan,
                     sumberInfo: formData.sumberInfo,
-                    pesan: formData.pesan
+                    pesan: formData.pesan,
+                    num1: captcha.num1,
+                    num2: captcha.num2,
+                    captchaAnswer: Number(captchaInput)
                 })
             });
 
@@ -2196,10 +2216,12 @@ const BukuTamu = ({ setActiveTab }) => {
                 setIsSuccess(true);
             } else {
                 alert('Gagal mengirim data tamu: ' + (result.message || 'Terjadi kesalahan'));
+                generateCaptcha();
             }
         } catch (err) {
             console.error(err);
             alert('Gagal terhubung ke server. Silakan coba beberapa saat lagi.');
+            generateCaptcha();
         } finally {
             setIsSubmitting(false);
         }
@@ -2317,6 +2339,33 @@ const BukuTamu = ({ setActiveTab }) => {
                         onChange={handleChange}
                         className="w-full p-3.5 border border-navy-200 bg-white rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-navy-900 shadow-sm font-semibold text-sm transition-all resize-none"
                     ></textarea>
+                </div>
+
+                <div className="bg-navy-50/50 border border-navy-100 p-4 rounded-2xl space-y-3">
+                    <div className="flex justify-between items-center">
+                        <label className="block text-xs font-bold text-navy-700 uppercase tracking-widest">Pertanyaan Keamanan <span className="text-red-500">*</span></label>
+                        <button 
+                            type="button" 
+                            onClick={generateCaptcha} 
+                            className="text-xs text-navy-500 hover:text-gold-600 font-bold transition-colors flex items-center gap-1 focus:outline-none"
+                            title="Ganti Pertanyaan"
+                        >
+                            Refresh Angka
+                        </button>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+                        <span className="font-bold text-sm text-navy-800 bg-white border border-navy-200 px-4 py-3 rounded-xl shadow-sm text-center shrink-0 min-w-[120px] select-none">
+                            {captcha.num1} + {captcha.num2} =
+                        </span>
+                        <input
+                            type="number"
+                            required
+                            placeholder="Tulis jawaban Anda"
+                            value={captchaInput}
+                            onChange={(e) => setCaptchaInput(e.target.value)}
+                            className="flex-grow p-3.5 border border-navy-200 bg-white rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-navy-900 shadow-sm font-bold text-sm tracking-wide transition-all"
+                        />
+                    </div>
                 </div>
 
                 <div className="pt-3 flex gap-3">

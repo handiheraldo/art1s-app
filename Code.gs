@@ -593,6 +593,15 @@ function doPost(e) {
   
   // --- Aksi: Kirim Buku Tamu (Public) ---
   if (action === "submitBukuTamu") {
+    // Verifikasi matematika sederhana untuk mencegah spam
+    var num1 = payload.num1;
+    var num2 = payload.num2;
+    var captchaAnswer = payload.captchaAnswer;
+    if (num1 === undefined || num2 === undefined || captchaAnswer === undefined || 
+        Number(captchaAnswer) !== (Number(num1) + Number(num2))) {
+      return ContentService.createTextOutput(JSON.stringify({success: false, message: "Jawaban pertanyaan keamanan salah."})).setMimeType(ContentService.MimeType.JSON);
+    }
+
     var sBukuTamu = ss.getSheetByName("Buku_Tamu");
     if (!sBukuTamu) {
       sBukuTamu = ss.insertSheet("Buku_Tamu");
