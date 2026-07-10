@@ -89,6 +89,15 @@ function checkAndInitSheets() {
     }
   }
 
+  // 4. Sheet Buku Tamu jika belum ada
+  var sBukuTamu = ss.getSheetByName("Buku_Tamu");
+  if (!sBukuTamu) {
+    sBukuTamu = ss.insertSheet("Buku_Tamu");
+    sBukuTamu.appendRow(["ID", "Tanggal", "Nama", "WhatsApp", "Asal Jemaat", "Kunjungan", "Sumber Info", "Pesan", "Status Follow-up"]);
+    sBukuTamu.getRange("A1:I1").setFontWeight("bold").setBackground("#eef2f6");
+    sBukuTamu.setFrozenRows(1);
+  }
+
   return ss;
 }
 }
@@ -582,7 +591,95 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
   }
   
+  // --- Aksi: Kirim Buku Tamu (Public) ---
+  if (action === "submitBukuTamu") {
+    var sBukuTamu = ss.getSheetByName("Buku_Tamu");
+    if (!sBukuTamu) {
+      sBukuTamu = ss.insertSheet("Buku_Tamu");
+      sBukuTamu.appendRow(["ID", "Tanggal", "Nama", "WhatsApp", "Asal Jemaat", "Kunjungan", "Sumber Info", "Pesan", "Status Follow-up"]);
+      sBukuTamu.getRange("A1:I1").setFontWeight("bold").setBackground("#eef2f6");
+      sBukuTamu.setFrozenRows(1);
+    }
+    
+    var id = "BT_" + new Date().getTime() + "_" + Math.floor(Math.random() * 1000);
+    var tanggal = payload.tanggal || new Date().toISOString().split('T')[0];
+    var nama = payload.nama || "";
+    var wa = payload.wa || "";
+    var asalJemaat = payload.asalJemaat || "";
+    var kunjungan = payload.kunjungan || "Pertama kali";
+    var sumberInfo = payload.sumberInfo || "";
+    var pesan = payload.pesan || "";
+    var statusFollowUp = "Belum di-follow up";
+    
+    sBukuTamu.appendRow([id, tanggal, nama, "'" + wa, asalJemaat, kunjungan, sumberInfo, pesan, statusFollowUp]);
+    return ContentService.createTextOutput(JSON.stringify({success: true, id: id})).setMimeType(ContentService.MimeType.JSON);
+  }
 
+  // --- Aksi: Ambil Data Buku Tamu (Admin) ---
+  if (action === "getBukuTamu") {
+    if (payload.password !== currentPassword) { 
+      return ContentService.createTextOutput(JSON.stringify({success: false, message: "Akses Ditolak"})).setMimeType(ContentService.MimeType.JSON); 
+    }
+    var sBukuTamu = ss.getSheetByName("Buku_Tamu");
+    var data = [];
+    if (sBukuTamu && sBukuTamu.getLastRow() > 1) {
+      var range = sBukuTamu.getDataRange();
+      var values = range.getValues();
+      for (var i = 1; i < values.length; i++) {
+        var row = values[i];
+        if (row[0]) {
+          var dateVal = row[1];
+          var dateString = "";
+          if (dateVal instanceof Date) {
+            dateString = Utilities.formatDate(dateVal, Session.getScriptTimeZone(), "yyyy-MM-dd");
+          } else if (dateVal) {
+            dateString = String(dateVal).split('T')[0];
+          }
+          
+          data.push({
+            id: row[0].toString(),
+            tanggal: dateString,
+            nama: row[2] ? row[2].toString() : "",
+            wa: row[3] ? row[3].toString().replace(/'/g, '') : "",
+            asalJemaat: row[4] ? row[4].toString() : "",
+            kunjungan: row[5] ? row[5].toString() : "",
+            sumberInfo: row[6] ? row[6].toString() : "",
+            pesan: row[7] ? row[7].toString() : "",
+            statusFollowUp: row[8] ? row[8].toString() : "Belum di-follow up"
+          });
+        }
+      }
+    }
+    data.reverse(); // Newest first
+    return ContentService.createTextOutput(JSON.stringify({success: true, data: data})).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // --- Aksi: Update Status Follow-up Buku Tamu (Admin) ---
+  if (action === "updateBukuTamuStatus") {
+    if (payload.password !== currentPassword) { 
+      return ContentService.createTextOutput(JSON.stringify({success: false, message: "Akses Ditolak"})).setMimeType(ContentService.MimeType.JSON); 
+    }
+    var sBukuTamu = ss.getSheetByName("Buku_Tamu");
+    if (!sBukuTamu) {
+      return ContentService.createTextOutput(JSON.stringify({success: false, message: "Sheet Buku_Tamu tidak ditemukan"})).setMimeType(ContentService.MimeType.JSON);
+    }
+    var targetId = payload.id;
+    var newStatus = payload.status;
+    var values = sBukuTamu.getDataRange().getValues();
+    var foundRow = -1;
+    for (var i = 1; i < values.length; i++) {
+      if (values[i][0] && values[i][0].toString() === targetId) {
+        foundRow = i + 1; // 1-based index
+        break;
+      }
+    }
+    if (foundRow > -1) {
+      sBukuTamu.getRange(foundRow, 9).setValue(newStatus); // Column 9 is "Status Follow-up"
+      return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
+    } else {
+      return ContentService.createTextOutput(JSON.stringify({success: false, message: "Data tamu tidak ditemukan"})).setMimeType(ContentService.MimeType.JSON);
+    }
+  }
 
   return ContentService.createTextOutput(JSON.stringify({success: false, message: "Aksi tidak dikenali"})).setMimeType(ContentService.MimeType.JSON);
 }

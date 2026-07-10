@@ -338,6 +338,18 @@ const Home = ({ setActiveTab, setJadwalSelectedDate, youtubeUrl, isLiveYoutube, 
                 hoverIcon: 'group-hover:text-fuchsia-700',
                 hoverText: 'group-hover:text-fuchsia-800'
             }
+        },
+        {
+            id: 'buku_tamu',
+            label: 'Buku Tamu',
+            icon: 'Edit',
+            colorClass: {
+                bg: 'bg-emerald-50',
+                icon: 'text-emerald-600',
+                hoverBg: 'group-hover:bg-emerald-100',
+                hoverIcon: 'group-hover:text-emerald-700',
+                hoverText: 'group-hover:text-emerald-800'
+            }
         }
     ];
 
@@ -2139,6 +2151,195 @@ const FormACMS = ({ setActiveTab }) => {
     );
 };
 
+const BukuTamu = ({ setActiveTab }) => {
+    const [formData, setFormData] = React.useState({
+        nama: '',
+        wa: '',
+        asalJemaat: '',
+        kunjungan: 'Pertama kali',
+        sumberInfo: '',
+        pesan: ''
+    });
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [isSuccess, setIsSuccess] = React.useState(false);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!formData.nama.trim()) {
+            alert('Nama Lengkap harus diisi.');
+            return;
+        }
+        setIsSubmitting(true);
+        try {
+            const response = await fetch(GAS_API_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'submitBukuTamu',
+                    tanggal: new Date().toISOString().split('T')[0],
+                    nama: formData.nama,
+                    wa: formData.wa,
+                    asalJemaat: formData.asalJemaat,
+                    kunjungan: formData.kunjungan,
+                    sumberInfo: formData.sumberInfo,
+                    pesan: formData.pesan
+                })
+            });
+
+            if (!response.ok) throw new Error('Jaringan bermasalah');
+            const result = await response.json();
+            if (result.success) {
+                setIsSuccess(true);
+            } else {
+                alert('Gagal mengirim data tamu: ' + (result.message || 'Terjadi kesalahan'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Gagal terhubung ke server. Silakan coba beberapa saat lagi.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    if (isSuccess) {
+        return (
+            <div className="max-w-md mx-auto bg-white rounded-3xl border border-navy-100/60 shadow-xl overflow-hidden p-6 md:p-8 text-center space-y-6 my-4 animate-fade-in relative z-10">
+                <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center text-green-500 mx-auto shadow-inner">
+                    <Icon name="Check" className="w-8 h-8" />
+                </div>
+                <h2 className="text-2xl font-black text-navy-900 tracking-tight">Kirim Berhasil!</h2>
+                <p className="text-sm text-navy-600 leading-relaxed font-medium">
+                    Terima kasih <b>{formData.nama}</b> telah mengisi buku tamu jemaat. <br />
+                    Selamat berbakti di <b>GMAHK Tidar 1 Surabaya</b>. Tuhan Yesus memberkati!
+                </p>
+                <div className="pt-4 border-t border-navy-50 flex flex-col gap-3">
+                    <button onClick={() => setActiveTab('home')} className="w-full bg-navy-900 text-gold-400 hover:bg-navy-800 font-bold py-3.5 rounded-xl transition-all shadow-md">
+                        Kembali ke Home
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="max-w-lg mx-auto bg-white rounded-3xl border border-navy-100/60 shadow-xl overflow-hidden p-6 md:p-8 space-y-6 my-4 animate-fade-in relative z-10">
+            <div className="flex items-center space-x-4 border-b border-navy-50 pb-5">
+                <div className="w-12 h-12 bg-navy-50 rounded-2xl flex items-center justify-center text-navy-900 shadow-inner">
+                    <Icon name="Edit" className="w-6 h-6" />
+                </div>
+                <div>
+                    <h2 className="font-black text-navy-900 text-xl tracking-tight">Buku Tamu Jemaat</h2>
+                    <p className="text-xs text-navy-500 font-bold uppercase tracking-widest mt-1">Selamat Datang di GMAHK Tidar 1</p>
+                </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+                <div>
+                    <label className="block text-xs font-bold text-navy-700 mb-2 uppercase tracking-widest">Nama Lengkap <span className="text-red-500">*</span></label>
+                    <input
+                        type="text"
+                        name="nama"
+                        required
+                        placeholder="Masukkan nama lengkap Anda"
+                        value={formData.nama}
+                        onChange={handleChange}
+                        className="w-full p-3.5 border border-navy-200 bg-white rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-navy-900 shadow-sm font-bold text-sm tracking-wide transition-all"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-xs font-bold text-navy-700 mb-2 uppercase tracking-widest">Nomor WhatsApp</label>
+                    <input
+                        type="tel"
+                        name="wa"
+                        placeholder="Contoh: 081234567890"
+                        value={formData.wa}
+                        onChange={handleChange}
+                        className="w-full p-3.5 border border-navy-200 bg-white rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-navy-900 shadow-sm font-semibold text-sm transition-all"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-xs font-bold text-navy-700 mb-2 uppercase tracking-widest">Asal Jemaat</label>
+                    <input
+                        type="text"
+                        name="asalJemaat"
+                        placeholder="Contoh: GMAHK Darmo / Belum Anggota"
+                        value={formData.asalJemaat}
+                        onChange={handleChange}
+                        className="w-full p-3.5 border border-navy-200 bg-white rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-navy-900 shadow-sm font-semibold text-sm transition-all"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-xs font-bold text-navy-700 mb-2 uppercase tracking-widest">Kunjungan</label>
+                    <div className="grid grid-cols-2 gap-3 mt-1">
+                        <button
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, kunjungan: 'Pertama kali' }))}
+                            className={`p-3 rounded-xl border text-sm font-bold transition-all shadow-sm ${formData.kunjungan === 'Pertama kali' ? 'border-navy-900 bg-navy-900 text-gold-400' : 'border-navy-200 bg-white text-navy-600 hover:bg-navy-50'}`}
+                        >
+                            Pertama kali
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, kunjungan: 'Pernah berkunjung' }))}
+                            className={`p-3 rounded-xl border text-sm font-bold transition-all shadow-sm ${formData.kunjungan === 'Pernah berkunjung' ? 'border-navy-900 bg-navy-900 text-gold-400' : 'border-navy-200 bg-white text-navy-600 hover:bg-navy-50'}`}
+                        >
+                            Pernah berkunjung
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label className="block text-xs font-bold text-navy-700 mb-2 uppercase tracking-widest">Tahu gereja ini dari mana?</label>
+                    <input
+                        type="text"
+                        name="sumberInfo"
+                        placeholder="Contoh: Google Maps / Diajak Teman / Lewat"
+                        value={formData.sumberInfo}
+                        onChange={handleChange}
+                        className="w-full p-3.5 border border-navy-200 bg-white rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-navy-900 shadow-sm font-semibold text-sm transition-all"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-xs font-bold text-navy-700 mb-2 uppercase tracking-widest">Kesan / Pesan (Opsional)</label>
+                    <textarea
+                        name="pesan"
+                        rows="3"
+                        placeholder="Tuliskan kesan atau pesan Anda..."
+                        value={formData.pesan}
+                        onChange={handleChange}
+                        className="w-full p-3.5 border border-navy-200 bg-white rounded-xl focus:ring-2 focus:ring-gold-500 outline-none text-navy-900 shadow-sm font-semibold text-sm transition-all resize-none"
+                    ></textarea>
+                </div>
+
+                <div className="pt-3 flex gap-3">
+                    <button
+                        type="button"
+                        onClick={() => setActiveTab('home')}
+                        className="flex-1 bg-navy-100 hover:bg-navy-200 text-navy-800 font-bold py-3.5 rounded-xl transition-all shadow-sm text-center"
+                    >
+                        Batal
+                    </button>
+                    <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className={`flex-1 bg-navy-900 hover:bg-navy-800 text-gold-400 font-bold py-3.5 rounded-xl transition-all shadow-md flex items-center justify-center ${isSubmitting ? 'opacity-50' : ''}`}
+                    >
+                        {isSubmitting ? 'Mengirim...' : 'Kirim Buku Tamu'}
+                    </button>
+                </div>
+            </form>
+        </div>
+    );
+};
+
 const LoginModal = ({ isOpen, onClose, onSuccess }) => {
     const [password, setPassword] = React.useState('');
     const [showPassword, setShowPassword] = React.useState(false);
@@ -2200,6 +2401,217 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
                     </button>
                 </form>
             </div>
+        </div>
+    );
+};
+
+const BukuTamuAdmin = ({ adminToken }) => {
+    const [tamuList, setTamuList] = React.useState([]);
+    const [isLoading, setIsLoading] = React.useState(true);
+    const [statusFilter, setStatusFilter] = React.useState('Semua'); // Semua, Belum di-follow up, Sudah dihubungi, Jemaat Baru, Tidak Aktif
+    const [isUpdatingStatus, setIsUpdatingStatus] = React.useState(null); // ID of row being updated
+
+    const fetchTamu = React.useCallback(async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetch(GAS_API_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'getBukuTamu',
+                    password: adminToken
+                })
+            });
+            if (!response.ok) throw new Error('Jaringan bermasalah');
+            const result = await response.json();
+            if (result.success) {
+                setTamuList(result.data || []);
+            } else {
+                alert('Gagal mengambil data buku tamu: ' + (result.message || 'Akses ditolak'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Gagal terhubung ke server untuk mengambil data buku tamu.');
+        } finally {
+            setIsLoading(false);
+        }
+    }, [adminToken]);
+
+    React.useEffect(() => {
+        fetchTamu();
+    }, [fetchTamu]);
+
+    const handleStatusChange = async (id, newStatus) => {
+        setIsUpdatingStatus(id);
+        try {
+            const response = await fetch(GAS_API_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'updateBukuTamuStatus',
+                    password: adminToken,
+                    id: id,
+                    status: newStatus
+                })
+            });
+            if (!response.ok) throw new Error('Jaringan bermasalah');
+            const result = await response.json();
+            if (result.success) {
+                setTamuList(prev => prev.map(t => t.id === id ? { ...t, statusFollowUp: newStatus } : t));
+            } else {
+                alert('Gagal memperbarui status: ' + (result.message || 'Terjadi kesalahan'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Gagal terhubung ke server.');
+        } finally {
+            setIsUpdatingStatus(null);
+        }
+    };
+
+    const formatWhatsAppLink = (waNum, guestName) => {
+        if (!waNum) return null;
+        let cleaned = waNum.replace(/[^0-9]/g, '');
+        if (cleaned.startsWith('0')) {
+            cleaned = '62' + cleaned.slice(1);
+        }
+        if (!cleaned.startsWith('62') && cleaned.length > 5) {
+            cleaned = '62' + cleaned;
+        }
+        const message = encodeURIComponent(`Shalom ${guestName}, terima kasih telah berkunjung ke ibadah di GMAHK Tidar 1 Surabaya. Senang Anda bisa berbakti bersama kami.`);
+        return `https://wa.me/${cleaned}?text=${message}`;
+    };
+
+    const getStatusColor = (status) => {
+        switch (status) {
+            case 'Sudah dihubungi': return 'bg-blue-50 text-blue-700 border border-blue-200';
+            case 'Jemaat Baru': return 'bg-green-50 text-green-700 border border-green-200';
+            case 'Tidak Aktif': return 'bg-red-50 text-red-700 border border-red-200';
+            default: return 'bg-yellow-50 text-yellow-700 border border-yellow-200'; // Belum di-follow up
+        }
+    };
+
+    const filteredList = statusFilter === 'Semua' 
+        ? tamuList 
+        : tamuList.filter(t => t.statusFollowUp === statusFilter);
+
+    const filterOptions = ['Semua', 'Belum di-follow up', 'Sudah dihubungi', 'Jemaat Baru', 'Tidak Aktif'];
+
+    return (
+        <div className="space-y-6 animate-fade-in bg-white p-2 md:p-4 rounded-xl">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-emerald-50 p-5 rounded-[1.5rem] border border-emerald-200 shadow-sm gap-4">
+                <div className="w-full md:w-2/3">
+                    <h3 className="text-lg font-black text-navy-900 mb-1">Daftar Buku Tamu Jemaat</h3>
+                    <p className="text-sm text-navy-800 font-medium leading-relaxed">
+                        Pantau daftar pengunjung ibadah jemaat, hubungi via WhatsApp untuk follow-up, dan kelola status keaktifan mereka.
+                    </p>
+                </div>
+                <button 
+                    onClick={fetchTamu} 
+                    disabled={isLoading}
+                    className="bg-navy-900 hover:bg-navy-800 text-gold-400 font-bold py-3 px-5 rounded-xl transition-all shadow-md flex items-center justify-center whitespace-nowrap self-stretch md:self-auto"
+                >
+                    <Icon name="Search" className="w-4 h-4 mr-2" />
+                    Refresh Data
+                </button>
+            </div>
+
+            {/* Filter Tabs */}
+            <div className="flex overflow-x-auto border border-navy-100/50 p-2 gap-2 rounded-2xl hide-scrollbar bg-navy-50/20">
+                {filterOptions.map(opt => (
+                    <button 
+                        key={opt} 
+                        onClick={() => setStatusFilter(opt)}
+                        className={`px-4 py-2.5 rounded-xl text-xs md:text-sm whitespace-nowrap font-bold transition-all ${statusFilter === opt ? 'bg-navy-900 text-gold-400 shadow-sm' : 'text-navy-500 hover:bg-navy-50 hover:text-navy-800'}`}
+                    >
+                        {opt}
+                    </button>
+                ))}
+            </div>
+
+            {isLoading ? (
+                <div className="space-y-4">
+                    <SkeletonCard />
+                    <SkeletonCard />
+                    <SkeletonCard />
+                </div>
+            ) : filteredList.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {filteredList.map(tamu => {
+                        const waLink = formatWhatsAppLink(tamu.wa, tamu.nama);
+                        return (
+                            <div key={tamu.id} className="bg-white rounded-2xl border border-navy-100/60 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                                <div className="space-y-3">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h4 className="font-black text-navy-900 text-base">{tamu.nama}</h4>
+                                            <p className="text-[10px] font-bold text-navy-400 mt-0.5">{formatIndoDate(tamu.tanggal)}</p>
+                                        </div>
+                                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${getStatusColor(tamu.statusFollowUp)}`}>
+                                            {tamu.statusFollowUp}
+                                        </span>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-2 pt-2 text-xs border-t border-navy-50">
+                                        <div>
+                                            <span className="text-navy-400 font-bold block">ASAL JEMAAT</span>
+                                            <span className="font-bold text-navy-900">{tamu.asalJemaat || '—'}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-navy-400 font-bold block">KUNJUNGAN</span>
+                                            <span className="font-bold text-navy-900">{tamu.kunjungan}</span>
+                                        </div>
+                                        <div className="col-span-2">
+                                            <span className="text-navy-400 font-bold block">SUMBER INFORMASI</span>
+                                            <span className="font-semibold text-navy-900">{tamu.sumberInfo || '—'}</span>
+                                        </div>
+                                    </div>
+
+                                    {tamu.pesan && (
+                                        <div className="bg-navy-50/40 border border-navy-100/60 p-3 rounded-xl text-xs text-navy-700 italic">
+                                            "{tamu.pesan}"
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-navy-50 mt-4">
+                                    <div className="flex-1 relative">
+                                        <select
+                                            value={tamu.statusFollowUp}
+                                            disabled={isUpdatingStatus === tamu.id}
+                                            onChange={(e) => handleStatusChange(tamu.id, e.target.value)}
+                                            className="w-full p-2.5 pl-3 pr-10 border border-navy-200 rounded-xl bg-white text-xs font-bold text-navy-800 focus:ring-1 focus:ring-gold-500 outline-none appearance-none cursor-pointer"
+                                        >
+                                            <option value="Belum di-follow up">Belum di-follow up</option>
+                                            <option value="Sudah dihubungi">Sudah dihubungi</option>
+                                            <option value="Jemaat Baru">Jemaat Baru</option>
+                                            <option value="Tidak Aktif">Tidak Aktif</option>
+                                        </select>
+                                        <Icon name="ChevronDown" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-navy-500 pointer-events-none" />
+                                    </div>
+
+                                    {waLink && (
+                                        <a
+                                            href={waLink}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow-sm hover:shadow transition-all flex items-center justify-center whitespace-nowrap"
+                                        >
+                                            <Icon name="Phone" className="w-3.5 h-3.5 mr-1.5" />
+                                            Hubungi WA
+                                        </a>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            ) : (
+                <div className="text-center py-12 border border-dashed border-navy-200 rounded-2xl bg-white/50">
+                    <Icon name="Users" className="w-12 h-12 mx-auto text-navy-300 mb-3" />
+                    <p className="text-sm font-medium text-navy-500">
+                        Tidak ada data tamu untuk status <span className="font-bold text-navy-900">"{statusFilter}"</span>.
+                    </p>
+                </div>
+            )}
         </div>
     );
 };
@@ -2634,10 +3046,11 @@ const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, ad
                 <div className="flex flex-col sm:flex-row border-b border-navy-50 bg-navy-50/20">
                     <button onClick={() => setAdminTab('jadwal')} className={`flex-1 py-4 font-bold text-sm md:text-xs lg:text-base text-center transition-colors ${adminTab === 'jadwal' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Kelola Jadwal</button>
                     <button onClick={() => setAdminTab('pelayan')} className={`flex-1 py-4 font-bold text-sm md:text-xs lg:text-base text-center transition-colors border-l sm:border-t-0 border-t border-navy-50 ${adminTab === 'pelayan' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Kelola Pejabat</button>
+                    <button onClick={() => setAdminTab('buku_tamu')} className={`flex-1 py-4 font-bold text-sm md:text-xs lg:text-base text-center transition-colors border-l sm:border-t-0 border-t border-navy-50 ${adminTab === 'buku_tamu' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Daftar Tamu</button>
                     <button onClick={() => setAdminTab('pengaturan')} className={`flex-1 py-4 font-bold text-sm md:text-xs lg:text-base text-center transition-colors border-l sm:border-t-0 border-t border-navy-50 ${adminTab === 'pengaturan' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Pengaturan Admin</button>
                 </div>
 
-                <div className={`p-4 md:p-6 ${adminTab === 'jadwal' ? 'bg-navy-50/30' : 'bg-white'}`}>
+                <div className={`p-4 md:p-6 ${(adminTab === 'jadwal' || adminTab === 'buku_tamu') ? 'bg-navy-50/30' : 'bg-white'}`}>
                     {adminTab === 'jadwal' && (
                         <div className="animate-fade-in space-y-4">
                             <div className="flex items-center gap-2">
@@ -3029,6 +3442,9 @@ const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, ad
                         </div>
                     )}
 
+                    {adminTab === 'buku_tamu' && (
+                        <BukuTamuAdmin adminToken={adminToken} />
+                    )}
 
                 </div>
             </div>
@@ -3056,6 +3472,7 @@ const Search = ({ setActiveTab, setJadwalSelectedDate, jadwalDB, rabuYMD, sabatY
         { id: 'member_baru', title: 'Member Baru', desc: 'Pendaftaran anggota baru', icon: 'Users' },
         { id: 'pindah_masuk', title: 'Pindah Masuk ACMS', desc: 'Prosedur pindah keanggotaan', icon: 'BookOpen' },
         { id: 'form_acms', title: 'Formulir ACMS', desc: 'Isi formulir perpindahan ACMS', icon: 'Edit' },
+        { id: 'buku_tamu', title: 'Buku Tamu', desc: 'Isi data kunjungan tamu jemaat', icon: 'Edit' },
         { id: 'hubungi', title: 'Hubungi Kami', desc: 'Kontak gembala dan pejabat jemaat', icon: 'Phone' },
         { id: 'belajar_alkitab', title: 'Doktrin Alkitab', desc: 'Pelajari dasar-dasar Alkitab', icon: 'BookOpen' },
         { id: 'belajar_28dasar', title: '28 Dasar Kepercayaan', desc: 'Doktrin gereja Masehi Advent Hari Ketujuh', icon: 'List' },
@@ -3498,6 +3915,7 @@ const App = () => {
             case 'pindah_masuk': return <PindahMasuk setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
             case 'hubungi': return <Hubungi setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
             case 'form_acms': return <FormACMS setActiveTab={setActiveTab} />;
+            case 'buku_tamu': return <BukuTamu setActiveTab={setActiveTab} />;
             case 'susunan_ibadah': return <SusunanIbadah setActiveTab={setActiveTab} activeSabat={activeSabat} sabatYMD={sabatYMD} isLoading={isAppLoading} />;
             case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} autoDetectYoutube={autoDetectYoutube} setAutoDetectYoutube={setAutoDetectYoutube} youtubeTitle={youtubeTitle} isLiveYoutube={isLiveYoutube} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} heroImageUrl={heroImageUrl} setHeroImageUrl={setHeroImageUrl} gdriveUrl={gdriveUrl} setGdriveUrl={setGdriveUrl} youtubeApiKey={youtubeApiKey} setYoutubeApiKey={setYoutubeApiKey} youtubeChannelId={youtubeChannelId} setYoutubeChannelId={setYoutubeChannelId} /> : <Home setActiveTab={setActiveTab} setJadwalSelectedDate={setJadwalSelectedDate} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} showPerpuluhan={showPerpuluhan} perpuluhanYMD={perpuluhanYMD} />;
             case 'search': return <Search setActiveTab={setActiveTab} setJadwalSelectedDate={setJadwalSelectedDate} jadwalDB={jadwalDB} rabuYMD={rabuYMD} sabatYMD={sabatYMD} tabs={tabs} dataPejabat={dataPejabat} />;
