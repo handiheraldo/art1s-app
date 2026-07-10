@@ -182,7 +182,8 @@ const Icon = ({ name, className }) => {
         Info: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg>,
         Share: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>,
         Shield: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>,
-        Copy: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>
+        Copy: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>,
+        FileText: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></svg>
     };
     return icons[name] || null;
 };
@@ -316,15 +317,15 @@ const Home = ({ setActiveTab, setJadwalSelectedDate, youtubeUrl, isLiveYoutube, 
             }
         },
         {
-            id: 'susunan_ibadah',
-            label: 'Susunan Ibadah',
-            icon: 'List',
+            id: 'buku_tamu',
+            label: 'Buku Tamu',
+            icon: 'Edit',
             colorClass: {
-                bg: 'bg-teal-50',
-                icon: 'text-teal-600',
-                hoverBg: 'group-hover:bg-teal-100',
-                hoverIcon: 'group-hover:text-teal-700',
-                hoverText: 'group-hover:text-teal-800'
+                bg: 'bg-emerald-50',
+                icon: 'text-emerald-600',
+                hoverBg: 'group-hover:bg-emerald-100',
+                hoverIcon: 'group-hover:text-emerald-700',
+                hoverText: 'group-hover:text-emerald-800'
             }
         },
         {
@@ -337,18 +338,6 @@ const Home = ({ setActiveTab, setJadwalSelectedDate, youtubeUrl, isLiveYoutube, 
                 hoverBg: 'group-hover:bg-fuchsia-100',
                 hoverIcon: 'group-hover:text-fuchsia-700',
                 hoverText: 'group-hover:text-fuchsia-800'
-            }
-        },
-        {
-            id: 'buku_tamu',
-            label: 'Buku Tamu',
-            icon: 'Edit',
-            colorClass: {
-                bg: 'bg-emerald-50',
-                icon: 'text-emerald-600',
-                hoverBg: 'group-hover:bg-emerald-100',
-                hoverIcon: 'group-hover:text-emerald-700',
-                hoverText: 'group-hover:text-emerald-800'
             }
         }
     ];
@@ -367,14 +356,12 @@ const Home = ({ setActiveTab, setJadwalSelectedDate, youtubeUrl, isLiveYoutube, 
         // 1. Search in App Pages / Features
         const appPages = [
             { id: 'home', title: 'Beranda / Home', desc: 'Halaman utama aplikasi', icon: 'Home' },
-            { id: 'susunan_ibadah', title: 'Susunan Ibadah', desc: 'Jadwal dan susunan acara ibadah', icon: 'List' },
             { id: 'jadwal', title: 'Jadwal Pelayanan', desc: 'Jadwal petugas ibadah lengkap', icon: 'Calendar' },
-            { id: 'live', title: 'Live Streaming / YouTube', desc: 'Ibadah online dan siaran langsung', icon: 'Video' },
+            { id: 'live', title: 'Ibadah / Live Stream', desc: 'Susunan ibadah dan siaran langsung YouTube', icon: 'FileText' },
             { id: 'persembahan', title: 'Persembahan & Perpuluhan', desc: 'Informasi donasi, QRIS, dan rekening', icon: 'Gift' },
             { id: 'keanggotaan', title: 'Layanan Anggota', desc: 'Informasi keanggotaan dan mutasi', icon: 'Users' },
             { id: 'member_baru', title: 'Member Baru', desc: 'Pendaftaran anggota baru', icon: 'Users' },
-            { id: 'pindah_masuk', title: 'Pindah Masuk ACMS', desc: 'Prosedur pindah keanggotaan', icon: 'BookOpen' },
-            { id: 'form_acms', title: 'Formulir ACMS', desc: 'Isi formulir perpindahan ACMS', icon: 'Edit' },
+            { id: 'form_acms', title: 'Pindah Masuk ACMS', desc: 'Isi formulir perpindahan ACMS', icon: 'BookOpen' },
             { id: 'hubungi', title: 'Hubungi Kami', desc: 'Kontak gembala dan pejabat jemaat', icon: 'Phone' },
             { id: 'belajar_alkitab', title: 'Doktrin Alkitab', desc: 'Pelajari dasar-dasar Alkitab', icon: 'BookOpen' },
             { id: 'belajar_28dasar', title: '28 Dasar Kepercayaan', desc: 'Doktrin gereja Masehi Advent Hari Ketujuh', icon: 'List' },
@@ -1218,20 +1205,6 @@ const Jadwal = ({ jadwalDB, jadwalSelectedDate, setJadwalSelectedDate, showPerja
 };
 
 const Live = ({ setActiveTab, activeRabu, activeSabat, rabuYMD, sabatYMD, youtubeUrl, isLiveYoutube, youtubeTitle, isLoading }) => {
-    const today = new Date();
-    const todayDay = today.getDay();
-
-    let isToday = false;
-    let targetJadwal = null;
-    let targetDateStr = '';
-
-    if (todayDay === 3) { targetJadwal = activeRabu; targetDateStr = rabuYMD; isToday = true; }
-    else if (todayDay === 6) { targetJadwal = activeSabat; targetDateStr = sabatYMD; isToday = true; }
-    else if (todayDay < 3) { targetJadwal = activeRabu; targetDateStr = rabuYMD; }
-    else { targetJadwal = activeSabat; targetDateStr = sabatYMD; }
-
-    const isRabu = new Date(targetDateStr + 'T00:00:00').getDay() === 3;
-
     return (
         <div className="space-y-6 md:space-y-8 animate-fade-in">
             <div className="bg-navy-900 rounded-[1.5rem] overflow-hidden shadow-lg p-2.5">
@@ -1254,48 +1227,7 @@ const Live = ({ setActiveTab, activeRabu, activeSabat, rabuYMD, sabatYMD, youtub
             </div>
 
             <div className="bg-white p-6 md:p-8 rounded-[1.5rem] shadow-sm border border-navy-100/60">
-                <div className="flex justify-between items-start sm:items-center mb-6 flex-col sm:flex-row gap-4 border-b pb-5 border-navy-50">
-                    <div>
-                        <h3 className={`text-sm font-bold uppercase tracking-widest mb-3 flex items-center ${isToday ? 'text-red-500' : 'text-gold-500'}`}>{isToday ? "🔥 Hari Ini" : "⏳ Terdekat"}</h3>
-                        <div className="flex items-center space-x-3"><Icon name="Calendar" className={`w-[1.4rem] h-[1.4rem] ${isToday ? 'text-red-500' : 'text-gold-500'}`} /><h2 className="text-xl font-bold text-navy-900 tracking-tight">{targetJadwal.title}</h2></div>
-                        <p className="text-sm text-navy-500 mt-1 font-medium">{formatIndoDate(targetDateStr)} &bull; {targetJadwal.time}</p>
-                    </div>
-                    <button onClick={() => setActiveTab('susunan_ibadah')} className="hidden sm:flex items-center justify-center text-sm font-bold text-navy-700 hover:text-navy-900 transition bg-navy-50 hover:bg-navy-100 px-6 py-2.5 rounded-full w-full sm:w-auto">Lihat Susunan Ibadah &rarr;</button>
-                </div>
-
-                {isLoading ? (
-                    <div className="space-y-6">
-                        <SkeletonList rows={5} />
-                    </div>
-                ) : isRabu ? (
-                    <div className="overflow-hidden border rounded-xl border-navy-100/50">
-                        <table className="w-full text-left text-sm border-collapse">
-                            <tbody>
-                                {targetJadwal.petugas.map((p, idx) => (<tr key={idx} className="border-b border-navy-50 relative last:border-0 hover:bg-navy-50/30 transition-colors"><td className="py-3 px-5 text-navy-500 font-medium w-1/2">{p.tugas}</td><td className="py-3 px-5 font-bold text-navy-900 w-1/2 text-right">{p.nama}</td></tr>))}
-                            </tbody>
-                        </table>
-                    </div>
-                ) : (
-                    <div className="space-y-6">
-                        <div className="border rounded-xl border-navy-100/50 overflow-hidden">
-                            <div className="bg-navy-50/50 px-5 py-3 border-b border-navy-100/50 font-bold text-navy-800 text-sm uppercase tracking-wide">Ibadah Umum / Khotbah</div>
-                            <table className="w-full text-left text-sm border-collapse">
-                                <tbody>
-                                    {targetJadwal.khotbah.map((p, idx) => (<tr key={idx} className="border-b border-navy-50 relative last:border-0 hover:bg-navy-50/30 transition-colors"><td className="py-2.5 px-5 text-navy-500 font-medium w-1/2">{p.tugas}</td><td className="py-2.5 px-5 font-bold text-navy-900 text-right w-1/2">{p.nama}</td></tr>))}
-                                </tbody>
-                            </table>
-                        </div>
-                        <div className="border rounded-xl border-navy-100/50 overflow-hidden">
-                            <div className="bg-navy-50/50 px-5 py-3 border-b border-navy-100/50 font-bold text-navy-800 text-sm uppercase tracking-wide">Sekolah Sabat</div>
-                            <table className="w-full text-left text-sm border-collapse">
-                                <tbody>
-                                    {targetJadwal.sekolahSabat.map((p, idx) => (<tr key={idx} className="border-b border-navy-50 relative last:border-0 hover:bg-navy-50/30 transition-colors"><td className="py-2.5 px-5 text-navy-500 font-medium w-1/2">{p.tugas}</td><td className="py-2.5 px-5 font-bold text-navy-900 text-right w-1/2">{p.nama}</td></tr>))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                )}
-                <button onClick={() => setActiveTab('susunan_ibadah')} className="sm:hidden w-full mt-4 flex justify-center items-center text-sm font-medium text-blue-600 hover:text-blue-800 transition bg-blue-50 hover:bg-blue-100 px-4 py-3 rounded-lg">Lihat Susunan Ibadah &rarr;</button>
+                <SusunanIbadah activeSabat={activeSabat} sabatYMD={sabatYMD} isLoading={isLoading} />
             </div>
         </div>
     );
@@ -1413,7 +1345,7 @@ const Keanggotaan = ({ setActiveTab }) => (
             <p className="text-sm font-medium text-navy-600 mb-6">Pilih jenis permohonan keanggotaan yang sesuai dengan status Anda saat ini.</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
                 <button onClick={() => setActiveTab('member_baru')} className="w-full text-left p-5 rounded-[1.25rem] border border-navy-100/50 bg-navy-50/30 hover:bg-navy-50 transition-colors flex items-center justify-between h-full group shadow-sm"><div><h3 className="font-bold text-navy-900 group-hover:text-gold-600 transition-colors">Member Baru</h3><p className="text-xs font-medium text-navy-500 mt-1.5 leading-relaxed">Untuk yang belum pernah menjadi anggota GMAHK (Non-Adventist).</p></div><span className="text-gold-500 font-black text-xl ml-4 transform group-hover:translate-x-1 transition-transform">&rarr;</span></button>
-                <button onClick={() => setActiveTab('pindah_masuk')} className="w-full text-left p-5 rounded-[1.25rem] border border-navy-100/50 bg-navy-50/30 hover:bg-navy-50 transition-colors flex items-center justify-between h-full group shadow-sm"><div><h3 className="font-bold text-navy-900 group-hover:text-gold-600 transition-colors">Pindah Masuk - ACMS</h3><p className="text-xs font-medium text-navy-500 mt-1.5 leading-relaxed">Untuk anggota GMAHK yang ingin pindah ke Tidar 1.</p></div><span className="text-gold-500 font-black text-xl ml-4 transform group-hover:translate-x-1 transition-transform">&rarr;</span></button>
+                <button onClick={() => setActiveTab('form_acms')} className="w-full text-left p-5 rounded-[1.25rem] border border-navy-100/50 bg-navy-50/30 hover:bg-navy-50 transition-colors flex items-center justify-between h-full group shadow-sm"><div><h3 className="font-bold text-navy-900 group-hover:text-gold-600 transition-colors">Pindah Masuk - ACMS</h3><p className="text-xs font-medium text-navy-500 mt-1.5 leading-relaxed">Untuk anggota GMAHK yang ingin pindah ke Tidar 1.</p></div><span className="text-gold-500 font-black text-xl ml-4 transform group-hover:translate-x-1 transition-transform">&rarr;</span></button>
                 <button onClick={() => setActiveTab('perlawatan')} className="w-full text-left p-5 rounded-[1.25rem] border border-navy-100/50 bg-navy-50/30 hover:bg-navy-50 transition-colors flex items-center justify-between h-full group shadow-sm"><div><h3 className="font-bold text-navy-900 group-hover:text-gold-600 transition-colors">Perlawatan</h3><p className="text-xs font-medium text-navy-500 mt-1.5 leading-relaxed">Permintaan perlawatan dari jemaat kepada pendeta atau officers gereja.</p></div><span className="text-gold-500 font-black text-xl ml-4 transform group-hover:translate-x-1 transition-transform">&rarr;</span></button>
             </div>
         </div>
@@ -1928,7 +1860,7 @@ const FormACMS = ({ setActiveTab, dataPejabat }) => {
                 </div>
 
                 <div className="pt-4 border-t border-navy-50">
-                    <button onClick={() => setActiveTab('pindah_masuk')} className="w-full bg-navy-900 text-gold-400 hover:bg-navy-800 font-bold py-3.5 rounded-xl transition-all shadow-md">
+                    <button onClick={() => setActiveTab('keanggotaan')} className="w-full bg-navy-900 text-gold-400 hover:bg-navy-800 font-bold py-3.5 rounded-xl transition-all shadow-md">
                         Selesai & Kembali
                     </button>
                 </div>
@@ -4200,14 +4132,12 @@ const Search = ({ setActiveTab, setJadwalSelectedDate, jadwalDB, rabuYMD, sabatY
     // Filter menus
     const appPages = [
         { id: 'home', title: 'Beranda / Home', desc: 'Halaman utama aplikasi', icon: 'Home' },
-        { id: 'susunan_ibadah', title: 'Susunan Ibadah', desc: 'Jadwal dan susunan acara ibadah', icon: 'List' },
         { id: 'jadwal', title: 'Jadwal Pelayanan', desc: 'Jadwal petugas ibadah lengkap', icon: 'Calendar' },
-        { id: 'live', title: 'Live Streaming / YouTube', desc: 'Ibadah online dan siaran langsung', icon: 'Video' },
+        { id: 'live', title: 'Ibadah / Live Stream', desc: 'Susunan ibadah dan siaran langsung YouTube', icon: 'FileText' },
         { id: 'persembahan', title: 'Persembahan & Perpuluhan', desc: 'Informasi donasi, QRIS, dan rekening', icon: 'Gift' },
         { id: 'keanggotaan', title: 'Layanan Anggota', desc: 'Informasi keanggotaan dan mutasi', icon: 'Users' },
         { id: 'member_baru', title: 'Member Baru', desc: 'Pendaftaran anggota baru', icon: 'Users' },
-        { id: 'pindah_masuk', title: 'Pindah Masuk ACMS', desc: 'Prosedur pindah keanggotaan', icon: 'BookOpen' },
-        { id: 'form_acms', title: 'Formulir ACMS', desc: 'Isi formulir perpindahan ACMS', icon: 'Edit' },
+        { id: 'form_acms', title: 'Pindah Masuk ACMS', desc: 'Isi formulir perpindahan ACMS', icon: 'BookOpen' },
         { id: 'buku_tamu', title: 'Buku Tamu', desc: 'Isi data kunjungan tamu jemaat', icon: 'Edit' },
         { id: 'hubungi', title: 'Hubungi Kami', desc: 'Kontak gembala dan pejabat jemaat', icon: 'Phone' },
         { id: 'belajar_alkitab', title: 'Doktrin Alkitab', desc: 'Pelajari dasar-dasar Alkitab', icon: 'BookOpen' },
@@ -4627,7 +4557,7 @@ const App = () => {
     const tabs = [
         { id: 'home', label: 'Home', icon: 'Home' },
         { id: 'belajar', label: 'Belajar', icon: 'BookOpen' },
-        { id: 'live', label: 'Live', icon: 'Video' },
+        { id: 'live', label: 'Ibadah', icon: 'FileText' },
         { id: 'jadwal', label: 'Jadwal', icon: 'Calendar' },
         { id: 'persembahan', label: 'Persembahan', icon: 'Gift' }
     ];
@@ -4653,7 +4583,6 @@ const App = () => {
             case 'hubungi': return <Hubungi setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
             case 'form_acms': return <FormACMS setActiveTab={setActiveTab} dataPejabat={dataPejabat} />;
             case 'buku_tamu': return <BukuTamu setActiveTab={setActiveTab} />;
-            case 'susunan_ibadah': return <SusunanIbadah setActiveTab={setActiveTab} activeSabat={activeSabat} sabatYMD={sabatYMD} isLoading={isAppLoading} />;
             case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} autoDetectYoutube={autoDetectYoutube} setAutoDetectYoutube={setAutoDetectYoutube} youtubeTitle={youtubeTitle} isLiveYoutube={isLiveYoutube} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} heroImageUrl={heroImageUrl} setHeroImageUrl={setHeroImageUrl} gdriveUrl={gdriveUrl} setGdriveUrl={setGdriveUrl} youtubeApiKey={youtubeApiKey} setYoutubeApiKey={setYoutubeApiKey} youtubeChannelId={youtubeChannelId} setYoutubeChannelId={setYoutubeChannelId} /> : <Home setActiveTab={setActiveTab} setJadwalSelectedDate={setJadwalSelectedDate} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} showPerpuluhan={showPerpuluhan} perpuluhanYMD={perpuluhanYMD} />;
             case 'search': return <Search setActiveTab={setActiveTab} setJadwalSelectedDate={setJadwalSelectedDate} jadwalDB={jadwalDB} rabuYMD={rabuYMD} sabatYMD={sabatYMD} tabs={tabs} dataPejabat={dataPejabat} />;
             default: return <Home setActiveTab={setActiveTab} setJadwalSelectedDate={setJadwalSelectedDate} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} showPerpuluhan={showPerpuluhan} perpuluhanYMD={perpuluhanYMD} />;
