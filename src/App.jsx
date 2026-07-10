@@ -1616,6 +1616,176 @@ const Hubungi = ({ setActiveTab, dataPejabat, isLoading }) => {
     );
 };
 
+const SignaturePad = ({ value, onChange }) => {
+    const canvasRef = React.useRef(null);
+    const [isDrawing, setIsDrawing] = React.useState(false);
+    const [isEmpty, setIsEmpty] = React.useState(!value);
+
+    React.useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        ctx.strokeStyle = '#1e293b'; // Slate 800 (navy)
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        // Load existing value if any
+        if (value) {
+            const img = new Image();
+            img.src = value;
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                setIsEmpty(false);
+            };
+        }
+
+        // To prevent scrolling on mobile devices when touching the signature area
+        const preventDefault = (e) => {
+            if (e.target === canvas) {
+                e.preventDefault();
+            }
+        };
+
+        // Attach touch move listener with passive: false to prevent scrolling
+        document.body.addEventListener('touchstart', preventDefault, { passive: false });
+        document.body.addEventListener('touchmove', preventDefault, { passive: false });
+        document.body.addEventListener('touchend', preventDefault, { passive: false });
+
+        return () => {
+            document.body.removeEventListener('touchstart', preventDefault);
+            document.body.removeEventListener('touchmove', preventDefault);
+            document.body.removeEventListener('touchend', preventDefault);
+        };
+    }, []);
+
+    React.useEffect(() => {
+        if (!value) {
+            const canvas = canvasRef.current;
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                setIsEmpty(true);
+            }
+        }
+    }, [value]);
+
+    const getCoordinates = (e) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return { x: 0, y: 0 };
+        const rect = canvas.getBoundingClientRect();
+
+        if (e.touches && e.touches[0]) {
+            return {
+                x: ((e.touches[0].clientX - rect.left) / rect.width) * canvas.width,
+                y: ((e.touches[0].clientY - rect.top) / rect.height) * canvas.height
+            };
+        }
+
+        return {
+            x: ((e.clientX - rect.left) / rect.width) * canvas.width,
+            y: ((e.clientY - rect.top) / rect.height) * canvas.height
+        };
+    };
+
+    const startDrawing = (e) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const coords = getCoordinates(e);
+
+        ctx.beginPath();
+        ctx.moveTo(coords.x, coords.y);
+        setIsDrawing(true);
+    };
+
+    const draw = (e) => {
+        if (!isDrawing) return;
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const coords = getCoordinates(e);
+
+        ctx.lineTo(coords.x, coords.y);
+        ctx.stroke();
+        setIsEmpty(false);
+    };
+
+    const stopDrawing = () => {
+        if (!isDrawing) return;
+        setIsDrawing(false);
+        saveSignature();
+    };
+
+    const clearCanvas = () => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        setIsEmpty(true);
+        onChange('');
+    };
+
+    const saveSignature = () => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        
+        // Export the drawn canvas content to base64
+        const dataUrl = canvas.toDataURL('image/png');
+        onChange(dataUrl);
+    };
+
+    return (
+        <div className="space-y-3">
+            <div className="relative border-2 border-navy-200 bg-white rounded-2xl shadow-inner overflow-hidden h-44">
+                {/* Background Guide Line and Text */}
+                {isEmpty && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-navy-400/80 pointer-events-none select-none px-4 text-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-8 h-8 mb-2 animate-bounce">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                        </svg>
+                        <p className="text-xs font-bold uppercase tracking-wider">Tanda Tangan di Sini</p>
+                        <p className="text-[10px] mt-1 font-medium">Gunakan mouse atau jari Anda</p>
+                    </div>
+                )}
+                
+                {/* Dashed baseline helper */}
+                <div className="absolute left-6 right-6 bottom-8 border-b border-dashed border-navy-100 pointer-events-none"></div>
+
+                <canvas
+                    ref={canvasRef}
+                    width={600}
+                    height={176}
+                    onMouseDown={startDrawing}
+                    onMouseMove={draw}
+                    onMouseUp={stopDrawing}
+                    onMouseLeave={stopDrawing}
+                    onTouchStart={startDrawing}
+                    onTouchMove={draw}
+                    onTouchEnd={stopDrawing}
+                    className="absolute inset-0 w-full h-full cursor-crosshair z-10"
+                />
+            </div>
+            <div className="flex justify-end">
+                <button
+                    type="button"
+                    onClick={clearCanvas}
+                    disabled={isEmpty}
+                    className={`flex items-center text-xs font-bold px-4 py-2 rounded-xl transition ${
+                        isEmpty 
+                            ? 'bg-navy-50 text-navy-300 cursor-not-allowed' 
+                            : 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 shadow-sm'
+                    }`}
+                >
+                    <Icon name="Trash" className="w-3.5 h-3.5 mr-1.5" />
+                    Hapus Tanda Tangan
+                </button>
+            </div>
+        </div>
+    );
+};
+
 const FormACMS = ({ setActiveTab }) => {
     const [step, setStep] = React.useState('fill');
 
@@ -1625,14 +1795,22 @@ const FormACMS = ({ setActiveTab }) => {
     }, [step]);
 
     const [isGenerating, setIsGenerating] = React.useState(false);
-    const [formData, setFormData] = React.useState({ namaLengkap: '', jenisKelamin: 'Laki-laki', tanggalLahir: '', namaIbu: '', baptisanTanggal: '', baptisanTempat: '', baptisanPendeta: '', masaDisiplin: 'TIDAK', pernahPindah: 'BELUM', jemaatAsalNama: '', jemaatAsalAlamat: '', jemaatAsalSekretaris: '', jemaatAsalKontak: '' });
+    const [formData, setFormData] = React.useState({ namaLengkap: '', jenisKelamin: 'Laki-laki', tanggalLahir: '', namaIbu: '', baptisanTanggal: '', baptisanTempat: '', baptisanPendeta: '', masaDisiplin: 'TIDAK', pernahPindah: 'BELUM', jemaatAsalNama: '', jemaatAsalAlamat: '', jemaatAsalSekretaris: '', jemaatAsalKontak: '', tandaTangan: '' });
     const [showCaptcha, setShowCaptcha] = React.useState(false);
     const [captcha, setCaptcha] = React.useState({ num1: 0, num2: 0 });
     const [captchaInput, setCaptchaInput] = React.useState('');
     const [captchaError, setCaptchaError] = React.useState(false);
 
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
-    const handleSubmit = (e) => { e.preventDefault(); setStep('preview'); window.scrollTo(0, 0); };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!formData.tandaTangan) {
+            alert('Silakan isi tanda tangan digital Anda terlebih dahulu pada Bagian D.');
+            return;
+        }
+        setStep('preview');
+        window.scrollTo(0, 0);
+    };
     const generateCaptcha = () => { setCaptcha({ num1: Math.floor(Math.random() * 10) + 1, num2: Math.floor(Math.random() * 10) + 1 }); setCaptchaInput(''); setCaptchaError(false); };
     const handleKirimClick = () => { generateCaptcha(); setShowCaptcha(true); };
     const verifyAndKirim = () => { if (parseInt(captchaInput) === captcha.num1 + captcha.num2) { setShowCaptcha(false); processPDF(); } else { setCaptchaError(true); generateCaptcha(); } };
@@ -1828,10 +2006,22 @@ const FormACMS = ({ setActiveTab }) => {
                                 </table>
                                 <p className="mb-3 text-sm font-medium">Demikian permohonan ini saya ajukan tanpa ada paksaan dari pihak manapun.</p>
                                 <div className="flex justify-end pr-6">
-                                    <div className="text-center w-64">
+                                    <div className="text-center w-64 flex flex-col items-center">
                                         <p className="text-sm font-medium">Tempat/Tanggal diajukan:</p>
-                                        <p className="mb-10 text-sm font-medium">Surabaya, {formatDate(new Date())}</p>
-                                        <p className="border-t border-black pt-0.5 uppercase leading-none font-bold">( {formData.namaLengkap || '..........................'} )</p>
+                                        <p className="text-sm font-medium">Surabaya, {formatDate(new Date())}</p>
+                                        <div className="h-14 flex items-center justify-center my-1 relative w-full">
+                                            {formData.tandaTangan ? (
+                                                <img
+                                                    src={formData.tandaTangan}
+                                                    alt="Tanda Tangan"
+                                                    crossOrigin="anonymous"
+                                                    className="max-h-full max-w-[180px] object-contain block"
+                                                />
+                                            ) : (
+                                                <div className="h-10"></div>
+                                            )}
+                                        </div>
+                                        <p className="border-t border-black pt-0.5 w-full uppercase leading-none font-bold">( {formData.namaLengkap || '..........................'} )</p>
                                         <p className="text-[11px] mt-1">Nama dan Tanda Tangan Pemohon</p>
                                     </div>
                                 </div>
@@ -1930,6 +2120,16 @@ const FormACMS = ({ setActiveTab }) => {
                             <div><label className="block text-xs text-gray-600 mb-1">Keputusan Majelis Tanggal</label><input type="text" disabled className="w-full p-2 border border-gray-300 rounded bg-gray-200" /></div>
                             <div><label className="block text-xs text-gray-600 mb-1">Nomor Keputusan</label><input type="text" disabled className="w-full p-2 border border-gray-300 rounded bg-gray-200" /></div>
                             <div className="md:col-span-2"><label className="block text-xs text-gray-600 mb-1">Diproses Tanggal</label><input type="text" disabled className="w-full p-2 border border-gray-300 rounded bg-gray-200" /></div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-navy-900 border-b pb-2 mb-4 uppercase tracking-widest text-sm bg-navy-50/50 px-3 py-1.5 rounded-t-lg">D. TANDA TANGAN DIGITAL</h3>
+                        <div className="px-3">
+                            <label className="block text-xs font-bold text-navy-700 mb-1.5 uppercase tracking-wide">Tanda Tangan Pemohon <span className="text-red-500">*</span></label>
+                            <SignaturePad
+                                value={formData.tandaTangan}
+                                onChange={(dataUrl) => setFormData(prev => ({ ...prev, tandaTangan: dataUrl }))}
+                            />
                         </div>
                     </div>
                     <button type="submit" className="w-full bg-navy-900 hover:bg-navy-800 text-gold-400 font-bold py-4 rounded-xl transition mt-8 text-lg flex justify-center items-center shadow-lg hover:shadow-xl"><span className="mr-3">Lanjut Preview Formulir</span> <Icon name="ChevronRight" className="w-5 h-5 bg-navy-800 rounded-full" /></button>
