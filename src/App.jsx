@@ -2761,6 +2761,74 @@ const BukuTamuAdmin = ({ adminToken }) => {
 const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, adminToken, setAdminToken, youtubeUrl, setYoutubeUrl, autoDetectYoutube, setAutoDetectYoutube, youtubeTitle, isLiveYoutube, kategoriPejabat, setKategoriPejabat, heroImageUrl, setHeroImageUrl, gdriveUrl, setGdriveUrl, youtubeApiKey, setYoutubeApiKey, youtubeChannelId, setYoutubeChannelId }) => {
     const [adminTab, setAdminTab] = React.useState('jadwal'); // jadwal, pelayan, pengaturan
 
+    const adminFeatures = [
+        {
+            id: 'jadwal',
+            label: 'Kelola Jadwal',
+            icon: 'Calendar',
+            colorClass: {
+                bg: 'bg-blue-50',
+                icon: 'text-blue-600',
+                hoverBg: 'group-hover:bg-blue-100',
+                hoverIcon: 'group-hover:text-blue-700',
+                hoverText: 'group-hover:text-blue-800'
+            }
+        },
+        {
+            id: 'pelayan',
+            label: 'Kelola Pejabat',
+            icon: 'Users',
+            colorClass: {
+                bg: 'bg-indigo-50',
+                icon: 'text-indigo-600',
+                hoverBg: 'group-hover:bg-indigo-100',
+                hoverIcon: 'group-hover:text-indigo-700',
+                hoverText: 'group-hover:text-indigo-800'
+            }
+        },
+        {
+            id: 'buku_tamu',
+            label: 'Daftar Tamu',
+            icon: 'Edit',
+            colorClass: {
+                bg: 'bg-emerald-50',
+                icon: 'text-emerald-600',
+                hoverBg: 'group-hover:bg-emerald-100',
+                hoverIcon: 'group-hover:text-emerald-700',
+                hoverText: 'group-hover:text-emerald-800'
+            }
+        },
+        {
+            id: 'pengaturan',
+            label: 'Pengaturan Admin',
+            icon: 'Settings',
+            colorClass: {
+                bg: 'bg-amber-50',
+                icon: 'text-amber-600',
+                hoverBg: 'group-hover:bg-amber-100',
+                hoverIcon: 'group-hover:text-amber-700',
+                hoverText: 'group-hover:text-amber-800'
+            }
+        }
+    ];
+
+    const renderAdminFeatureCard = (item) => {
+        const labelParts = item.label.split(' ');
+        const line1 = labelParts.length > 1 ? labelParts.slice(0, Math.ceil(labelParts.length / 2)).join(' ') : labelParts[0];
+        const line2 = labelParts.length > 1 ? labelParts.slice(Math.ceil(labelParts.length / 2)).join(' ') : '';
+        const cc = item.colorClass;
+        const isActive = adminTab === item.id;
+
+        return (
+            <div key={item.id} onClick={() => setAdminTab(item.id)} className={`bg-white p-4 md:p-6 rounded-[1.25rem] shadow-sm flex flex-col items-center text-center justify-center cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-navy-100/60 group ${isActive ? 'border-navy-900 ring-2 ring-navy-900/10 scale-[1.02]' : ''}`}>
+                <div className={`w-12 h-12 md:w-16 md:h-16 rounded-[1rem] ${isActive ? 'bg-navy-900' : cc.bg} ${cc.hoverBg} transition-colors flex items-center justify-center mb-2.5 md:mb-3`}>
+                    <Icon name={item.icon} className={`w-6 h-6 md:w-8 md:h-8 ${isActive ? 'text-gold-400' : cc.icon} ${cc.hoverIcon} transition-colors`} />
+                </div>
+                <h3 className={`font-bold text-[11px] md:text-sm leading-tight text-navy-900 ${cc.hoverText} transition-colors`}>{line1}{line2 && <><br />{line2}</>}</h3>
+            </div>
+        );
+    };
+
     // Scroll to top of the page when admin dashboard tab changes
     React.useLayoutEffect(() => {
         window.scrollTo(0, 0);
@@ -3184,15 +3252,12 @@ const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, ad
 
     return (
         <div className="space-y-6 animate-fade-in relative z-10">
-            <div className="bg-white rounded-[1.5rem] shadow-sm border border-navy-100/60 overflow-hidden">
-                <div className="flex flex-col sm:flex-row border-b border-navy-50 bg-navy-50/20">
-                    <button onClick={() => setAdminTab('jadwal')} className={`flex-1 py-4 font-bold text-sm md:text-xs lg:text-base text-center transition-colors ${adminTab === 'jadwal' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Kelola Jadwal</button>
-                    <button onClick={() => setAdminTab('pelayan')} className={`flex-1 py-4 font-bold text-sm md:text-xs lg:text-base text-center transition-colors border-l sm:border-t-0 border-t border-navy-50 ${adminTab === 'pelayan' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Kelola Pejabat</button>
-                    <button onClick={() => setAdminTab('buku_tamu')} className={`flex-1 py-4 font-bold text-sm md:text-xs lg:text-base text-center transition-colors border-l sm:border-t-0 border-t border-navy-50 ${adminTab === 'buku_tamu' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Daftar Tamu</button>
-                    <button onClick={() => setAdminTab('pengaturan')} className={`flex-1 py-4 font-bold text-sm md:text-xs lg:text-base text-center transition-colors border-l sm:border-t-0 border-t border-navy-50 ${adminTab === 'pengaturan' ? 'bg-navy-900 text-gold-400 shadow-inner' : 'text-navy-600 hover:text-navy-900 hover:bg-navy-50/50'}`}>Pengaturan Admin</button>
-                </div>
+            {/* Admin navigation cards (Homepage Style) */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-5">
+                {adminFeatures.map(item => renderAdminFeatureCard(item))}
+            </div>
 
-                <div className={`p-4 md:p-6 ${(adminTab === 'jadwal' || adminTab === 'buku_tamu') ? 'bg-navy-50/30' : 'bg-white'}`}>
+            <div className={`rounded-[1.5rem] shadow-sm border border-navy-100/60 overflow-hidden p-4 md:p-6 ${(adminTab === 'jadwal' || adminTab === 'buku_tamu') ? 'bg-navy-50/30' : 'bg-white'}`}>
                     {adminTab === 'jadwal' && (
                         <div className="animate-fade-in space-y-4">
                             <div className="flex items-center gap-2">
@@ -3588,7 +3653,6 @@ const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, ad
                         <BukuTamuAdmin adminToken={adminToken} />
                     )}
 
-                </div>
             </div>
         </div>
     );
