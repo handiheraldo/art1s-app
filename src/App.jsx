@@ -263,12 +263,82 @@ const Home = ({ setActiveTab, setJadwalSelectedDate, youtubeUrl, isLiveYoutube, 
     }, []);
 
     const featureItems = [
-        { id: 'sekolah_sabat', label: 'Sekolah Sabat', icon: 'BookOpen', isExternal: true, link: 'https://sabbath-school.adventech.io/in' },
-        { id: 'keanggotaan', label: 'Layanan Anggota', icon: 'Users' },
-        { id: 'hubungi', label: 'Hubungi Kami', icon: 'Phone' },
-        { id: 'lagu_sion', label: 'Lagu Sion', icon: 'Music', isExternal: true, link: 'https://play.lagusion.org/' },
-        { id: 'susunan_ibadah', label: 'Susunan Ibadah', icon: 'List' },
-        { id: 'persembahan', label: 'Persembahan & Perpuluhan', icon: 'Gift' }
+        {
+            id: 'sekolah_sabat',
+            label: 'Sekolah Sabat',
+            icon: 'BookOpen',
+            isExternal: true,
+            link: 'https://sabbath-school.adventech.io/in',
+            colorClass: {
+                bg: 'bg-blue-50',
+                icon: 'text-blue-600',
+                hoverBg: 'group-hover:bg-blue-100',
+                hoverIcon: 'group-hover:text-blue-700',
+                hoverText: 'group-hover:text-blue-800'
+            }
+        },
+        {
+            id: 'keanggotaan',
+            label: 'Layanan Anggota',
+            icon: 'Users',
+            colorClass: {
+                bg: 'bg-indigo-50',
+                icon: 'text-indigo-600',
+                hoverBg: 'group-hover:bg-indigo-100',
+                hoverIcon: 'group-hover:text-indigo-700',
+                hoverText: 'group-hover:text-indigo-800'
+            }
+        },
+        {
+            id: 'hubungi',
+            label: 'Hubungi Kami',
+            icon: 'Phone',
+            colorClass: {
+                bg: 'bg-green-50',
+                icon: 'text-green-600',
+                hoverBg: 'group-hover:bg-green-100',
+                hoverIcon: 'group-hover:text-green-700',
+                hoverText: 'group-hover:text-green-800'
+            }
+        },
+        {
+            id: 'lagu_sion',
+            label: 'Lagu Sion',
+            icon: 'Music',
+            isExternal: true,
+            link: 'https://play.lagusion.org/',
+            colorClass: {
+                bg: 'bg-orange-50',
+                icon: 'text-orange-600',
+                hoverBg: 'group-hover:bg-orange-100',
+                hoverIcon: 'group-hover:text-orange-700',
+                hoverText: 'group-hover:text-orange-800'
+            }
+        },
+        {
+            id: 'susunan_ibadah',
+            label: 'Susunan Ibadah',
+            icon: 'List',
+            colorClass: {
+                bg: 'bg-teal-50',
+                icon: 'text-teal-600',
+                hoverBg: 'group-hover:bg-teal-100',
+                hoverIcon: 'group-hover:text-teal-700',
+                hoverText: 'group-hover:text-teal-800'
+            }
+        },
+        {
+            id: 'persembahan',
+            label: 'Persembahan & Perpuluhan',
+            icon: 'Gift',
+            colorClass: {
+                bg: 'bg-fuchsia-50',
+                icon: 'text-fuchsia-600',
+                hoverBg: 'group-hover:bg-fuchsia-100',
+                hoverIcon: 'group-hover:text-fuchsia-700',
+                hoverText: 'group-hover:text-fuchsia-800'
+            }
+        }
     ];
 
     const filteredItems = searchQuery.trim()
@@ -365,13 +435,20 @@ const Home = ({ setActiveTab, setJadwalSelectedDate, youtubeUrl, isLiveYoutube, 
         const labelParts = item.label.split(' ');
         const line1 = labelParts.length > 1 ? labelParts.slice(0, Math.ceil(labelParts.length / 2)).join(' ') : labelParts[0];
         const line2 = labelParts.length > 1 ? labelParts.slice(Math.ceil(labelParts.length / 2)).join(' ') : '';
+        const cc = item.colorClass || {
+            bg: 'bg-navy-50',
+            icon: 'text-navy-600',
+            hoverBg: 'group-hover:bg-gold-50',
+            hoverIcon: 'group-hover:text-gold-500',
+            hoverText: 'group-hover:text-gold-700'
+        };
 
         const cardContent = (
             <>
-                <div className="w-12 h-12 md:w-16 md:h-16 rounded-[1rem] bg-navy-50 group-hover:bg-gold-50 transition-colors flex items-center justify-center mb-2.5 md:mb-3">
-                    <Icon name={item.icon} className="w-6 h-6 md:w-8 md:h-8 text-navy-600 group-hover:text-gold-500 transition-colors" />
+                <div className={`w-12 h-12 md:w-16 md:h-16 rounded-[1rem] ${cc.bg} ${cc.hoverBg} transition-colors flex items-center justify-center mb-2.5 md:mb-3`}>
+                    <Icon name={item.icon} className={`w-6 h-6 md:w-8 md:h-8 ${cc.icon} ${cc.hoverIcon} transition-colors`} />
                 </div>
-                <h3 className="font-bold text-[11px] md:text-sm leading-tight text-navy-900 group-hover:text-gold-700 transition-colors">{line1}{line2 && <><br />{line2}</>}</h3>
+                <h3 className={`font-bold text-[11px] md:text-sm leading-tight text-navy-900 ${cc.hoverText} transition-colors`}>{line1}{line2 && <><br />{line2}</>}</h3>
             </>
         );
 
