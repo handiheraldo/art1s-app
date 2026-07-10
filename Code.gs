@@ -34,9 +34,8 @@ function checkAndInitSheets() {
     sPengaturan.appendRow(["PASSWORD", "admin"]);
     sPengaturan.appendRow(["YOUTUBE_URL", "https://www.youtube-nocookie.com/embed?listType=playlist&list=UUz6rQ_5zP0Y0c8V7aKx2jLQ"]);
     sPengaturan.appendRow(["AUTO_DETECT_YOUTUBE", "YA"]);
-    sPengaturan.appendRow(["KEUANGAN_SALDO_PEMBUKUAN", "98982221"]);
-    sPengaturan.appendRow(["KEUANGAN_SALDO_BCA", "98984480"]);
-    sPengaturan.appendRow(["KEUANGAN_SIGNATURES", "Ditandatangani: Ketua Jemaat — Septha Domona • Gembala Jemaat — Pdt. David Indra Utomo • Bendahara — Ari Wattimena"]);
+    sPengaturan.appendRow(["YOUTUBE_API_KEY", ""]);
+    sPengaturan.appendRow(["YOUTUBE_CHANNEL_ID", "UCNwVpE7CqpcKVcaUnZhUWTQ"]);
     sPengaturan.getRange("A1:B1").setFontWeight("bold");
     sPengaturan.setColumnWidth(1, 150);
     sPengaturan.setColumnWidth(2, 400);
@@ -46,14 +45,11 @@ function checkAndInitSheets() {
     if (keys.indexOf("AUTO_DETECT_YOUTUBE") === -1) {
       sPengaturan.appendRow(["AUTO_DETECT_YOUTUBE", "YA"]);
     }
-    if (keys.indexOf("KEUANGAN_SALDO_PEMBUKUAN") === -1) {
-      sPengaturan.appendRow(["KEUANGAN_SALDO_PEMBUKUAN", "98982221"]);
+    if (keys.indexOf("YOUTUBE_API_KEY") === -1) {
+      sPengaturan.appendRow(["YOUTUBE_API_KEY", ""]);
     }
-    if (keys.indexOf("KEUANGAN_SALDO_BCA") === -1) {
-      sPengaturan.appendRow(["KEUANGAN_SALDO_BCA", "98984480"]);
-    }
-    if (keys.indexOf("KEUANGAN_SIGNATURES") === -1) {
-      sPengaturan.appendRow(["KEUANGAN_SIGNATURES", "Ditandatangani: Ketua Jemaat — Septha Domona • Gembala Jemaat — Pdt. David Indra Utomo • Bendahara — Ari Wattimena"]);
+    if (keys.indexOf("YOUTUBE_CHANNEL_ID") === -1) {
+      sPengaturan.appendRow(["YOUTUBE_CHANNEL_ID", "UCNwVpE7CqpcKVcaUnZhUWTQ"]);
     }
   }
   
@@ -93,77 +89,14 @@ function checkAndInitSheets() {
     }
   }
 
-  // 4. Sheet Keuangan_KasOps
-  var sKasOps = ss.getSheetByName("Keuangan_KasOps");
-  if (!sKasOps) {
-    sKasOps = ss.insertSheet("Keuangan_KasOps");
-    sKasOps.appendRow(["Bulan", "Tahun", "Saldo Awal", "Debet", "Kredit", "Saldo Akhir"]);
-    sKasOps.getRange("A1:F1").setFontWeight("bold").setBackground("#eef2f6");
-    sKasOps.setFrozenRows(1);
-    
-    var initialKasOps = [
-      ["Des", "2025", 10611132, 10855000, 11805150, 9660982],
-      ["Jan", "2026", 9660982, 10615496, 7859322, 12417156],
-      ["Feb", "2026", 12417156, 11464300, 8944386, 14937070],
-      ["Mar", "2026", 14937070, 8255225, 11823456, 11368839],
-      ["Apr", "2026", 11368839, 7986200, 8159786, 11195253],
-      ["Mei", "2026", 11195253, 11778000, 9114626, 13858627]
-    ];
-    sKasOps.getRange(2, 1, initialKasOps.length, 6).setValues(initialKasOps);
-  }
-
-  // 5. Sheet Keuangan_KasTotal
-  var sKasTotal = ss.getSheetByName("Keuangan_KasTotal");
-  if (!sKasTotal) {
-    sKasTotal = ss.insertSheet("Keuangan_KasTotal");
-    sKasTotal.appendRow(["Nama Kas", "Saldo"]);
-    sKasTotal.getRange("A1:B1").setFontWeight("bold").setBackground("#eef2f6");
-    sKasTotal.setFrozenRows(1);
-    
-    var initialKasTotal = [
-      ["Kas Operasional Gereja", 13858627],
-      ["Kas Pembangunan Gereja", 3760725],
-      ["Kas PA (Bukan Kas Gereja)", 11227954],
-      ["Kas Kursus Gratis", 5725998],
-      ["Kas SSA", 1503967],
-      ["Kas Dana Sosial", 1227200],
-      ["Kas BWA", 4073000],
-      ["Kas Penginjilan", 2824750],
-      ["Kas Administrasi Gereja", 28500000],
-      ["Kas ART1S Senior", 812500],
-      ["Kas Pembelian Angklung", 250000],
-      ["Kas Choir ART1S Pemuda", 618000],
-      ["Kas Pembelian A/C", 1000000]
-    ];
-    sKasTotal.getRange(2, 1, initialKasTotal.length, 2).setValues(initialKasTotal);
-  }
-
-  // 6. Sheet Keuangan_KJKT
-  var sKJKT = ss.getSheetByName("Keuangan_KJKT");
-  if (!sKJKT) {
-    sKJKT = ss.insertSheet("Keuangan_KJKT");
-    sKJKT.appendRow(["Tanggal", "Keterangan", "Perpuluhan", "Terpadu", "Jumlah"]);
-    sKJKT.getRange("A1:E1").setFontWeight("bold").setBackground("#eef2f6");
-    sKJKT.setFrozenRows(1);
-    
-    var initialKJKT = [
-      ["02/05", "Persembahan SS & Khotbah", "", 831500, 831500],
-      ["09/05", "Persembahan SS & Khotbah", "", 759500, 759500],
-      ["16/05", "Persembahan SS & Khotbah", "", 706000, 706000],
-      ["23/05", "Persembahan SS & Khotbah", "", 866000, 866000],
-      ["30/05", "Persembahan SS & Khotbah", "", 486000, 486000],
-      ["", "Perpuluhan & Persembahan Mei '26 (Amplop Persan & Tf.)", 19122500, 828000, 19950500]
-    ];
-    sKJKT.getRange(2, 1, initialKJKT.length, 5).setValues(initialKJKT);
-  }
-  
   return ss;
+}
 }
 
 // =========================================================================
 // MENDETEKSI LIVE STREAM ATAU VIDEO TERBARU SECARA OTOMATIS
 // =========================================================================
-function getLatestYoutubeVideo() {
+function getLatestYoutubeVideo(apiKey, channelId) {
   var cache = CacheService.getScriptCache();
   var cached = cache.get("latest_youtube_video_data");
   if (cached) {
@@ -179,76 +112,77 @@ function getLatestYoutubeVideo() {
     url: "https://www.youtube.com/embed/kdBIXxl3pfM"
   };
 
-  try {
-    var channelUrl = "https://www.youtube.com/@art1stv/live";
-    var response = UrlFetchApp.fetch(channelUrl, {
-      muteHttpExceptions: true,
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-      }
-    });
+  if (!apiKey) {
+    Logger.log("getLatestYoutubeVideo: API Key is empty");
+    return fallbackData;
+  }
+  
+  if (!channelId) {
+    channelId = "UCNwVpE7CqpcKVcaUnZhUWTQ";
+  }
 
-    if (response.getResponseCode() !== 200) {
-      return fallbackData;
+  try {
+    // 1. Cek apakah ada live stream aktif
+    var liveUrl = "https://www.googleapis.com/youtube/v3/search"
+      + "?part=snippet"
+      + "&channelId=" + channelId
+      + "&eventType=live"
+      + "&type=video"
+      + "&key=" + apiKey;
+
+    var response = UrlFetchApp.fetch(liveUrl, { muteHttpExceptions: true });
+    if (response.getResponseCode() === 200) {
+      var data = JSON.parse(response.getContentText());
+      if (data.items && data.items.length > 0) {
+        var firstVideo = data.items[0];
+        var videoId = firstVideo.id.videoId;
+        var title = firstVideo.snippet.title;
+        
+        var result = {
+          videoId: videoId,
+          title: title,
+          isLive: true,
+          url: "https://www.youtube.com/embed/" + videoId
+        };
+        
+        // Cache selama 5 menit
+        cache.put("latest_youtube_video_data", JSON.stringify(result), 300);
+        return result;
+      }
+    } else {
+      Logger.log("YouTube API Live Check failed: " + response.getContentText());
     }
 
-    var html = response.getContentText();
-    var startText = "ytInitialData = ";
-    var startIndex = html.indexOf(startText);
-    if (startIndex !== -1) {
-      var start = startIndex + startText.length;
-      var end = html.indexOf(";</script>", start);
-      if (end === -1) {
-        end = html.indexOf(";\n", start);
-      }
-      if (end !== -1) {
-        var jsonStr = html.substring(start, end);
-        var data = JSON.parse(jsonStr);
+    // 2. Jika tidak sedang live, ambil video rekaman terbaru
+    var latestUrl = "https://www.googleapis.com/youtube/v3/search"
+      + "?part=snippet"
+      + "&channelId=" + channelId
+      + "&order=date"
+      + "&type=video"
+      + "&maxResults=1"
+      + "&key=" + apiKey;
+
+    var responseLatest = UrlFetchApp.fetch(latestUrl, { muteHttpExceptions: true });
+    if (responseLatest.getResponseCode() === 200) {
+      var dataLatest = JSON.parse(responseLatest.getContentText());
+      if (dataLatest.items && dataLatest.items.length > 0) {
+        var firstVideo = dataLatest.items[0];
+        var videoId = firstVideo.id.videoId;
+        var title = firstVideo.snippet.title;
         
-        var videos = [];
-        function findLockups(obj) {
-          if (!obj || typeof obj !== 'object') return;
-          if (obj.lockupViewModel) {
-            videos.push(obj.lockupViewModel);
-          }
-          for (var key in obj) {
-            if (obj.hasOwnProperty(key)) {
-              findLockups(obj[key]);
-            }
-          }
-        }
-        findLockups(data);
+        var result = {
+          videoId: videoId,
+          title: title,
+          isLive: false,
+          url: "https://www.youtube.com/embed/" + videoId
+        };
         
-        if (videos.length > 0) {
-          var firstVideo = videos[0];
-          var videoId = firstVideo.contentId;
-          var title = firstVideo.metadata && firstVideo.metadata.lockupMetadataViewModel && firstVideo.metadata.lockupMetadataViewModel.title && firstVideo.metadata.lockupMetadataViewModel.title.content || "";
-          
-          var isLive = false;
-          var overlays = firstVideo.contentImage && firstVideo.contentImage.thumbnailViewModel && firstVideo.contentImage.thumbnailViewModel.overlays;
-          if (overlays && Array.isArray(overlays)) {
-            for (var i = 0; i < overlays.length; i++) {
-              var badge = overlays[i].thumbnailBottomOverlayViewModel && overlays[i].thumbnailBottomOverlayViewModel.badges && overlays[i].thumbnailBottomOverlayViewModel.badges[0] && overlays[i].thumbnailBottomOverlayViewModel.badges[0].thumbnailBadgeViewModel;
-              if (badge) {
-                if (badge.badgeStyle === 'THUMBNAIL_OVERLAY_BADGE_STYLE_LIVE') {
-                  isLive = true;
-                }
-              }
-            }
-          }
-          
-          var result = {
-            videoId: videoId,
-            title: title,
-            isLive: isLive,
-            url: "https://www.youtube.com/embed/" + videoId
-          };
-          
-          // Cache the result for 5 minutes (300 seconds)
-          cache.put("latest_youtube_video_data", JSON.stringify(result), 300);
-          return result;
-        }
+        // Cache selama 5 menit
+        cache.put("latest_youtube_video_data", JSON.stringify(result), 300);
+        return result;
       }
+    } else {
+      Logger.log("YouTube API Latest Check failed: " + responseLatest.getContentText());
     }
   } catch (err) {
     Logger.log("Error in getLatestYoutubeVideo: " + err.toString());
@@ -268,20 +202,19 @@ function doGet(e) {
   var pengData = sPengaturan.getDataRange().getValues();
   var youtubeUrl = "https://www.youtube-nocookie.com/embed?listType=playlist&list=UUz6rQ_5zP0Y0c8V7aKx2jLQ";
   var heroImageUrl = "";
+  var gdriveUrl = "https://drive.google.com";
   var kategoriPejabat = ["Kepemimpinan", "Keuangan", "Departemen & Pelayanan", "Lainnya"];
   var autoDetectYoutube = true;
-  
-  var saldoPembukuan = 98982221;
-  var saldoBca = 98984480;
-  var signaturesKeuangan = "Ditandatangani: Ketua Jemaat — Septha Domona • Gembala Jemaat — Pdt. David Indra Utomo • Bendahara — Ari Wattimena";
+  var youtubeApiKey = "";
+  var youtubeChannelId = "UCNwVpE7CqpcKVcaUnZhUWTQ";
   
   for (var i = 1; i < pengData.length; i++) {
     if (pengData[i][0] === "YOUTUBE_URL") youtubeUrl = pengData[i][1].toString();
     if (pengData[i][0] === "HERO_IMAGE_URL") heroImageUrl = pengData[i][1].toString();
+    if (pengData[i][0] === "GDRIVE_URL") gdriveUrl = pengData[i][1].toString();
     if (pengData[i][0] === "AUTO_DETECT_YOUTUBE") autoDetectYoutube = pengData[i][1].toString() === "YA";
-    if (pengData[i][0] === "KEUANGAN_SALDO_PEMBUKUAN") saldoPembukuan = Number(pengData[i][1]) || 0;
-    if (pengData[i][0] === "KEUANGAN_SALDO_BCA") saldoBca = Number(pengData[i][1]) || 0;
-    if (pengData[i][0] === "KEUANGAN_SIGNATURES") signaturesKeuangan = pengData[i][1].toString();
+    if (pengData[i][0] === "YOUTUBE_API_KEY") youtubeApiKey = pengData[i][1].toString();
+    if (pengData[i][0] === "YOUTUBE_CHANNEL_ID") youtubeChannelId = pengData[i][1].toString();
     if (pengData[i][0] === "KATEGORI_PEJABAT") {
       try {
         kategoriPejabat = JSON.parse(pengData[i][1].toString());
@@ -293,7 +226,7 @@ function doGet(e) {
   var youtubeTitle = "";
   
   if (autoDetectYoutube) {
-    var ytData = getLatestYoutubeVideo();
+    var ytData = getLatestYoutubeVideo(youtubeApiKey, youtubeChannelId);
     youtubeUrl = ytData.url;
     isLiveYoutube = ytData.isLive;
     youtubeTitle = ytData.title;
@@ -391,58 +324,6 @@ function doGet(e) {
     }
   }
 
-  // --- Baca Keuangan KasOps ---
-  var sKasOps = ss.getSheetByName("Keuangan_KasOps");
-  var kasOpsData = [];
-  if (sKasOps) {
-    var data = sKasOps.getDataRange().getValues();
-    for (var i = 1; i < data.length; i++) {
-      if (data[i][0] !== "") {
-        kasOpsData.push({
-          bulan: data[i][0].toString(),
-          tahun: data[i][1].toString(),
-          saldoAwal: Number(data[i][2]) || 0,
-          debet: Number(data[i][3]) || 0,
-          kredit: Number(data[i][4]) || 0,
-          saldo: Number(data[i][5]) || 0
-        });
-      }
-    }
-  }
-  
-  // --- Baca Keuangan KasTotal ---
-  var sKasTotal = ss.getSheetByName("Keuangan_KasTotal");
-  var kasTotalData = [];
-  if (sKasTotal) {
-    var data = sKasTotal.getDataRange().getValues();
-    for (var i = 1; i < data.length; i++) {
-      if (data[i][0] !== "") {
-        kasTotalData.push({
-          nama: data[i][0].toString(),
-          saldo: Number(data[i][1]) || 0
-        });
-      }
-    }
-  }
-  
-  // --- Baca Keuangan KJKT ---
-  var sKJKT = ss.getSheetByName("Keuangan_KJKT");
-  var kjktData = [];
-  if (sKJKT) {
-    var data = sKJKT.getDataRange().getValues();
-    for (var i = 1; i < data.length; i++) {
-      if (data[i][1] !== "") {
-        kjktData.push({
-          tgl: data[i][0].toString(),
-          ket: data[i][1].toString(),
-          perpuluhan: data[i][2] === "" ? null : Number(data[i][2]),
-          terpadu: data[i][3] === "" ? null : Number(data[i][3]),
-          jumlah: Number(data[i][4]) || 0
-        });
-      }
-    }
-  }
-  
   return ContentService.createTextOutput(JSON.stringify({
     dataPejabat: dataPejabat,
     jadwalDB: jadwalDB,
@@ -450,16 +331,10 @@ function doGet(e) {
     isLiveYoutube: isLiveYoutube,
     youtubeTitle: youtubeTitle,
     autoDetectYoutube: autoDetectYoutube,
+    youtubeChannelId: youtubeChannelId,
     heroImageUrl: heroImageUrl,
-    kategoriPejabat: kategoriPejabat,
-    keuangan: {
-      kasOps: kasOpsData,
-      kasTotal: kasTotalData,
-      kjktRows: kjktData,
-      saldoPembukuan: saldoPembukuan,
-      saldoBca: saldoBca,
-      signatures: signaturesKeuangan
-    }
+    gdriveUrl: gdriveUrl,
+    kategoriPejabat: kategoriPejabat
   })).setMimeType(ContentService.MimeType.JSON);
 }
 
@@ -477,7 +352,18 @@ function doPost(e) {
   // --- Aksi: Verifikasi Login ---
   if (action === "verifyPassword") {
     if (payload.password === currentPassword) {
-      return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
+      var youtubeApiKey = "";
+      var youtubeChannelId = "UCNwVpE7CqpcKVcaUnZhUWTQ";
+      var pengData = sPengaturan.getDataRange().getValues();
+      for (var i = 1; i < pengData.length; i++) {
+        if (pengData[i][0] === "YOUTUBE_API_KEY") youtubeApiKey = pengData[i][1].toString();
+        if (pengData[i][0] === "YOUTUBE_CHANNEL_ID") youtubeChannelId = pengData[i][1].toString();
+      }
+      return ContentService.createTextOutput(JSON.stringify({
+        success: true,
+        youtubeApiKey: youtubeApiKey,
+        youtubeChannelId: youtubeChannelId
+      })).setMimeType(ContentService.MimeType.JSON);
     } else {
       return ContentService.createTextOutput(JSON.stringify({success: false, message: "Password salah"})).setMimeType(ContentService.MimeType.JSON);
     }
@@ -525,6 +411,32 @@ function doPost(e) {
       }
       if (!foundAuto) { sPengaturan.appendRow(["AUTO_DETECT_YOUTUBE", val]); }
     }
+
+    // Simpan YOUTUBE_API_KEY jika diberikan
+    if (payload.apiKey !== undefined) {
+      var foundKey = false;
+      for (var i = 1; i < pengData.length; i++) {
+        if (pengData[i][0] === "YOUTUBE_API_KEY") {
+          sPengaturan.getRange(i + 1, 2).setValue(payload.apiKey);
+          foundKey = true;
+          break;
+        }
+      }
+      if (!foundKey) { sPengaturan.appendRow(["YOUTUBE_API_KEY", payload.apiKey]); }
+    }
+
+    // Simpan YOUTUBE_CHANNEL_ID jika diberikan
+    if (payload.channelId !== undefined) {
+      var foundChan = false;
+      for (var i = 1; i < pengData.length; i++) {
+        if (pengData[i][0] === "YOUTUBE_CHANNEL_ID") {
+          sPengaturan.getRange(i + 1, 2).setValue(payload.channelId);
+          foundChan = true;
+          break;
+        }
+      }
+      if (!foundChan) { sPengaturan.appendRow(["YOUTUBE_CHANNEL_ID", payload.channelId]); }
+    }
     
     return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
   }
@@ -543,6 +455,24 @@ function doPost(e) {
       }
     }
     if (!found) { sPengaturan.appendRow(["HERO_IMAGE_URL", payload.url]); }
+    
+    return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // --- Aksi: Simpan Google Drive URL ---
+  if (action === "saveGdriveUrl") {
+    if (payload.password !== currentPassword) { return ContentService.createTextOutput(JSON.stringify({success: false, message: "Akses Ditolak"})).setMimeType(ContentService.MimeType.JSON); }
+    
+    var pengData = sPengaturan.getDataRange().getValues();
+    var found = false;
+    for (var i = 1; i < pengData.length; i++) {
+      if (pengData[i][0] === "GDRIVE_URL") {
+        sPengaturan.getRange(i + 1, 2).setValue(payload.url);
+        found = true;
+        break;
+      }
+    }
+    if (!found) { sPengaturan.appendRow(["GDRIVE_URL", payload.url]); }
     
     return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
   }
@@ -652,84 +582,7 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
   }
   
-  // --- Aksi: Simpan Keuangan ---
-  if (action === "saveKeuangan") {
-    if (payload.password !== currentPassword) { return ContentService.createTextOutput(JSON.stringify({success: false, message: "Akses Ditolak"})).setMimeType(ContentService.MimeType.JSON); }
-    
-    // 1. Simpan ke Keuangan_KasOps
-    var sKasOps = ss.getSheetByName("Keuangan_KasOps");
-    if (sKasOps) {
-      if (sKasOps.getLastRow() > 1) {
-        sKasOps.getRange(2, 1, sKasOps.getLastRow() - 1, 6).clearContent();
-      }
-      var newOpsRows = [];
-      for (var i = 0; i < payload.data.kasOps.length; i++) {
-        var d = payload.data.kasOps[i];
-        newOpsRows.push([d.bulan, d.tahun, d.saldoAwal, d.debet, d.kredit, d.saldo]);
-      }
-      if (newOpsRows.length > 0) {
-        sKasOps.getRange(2, 1, newOpsRows.length, 6).setValues(newOpsRows);
-      }
-    }
-    
-    // 2. Simpan ke Keuangan_KasTotal
-    var sKasTotal = ss.getSheetByName("Keuangan_KasTotal");
-    if (sKasTotal) {
-      if (sKasTotal.getLastRow() > 1) {
-        sKasTotal.getRange(2, 1, sKasTotal.getLastRow() - 1, 2).clearContent();
-      }
-      var newTotalRows = [];
-      for (var i = 0; i < payload.data.kasTotal.length; i++) {
-        var d = payload.data.kasTotal[i];
-        newTotalRows.push([d.nama, d.saldo]);
-      }
-      if (newTotalRows.length > 0) {
-        sKasTotal.getRange(2, 1, newTotalRows.length, 2).setValues(newTotalRows);
-      }
-    }
-    
-    // 3. Simpan ke Keuangan_KJKT
-    var sKJKT = ss.getSheetByName("Keuangan_KJKT");
-    if (sKJKT) {
-      if (sKJKT.getLastRow() > 1) {
-        sKJKT.getRange(2, 1, sKJKT.getLastRow() - 1, 5).clearContent();
-      }
-      var newKjktRows = [];
-      for (var i = 0; i < payload.data.kjktRows.length; i++) {
-        var d = payload.data.kjktRows[i];
-        var perp = d.perpuluhan === null ? "" : d.perpuluhan;
-        var terp = d.terpadu === null ? "" : d.terpadu;
-        newKjktRows.push([d.tgl || "", d.ket, perp, terp, d.jumlah]);
-      }
-      if (newKjktRows.length > 0) {
-        sKJKT.getRange(2, 1, newKjktRows.length, 5).setValues(newKjktRows);
-      }
-    }
-    
-    // 4. Simpan Pengaturan Keuangan (Saldo Pembukuan, Saldo BCA, Signatures)
-    var pengData = sPengaturan.getDataRange().getValues();
-    var keysToUpdate = {
-      "KEUANGAN_SALDO_PEMBUKUAN": payload.data.saldoPembukuan,
-      "KEUANGAN_SALDO_BCA": payload.data.saldoBca,
-      "KEUANGAN_SIGNATURES": payload.data.signatures
-    };
-    
-    for (var k in keysToUpdate) {
-      var found = false;
-      for (var i = 1; i < pengData.length; i++) {
-        if (pengData[i][0] === k) {
-          sPengaturan.getRange(i + 1, 2).setValue(keysToUpdate[k]);
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        sPengaturan.appendRow([k, keysToUpdate[k]]);
-      }
-    }
-    
-    return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
-  }
+
 
   return ContentService.createTextOutput(JSON.stringify({success: false, message: "Aksi tidak dikenali"})).setMimeType(ContentService.MimeType.JSON);
 }

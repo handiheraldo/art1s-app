@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://app.tidar1.org/sitemap.xml
