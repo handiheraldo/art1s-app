@@ -1411,9 +1411,10 @@ const Keanggotaan = ({ setActiveTab }) => (
         <div className="bg-white p-6 md:p-8 rounded-[1.5rem] shadow-sm border border-navy-100/60">
             <h2 className="text-[1.3rem] font-black mb-4 text-navy-900 border-b pb-3 border-navy-50">Layanan Keanggotaan</h2>
             <p className="text-sm font-medium text-navy-600 mb-6">Pilih jenis permohonan keanggotaan yang sesuai dengan status Anda saat ini.</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
                 <button onClick={() => setActiveTab('member_baru')} className="w-full text-left p-5 rounded-[1.25rem] border border-navy-100/50 bg-navy-50/30 hover:bg-navy-50 transition-colors flex items-center justify-between h-full group shadow-sm"><div><h3 className="font-bold text-navy-900 group-hover:text-gold-600 transition-colors">Member Baru</h3><p className="text-xs font-medium text-navy-500 mt-1.5 leading-relaxed">Untuk yang belum pernah menjadi anggota GMAHK (Non-Adventist).</p></div><span className="text-gold-500 font-black text-xl ml-4 transform group-hover:translate-x-1 transition-transform">&rarr;</span></button>
                 <button onClick={() => setActiveTab('pindah_masuk')} className="w-full text-left p-5 rounded-[1.25rem] border border-navy-100/50 bg-navy-50/30 hover:bg-navy-50 transition-colors flex items-center justify-between h-full group shadow-sm"><div><h3 className="font-bold text-navy-900 group-hover:text-gold-600 transition-colors">Pindah Masuk - ACMS</h3><p className="text-xs font-medium text-navy-500 mt-1.5 leading-relaxed">Untuk anggota GMAHK yang ingin pindah ke Tidar 1.</p></div><span className="text-gold-500 font-black text-xl ml-4 transform group-hover:translate-x-1 transition-transform">&rarr;</span></button>
+                <button onClick={() => setActiveTab('perlawatan')} className="w-full text-left p-5 rounded-[1.25rem] border border-navy-100/50 bg-navy-50/30 hover:bg-navy-50 transition-colors flex items-center justify-between h-full group shadow-sm"><div><h3 className="font-bold text-navy-900 group-hover:text-gold-600 transition-colors">Perlawatan</h3><p className="text-xs font-medium text-navy-500 mt-1.5 leading-relaxed">Permintaan perlawatan dari jemaat kepada pendeta atau officers gereja.</p></div><span className="text-gold-500 font-black text-xl ml-4 transform group-hover:translate-x-1 transition-transform">&rarr;</span></button>
             </div>
         </div>
         <div className="bg-white p-6 md:p-8 rounded-[1.5rem] shadow-sm border border-navy-100/60 pb-safe">
@@ -2758,6 +2759,465 @@ const BukuTamuAdmin = ({ adminToken }) => {
     );
 };
 
+const formatDateTimeIndo = (dateTimeString) => {
+    if (!dateTimeString) return '';
+    const date = new Date(dateTimeString);
+    if (isNaN(date.getTime())) return dateTimeString;
+    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'];
+    const dayName = days[date.getDay()];
+    const day = date.getDate();
+    const monthName = months[date.getMonth()];
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${dayName}, ${day} ${monthName} ${year} pukul ${hours}:${minutes} WIB`;
+};
+
+const Perlawatan = ({ setActiveTab, dataPejabat, isLoading }) => {
+    const [formData, setFormData] = React.useState({
+        nama: '',
+        wa: '',
+        lokasi: '',
+        rencanaTgl: '',
+        tujuan: 'Doa & Penguatan',
+        keterangan: ''
+    });
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [isSuccess, setIsSuccess] = React.useState(false);
+    const [createdId, setCreatedId] = React.useState('');
+    const [captcha, setCaptcha] = React.useState({ num1: 0, num2: 0 });
+    const [captchaInput, setCaptchaInput] = React.useState('');
+
+    const generateCaptcha = React.useCallback(() => {
+        const n1 = Math.floor(Math.random() * 9) + 1; // 1 to 9
+        const n2 = Math.floor(Math.random() * 9) + 1; // 1 to 9
+        setCaptcha({ num1: n1, num2: n2 });
+        setCaptchaInput('');
+    }, []);
+
+    React.useEffect(() => {
+        generateCaptcha();
+    }, [generateCaptcha]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!formData.nama.trim() || !formData.wa.trim() || !formData.lokasi.trim() || !formData.rencanaTgl.trim()) {
+            alert('Semua kolom bertanda bintang (*) harus diisi.');
+            return;
+        }
+        if (Number(captchaInput) !== captcha.num1 + captcha.num2) {
+            alert('Jawaban pertanyaan keamanan salah. Silakan hitung kembali.');
+            return;
+        }
+        setIsSubmitting(true);
+        try {
+            const response = await fetch(GAS_API_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'submitPerlawatan',
+                    tanggal: new Date().toISOString().split('T')[0],
+                    nama: formData.nama,
+                    wa: formData.wa,
+                    lokasi: formData.lokasi,
+                    rencanaTgl: formData.rencanaTgl,
+                    tujuan: formData.tujuan,
+                    keterangan: formData.keterangan,
+                    num1: captcha.num1,
+                    num2: captcha.num2,
+                    captchaAnswer: Number(captchaInput)
+                })
+            });
+
+            if (!response.ok) throw new Error('Jaringan bermasalah');
+            const result = await response.json();
+            if (result.success) {
+                setCreatedId(result.id);
+                setIsSuccess(true);
+            } else {
+                alert('Gagal mengirim permintaan: ' + (result.message || 'Terjadi kesalahan'));
+                generateCaptcha();
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Gagal terhubung ke server. Silakan coba beberapa saat lagi.');
+            generateCaptcha();
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleWhatsAppContact = async (p) => {
+        // Automatically update status to 'Sudah dijadwalkan' in the background (public endpoint bypass)
+        try {
+            await fetch(GAS_API_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'updatePerlawatanStatus',
+                    id: createdId,
+                    status: 'Sudah dijadwalkan'
+                })
+            });
+        } catch (e) {
+            console.error('Failed to auto-update status:', e);
+        }
+
+        // Generate prefilled WhatsApp text
+        const tglFormatted = formatDateTimeIndo(formData.rencanaTgl) || formData.rencanaTgl;
+        const text = `Syalom ${p.jabatan} ${p.nama},\n\nSaya ingin mengajukan permohonan perlawatan (kunjungan) dengan rincian berikut:\n\n` +
+            `- *Nama Pemohon*: ${formData.nama}\n` +
+            `- *WhatsApp*: ${formData.wa}\n` +
+            `- *Lokasi / Alamat*: ${formData.lokasi}\n` +
+            `- *Rencana Tanggal & Waktu*: ${tglFormatted}\n` +
+            `- *Tujuan / Alasan*: ${formData.tujuan}\n` +
+            (formData.keterangan ? `- *Keterangan Tambahan*: ${formData.keterangan}\n` : '') +
+            `\nMohon kesediaan waktu pelayan jemaat untuk menjadwalkannya. Terima kasih, Tuhan memberkati.`;
+
+        let cleaned = p.wa.replace(/[^0-9]/g, '');
+        if (cleaned.startsWith('0')) {
+            cleaned = '62' + cleaned.slice(1);
+        }
+        window.open(`https://wa.me/${cleaned}?text=${encodeURIComponent(text)}`, '_blank');
+    };
+
+    const contacts = dataPejabat.filter(p => ['gembala', 'ketua1'].includes(p.id));
+
+    if (isSuccess) {
+        return (
+            <div className="max-w-md mx-auto bg-white rounded-3xl border border-navy-100/60 shadow-xl overflow-hidden p-6 md:p-8 text-center space-y-6 my-4 animate-fade-in relative z-10">
+                <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center text-green-500 mx-auto shadow-inner">
+                    <Icon name="Check" className="w-8 h-8" />
+                </div>
+                <h2 className="text-2xl font-black text-navy-900 tracking-tight">Pengajuan Terkirim!</h2>
+                <p className="text-sm text-navy-600 leading-relaxed font-medium">
+                    Permintaan perlawatan atas nama <b>{formData.nama}</b> telah berhasil dikirimkan ke sistem.
+                </p>
+                
+                <div className="bg-navy-50/50 p-5 rounded-2xl text-left border border-navy-100 text-xs text-navy-700 space-y-3 shadow-inner">
+                    <h3 className="font-bold text-navy-900 text-sm flex items-center border-b pb-2 border-navy-100/80">
+                        <Icon name="Info" className="w-4.5 h-4.5 mr-1.5 text-gold-500" /> WhatsApp Direct Follow-up
+                    </h3>
+                    <p className="leading-relaxed">
+                        Silakan hubungi Pendeta atau Ketua Jemaat di bawah ini untuk konfirmasi cepat via WhatsApp. <b>Menghubungi mereka akan otomatis menjadwalkan perlawatan Anda.</b>
+                    </p>
+                    <div className="space-y-2 pt-1">
+                        {contacts.map(p => (
+                            <button
+                                key={p.id}
+                                onClick={() => handleWhatsAppContact(p)}
+                                className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-2.5 px-4 rounded-xl shadow-sm transition-all flex items-center justify-between group"
+                            >
+                                <span className="flex items-center text-left">
+                                    <Icon name="Phone" className="w-4 h-4 mr-2" />
+                                    <span>
+                                        <span className="block text-[10px] uppercase opacity-75 font-semibold leading-tight">{p.jabatan}</span>
+                                        <span className="text-xs font-bold leading-normal">{p.nama}</span>
+                                    </span>
+                                </span>
+                                <span className="text-white font-black text-sm ml-2 transform group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="pt-4 border-t border-navy-50">
+                    <button onClick={() => setActiveTab('home')} className="w-full bg-navy-900 text-gold-400 hover:bg-navy-800 font-bold py-3.5 rounded-xl transition-all shadow-md">
+                        Kembali ke Home
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="max-w-lg mx-auto bg-white rounded-3xl border border-navy-100/60 shadow-xl overflow-hidden p-6 md:p-8 space-y-6 my-4 animate-fade-in relative z-10">
+            <div className="border-b border-navy-50 pb-5">
+                <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-navy-50 rounded-2xl flex items-center justify-center text-navy-900 shadow-inner">
+                        <Icon name="Users" className="w-6 h-6 text-gold-500" />
+                    </div>
+                    <div>
+                        <h2 className="font-black text-navy-900 text-xl tracking-tight">Permintaan Perlawatan</h2>
+                        <p className="text-xs text-navy-500 font-bold uppercase tracking-widest mt-1">Layanan Kunjungan Jemaat</p>
+                    </div>
+                </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+                <div>
+                    <label className="block text-xs font-bold text-navy-700 mb-1.5 uppercase tracking-wide">Nama Lengkap Pemohon <span className="text-red-500">*</span></label>
+                    <input type="text" name="nama" value={formData.nama} onChange={handleChange} required className="w-full p-3.5 border border-navy-200 rounded-xl focus:border-gold-500 outline-none transition-colors text-sm font-semibold bg-navy-50/50 shadow-sm" placeholder="Nama lengkap Anda..." />
+                </div>
+
+                <div>
+                    <label className="block text-xs font-bold text-navy-700 mb-1.5 uppercase tracking-wide">Nomor WhatsApp Aktif <span className="text-red-500">*</span></label>
+                    <input type="tel" name="wa" value={formData.wa} onChange={handleChange} required className="w-full p-3.5 border border-navy-200 rounded-xl focus:border-gold-500 outline-none transition-colors text-sm font-semibold bg-navy-50/50 shadow-sm" placeholder="Contoh: 08123456789..." />
+                </div>
+
+                <div>
+                    <label className="block text-xs font-bold text-navy-700 mb-1.5 uppercase tracking-wide">Alamat / Lokasi Kunjungan <span className="text-red-500">*</span></label>
+                    <input type="text" name="lokasi" value={formData.lokasi} onChange={handleChange} required className="w-full p-3.5 border border-navy-200 rounded-xl focus:border-gold-500 outline-none transition-colors text-sm font-semibold bg-navy-50/50 shadow-sm" placeholder="Alamat rumah atau lokasi perlawatan..." />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-xs font-bold text-navy-700 mb-1.5 uppercase tracking-wide">Tanggal & Waktu Rencana <span className="text-red-500">*</span></label>
+                        <input type="datetime-local" name="rencanaTgl" value={formData.rencanaTgl} onChange={handleChange} required className="w-full p-3.5 border border-navy-200 rounded-xl focus:border-gold-500 outline-none transition-colors text-sm font-semibold bg-navy-50/50 shadow-sm" />
+                    </div>
+                    <div>
+                        <label className="block text-xs font-bold text-navy-700 mb-1.5 uppercase tracking-wide">Tujuan / Alasan Kunjungan <span className="text-red-500">*</span></label>
+                        <div className="relative">
+                            <select name="tujuan" value={formData.tujuan} onChange={handleChange} required className="w-full p-3.5 pr-10 border border-navy-200 rounded-xl focus:border-gold-500 bg-navy-50/50 text-sm font-semibold outline-none appearance-none cursor-pointer shadow-sm">
+                                <option value="Doa & Penguatan">Doa & Penguatan</option>
+                                <option value="Konseling Rohani">Konseling Rohani</option>
+                                <option value="Pembesukan Sakit">Pembesukan Sakit</option>
+                                <option value="Pemberkatan Rumah">Pemberkatan Rumah</option>
+                                <option value="Pengucapan Syukur">Pengucapan Syukur</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                            <Icon name="ChevronDown" className="w-4 h-4 absolute right-3.5 top-1/2 -translate-y-1/2 text-navy-500 pointer-events-none" />
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label className="block text-xs font-bold text-navy-700 mb-1.5 uppercase tracking-wide">Keterangan / Kebutuhan Khusus</label>
+                    <textarea name="keterangan" value={formData.keterangan} onChange={handleChange} rows="3" className="w-full p-3.5 border border-navy-200 rounded-xl focus:border-gold-500 outline-none transition-colors text-sm font-semibold bg-navy-50/50 shadow-sm" placeholder="Ceritakan kebutuhan perlawatan atau pesan khusus..." />
+                </div>
+
+                <div className="bg-navy-50/50 border border-navy-100 p-4 rounded-xl space-y-3">
+                    <label className="block text-xs font-bold text-navy-700 uppercase tracking-wide">Pertanyaan Keamanan <span className="text-red-500">*</span></label>
+                    <div className="flex items-center space-x-3">
+                        <span className="text-sm font-black text-navy-900 shrink-0 bg-white border border-navy-100 px-3 py-2 rounded-lg">{captcha.num1} + {captcha.num2} =</span>
+                        <input type="number" value={captchaInput} onChange={e => setCaptchaInput(e.target.value)} required className="w-full p-2 border border-navy-200 rounded-lg focus:border-gold-500 outline-none transition-colors text-sm font-bold bg-white text-center shadow-inner" placeholder="?" />
+                    </div>
+                </div>
+
+                <button type="submit" disabled={isSubmitting} className={`w-full ${isSubmitting ? 'bg-navy-300 text-navy-500 cursor-not-allowed' : 'bg-navy-900 hover:bg-navy-800 text-gold-400 shadow-md hover:shadow-lg'} font-bold py-3.5 rounded-xl transition-all text-sm flex justify-center items-center`}>
+                    {isSubmitting ? <><span className="w-4 h-4 border-2 border-navy-500 border-t-white rounded-full animate-spin mr-2"></span> Mengirim...</> : 'Kirim Permintaan'}
+                </button>
+            </form>
+        </div>
+    );
+};
+
+const PerlawatanAdmin = ({ adminToken }) => {
+    const [perlawatanList, setPerlawatanList] = React.useState([]);
+    const [isLoading, setIsLoading] = React.useState(true);
+    const [statusFilter, setStatusFilter] = React.useState('Semua'); // Semua, Belum dijadwalkan, Sudah dijadwalkan, Selesai dilawat, Dibatalkan
+    const [isUpdatingStatus, setIsUpdatingStatus] = React.useState(null); // ID of row being updated
+
+    const fetchPerlawatan = React.useCallback(async () => {
+        setIsLoading(true);
+        try {
+            const response = await fetch(GAS_API_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'getPerlawatan',
+                    password: adminToken
+                })
+            });
+            if (!response.ok) throw new Error('Jaringan bermasalah');
+            const result = await response.json();
+            if (result.success) {
+                setPerlawatanList(result.data || []);
+            } else {
+                alert('Gagal mengambil data perlawatan: ' + (result.message || 'Akses ditolak'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Gagal terhubung ke server untuk mengambil data perlawatan.');
+        } finally {
+            setIsLoading(false);
+        }
+    }, [adminToken]);
+
+    React.useEffect(() => {
+        fetchPerlawatan();
+    }, [fetchPerlawatan]);
+
+    const handleStatusChange = async (id, newStatus) => {
+        setIsUpdatingStatus(id);
+        try {
+            const response = await fetch(GAS_API_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: 'updatePerlawatanStatus',
+                    password: adminToken,
+                    id: id,
+                    status: newStatus
+                })
+            });
+            if (!response.ok) throw new Error('Jaringan bermasalah');
+            const result = await response.json();
+            if (result.success) {
+                setPerlawatanList(prev => prev.map(p => p.id === id ? { ...p, status: newStatus } : p));
+            } else {
+                alert('Gagal memperbarui status: ' + (result.message || 'Terjadi kesalahan'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Gagal terhubung ke server.');
+        } finally {
+            setIsUpdatingStatus(null);
+        }
+    };
+
+    const formatWhatsAppLink = (waNum, applicantName, purpose, datePlanned) => {
+        if (!waNum) return null;
+        let cleaned = waNum.replace(/[^0-9]/g, '');
+        if (cleaned.startsWith('0')) {
+            cleaned = '62' + cleaned.slice(1);
+        }
+        if (!cleaned.startsWith('62') && cleaned.length > 5) {
+            cleaned = '62' + cleaned;
+        }
+        const dateStr = formatDateTimeIndo(datePlanned);
+        const message = encodeURIComponent(`Shalom ${applicantName}, kami dari GMAHK Tidar 1 Surabaya menghubungi Anda mengenai permohonan perlawatan (${purpose}) yang diajukan untuk rencana tanggal ${dateStr}. Kami ingin mengonfirmasi jadwal kunjungan tersebut.`);
+        return `https://wa.me/${cleaned}?text=${message}`;
+    };
+
+    const getStatusColor = (status) => {
+        switch (status) {
+            case 'Sudah dijadwalkan': return 'bg-blue-50 text-blue-700 border border-blue-200';
+            case 'Selesai dilawat': return 'bg-green-50 text-green-700 border border-green-200';
+            case 'Dibatalkan': return 'bg-red-50 text-red-700 border border-red-200';
+            default: return 'bg-yellow-50 text-yellow-700 border border-yellow-200'; // Belum dijadwalkan
+        }
+    };
+
+    const filteredList = statusFilter === 'Semua' 
+        ? perlawatanList 
+        : perlawatanList.filter(p => p.status === statusFilter);
+
+    const filterOptions = ['Semua', 'Belum dijadwalkan', 'Sudah dijadwalkan', 'Selesai dilawat', 'Dibatalkan'];
+
+    return (
+        <div className="space-y-6 animate-fade-in bg-white p-2 md:p-4 rounded-xl">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-teal-50 p-5 rounded-[1.5rem] border border-teal-200 shadow-sm gap-4">
+                <div className="w-full md:w-2/3">
+                    <h3 className="text-lg font-black text-navy-900 mb-1">Daftar Permintaan Perlawatan</h3>
+                    <p className="text-sm text-navy-800 font-medium leading-relaxed">
+                        Pantau daftar permintaan kunjungan jemaat, hubungi pemohon via WhatsApp untuk koordinasi jadwal, dan kelola status perlawatan.
+                    </p>
+                </div>
+                <button 
+                    onClick={fetchPerlawatan} 
+                    disabled={isLoading}
+                    className="bg-navy-900 hover:bg-navy-800 text-gold-400 font-bold py-3 px-5 rounded-xl transition-all shadow-md flex items-center justify-center whitespace-nowrap self-stretch md:self-auto"
+                >
+                    <Icon name="Search" className="w-4 h-4 mr-2" />
+                    Refresh Data
+                </button>
+            </div>
+
+            {/* Filter Tabs */}
+            <div className="flex overflow-x-auto border border-navy-100/50 p-2 gap-2 rounded-2xl hide-scrollbar bg-navy-50/20">
+                {filterOptions.map(opt => (
+                    <button 
+                        key={opt} 
+                        onClick={() => setStatusFilter(opt)}
+                        className={`px-4 py-2.5 rounded-xl text-xs md:text-sm whitespace-nowrap font-bold transition-all ${statusFilter === opt ? 'bg-navy-900 text-gold-400 shadow-sm' : 'text-navy-500 hover:bg-navy-50 hover:text-navy-800'}`}
+                    >
+                        {opt}
+                    </button>
+                ))}
+            </div>
+
+            {isLoading ? (
+                <div className="space-y-4">
+                    <SkeletonCard />
+                    <SkeletonCard />
+                    <SkeletonCard />
+                </div>
+            ) : filteredList.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {filteredList.map(item => {
+                        const waLink = formatWhatsAppLink(item.wa, item.nama, item.tujuan, item.rencanaTgl);
+                        return (
+                            <div key={item.id} className="bg-white rounded-2xl border border-navy-100/60 p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
+                                <div className="space-y-3">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h4 className="font-black text-navy-900 text-base">{item.nama}</h4>
+                                            <p className="text-[10px] font-bold text-navy-400 mt-0.5">Diajukan: {formatIndoDate(item.tanggalPengajuan)}</p>
+                                        </div>
+                                        <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${getStatusColor(item.status)}`}>
+                                            {item.status}
+                                        </span>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 gap-2 pt-2 text-xs border-t border-navy-50">
+                                        <div>
+                                            <span className="text-navy-400 font-bold block">RENCANA TANGGAL & WAKTU</span>
+                                            <span className="font-bold text-navy-900">{formatDateTimeIndo(item.rencanaTgl)}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-navy-400 font-bold block">TUJUAN / ALASAN</span>
+                                            <span className="font-bold text-navy-900">{item.tujuan}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-navy-400 font-bold block">ALAMAT / LOKASI KUNJUNGAN</span>
+                                            <span className="font-semibold text-navy-900">{item.lokasi}</span>
+                                        </div>
+                                    </div>
+
+                                    {item.keterangan && (
+                                        <div className="bg-navy-50/40 border border-navy-100/60 p-3 rounded-xl text-xs text-navy-700 italic">
+                                            "{item.keterangan}"
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-navy-50 mt-4">
+                                    <div className="flex-1 relative">
+                                        <select
+                                            value={item.status}
+                                            disabled={isUpdatingStatus === item.id}
+                                            onChange={(e) => handleStatusChange(item.id, e.target.value)}
+                                            className="w-full p-2.5 pl-3 pr-10 border border-navy-200 rounded-xl bg-white text-xs font-bold text-navy-800 focus:ring-1 focus:ring-gold-500 outline-none appearance-none cursor-pointer"
+                                        >
+                                            <option value="Belum dijadwalkan">Belum dijadwalkan</option>
+                                            <option value="Sudah dijadwalkan">Sudah dijadwalkan</option>
+                                            <option value="Selesai dilawat">Selesai dilawat</option>
+                                            <option value="Dibatalkan">Dibatalkan</option>
+                                        </select>
+                                        <Icon name="ChevronDown" className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-navy-500 pointer-events-none" />
+                                    </div>
+
+                                    {waLink && (
+                                        <a
+                                            href={waLink}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="bg-[#25D366] hover:bg-[#128C7E] text-white font-bold py-2.5 px-4 rounded-xl text-xs shadow-sm hover:shadow transition-all flex items-center justify-center whitespace-nowrap"
+                                        >
+                                            <Icon name="Phone" className="w-3.5 h-3.5 mr-1.5" />
+                                            Hubungi WA
+                                        </a>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            ) : (
+                <div className="text-center py-12 border border-dashed border-navy-200 rounded-2xl bg-white/50">
+                    <Icon name="Users" className="w-12 h-12 mx-auto text-navy-300 mb-3" />
+                    <p className="text-sm font-medium text-navy-500">
+                        Tidak ada data perlawatan untuk status <span className="font-bold text-navy-900">"{statusFilter}"</span>.
+                    </p>
+                </div>
+            )}
+        </div>
+    );
+};
+
 const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, adminToken, setAdminToken, youtubeUrl, setYoutubeUrl, autoDetectYoutube, setAutoDetectYoutube, youtubeTitle, isLiveYoutube, kategoriPejabat, setKategoriPejabat, heroImageUrl, setHeroImageUrl, gdriveUrl, setGdriveUrl, youtubeApiKey, setYoutubeApiKey, youtubeChannelId, setYoutubeChannelId }) => {
     const [adminTab, setAdminTab] = React.useState('jadwal'); // jadwal, pelayan, pengaturan
 
@@ -2796,6 +3256,18 @@ const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, ad
                 hoverBg: 'group-hover:bg-emerald-100',
                 hoverIcon: 'group-hover:text-emerald-700',
                 hoverText: 'group-hover:text-emerald-800'
+            }
+        },
+        {
+            id: 'perlawatan',
+            label: 'Daftar Perlawatan',
+            icon: 'MessageCircle',
+            colorClass: {
+                bg: 'bg-teal-50',
+                icon: 'text-teal-600',
+                hoverBg: 'group-hover:bg-teal-100',
+                hoverIcon: 'group-hover:text-teal-700',
+                hoverText: 'group-hover:text-teal-800'
             }
         },
         {
@@ -3257,7 +3729,7 @@ const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, ad
                 {adminFeatures.map(item => renderAdminFeatureCard(item))}
             </div>
 
-            <div className={`rounded-[1.5rem] shadow-sm border border-navy-100/60 overflow-hidden p-4 md:p-6 ${(adminTab === 'jadwal' || adminTab === 'buku_tamu') ? 'bg-navy-50/30' : 'bg-white'}`}>
+            <div className={`rounded-[1.5rem] shadow-sm border border-navy-100/60 overflow-hidden p-4 md:p-6 ${(adminTab === 'jadwal' || adminTab === 'buku_tamu' || adminTab === 'perlawatan') ? 'bg-navy-50/30' : 'bg-white'}`}>
                     {adminTab === 'jadwal' && (
                         <div className="animate-fade-in space-y-4">
                             <div className="flex items-center gap-2">
@@ -3653,6 +4125,10 @@ const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, ad
                         <BukuTamuAdmin adminToken={adminToken} />
                     )}
 
+                    {adminTab === 'perlawatan' && (
+                        <PerlawatanAdmin adminToken={adminToken} />
+                    )}
+
             </div>
         </div>
     );
@@ -3907,7 +4383,7 @@ const App = () => {
                         let nextTab = 'home';
                         if (currentTab.startsWith('belajar_')) {
                             nextTab = 'belajar';
-                        } else if (currentTab === 'member_baru' || currentTab === 'pindah_masuk' || currentTab === 'form_acms') {
+                        } else if (currentTab === 'member_baru' || currentTab === 'pindah_masuk' || currentTab === 'form_acms' || currentTab === 'perlawatan') {
                             nextTab = 'keanggotaan';
                         } else {
                             nextTab = 'home';
@@ -4117,6 +4593,7 @@ const App = () => {
             case 'persembahan': return <Persembahan dataPejabat={dataPejabat} isLoading={isAppLoading} setActiveTab={setActiveTab} />;
 
             case 'keanggotaan': return <Keanggotaan setActiveTab={setActiveTab} />;
+            case 'perlawatan': return <Perlawatan setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
             case 'member_baru': return <MemberBaru setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
             case 'pindah_masuk': return <PindahMasuk setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
             case 'hubungi': return <Hubungi setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;

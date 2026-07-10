@@ -98,6 +98,15 @@ function checkAndInitSheets() {
     sBukuTamu.setFrozenRows(1);
   }
 
+  // 5. Sheet Perlawatan jika belum ada
+  var sPerlawatan = ss.getSheetByName("Perlawatan");
+  if (!sPerlawatan) {
+    sPerlawatan = ss.insertSheet("Perlawatan");
+    sPerlawatan.appendRow(["ID", "Tanggal Pengajuan", "Nama Pemohon", "WhatsApp", "Alamat / Lokasi", "Tanggal & Waktu Rencana", "Tujuan / Alasan Perlawatan", "Keterangan", "Status"]);
+    sPerlawatan.getRange("A1:I1").setFontWeight("bold").setBackground("#eef2f6");
+    sPerlawatan.setFrozenRows(1);
+  }
+
   return ss;
 }
 }
@@ -725,6 +734,115 @@ function doPost(e) {
       return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
     } else {
       return ContentService.createTextOutput(JSON.stringify({success: false, message: "Data tamu tidak ditemukan"})).setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+
+  // --- Aksi: Kirim Permintaan Perlawatan (Public) ---
+  if (action === "submitPerlawatan") {
+    var num1 = payload.num1;
+    var num2 = payload.num2;
+    var captchaAnswer = payload.captchaAnswer;
+    if (num1 === undefined || num2 === undefined || captchaAnswer === undefined || 
+        Number(captchaAnswer) !== (Number(num1) + Number(num2))) {
+      return ContentService.createTextOutput(JSON.stringify({success: false, message: "Jawaban pertanyaan keamanan salah."})).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var sPerlawatan = ss.getSheetByName("Perlawatan");
+    if (!sPerlawatan) {
+      sPerlawatan = ss.insertSheet("Perlawatan");
+      sPerlawatan.appendRow(["ID", "Tanggal Pengajuan", "Nama Pemohon", "WhatsApp", "Alamat / Lokasi", "Tanggal & Waktu Rencana", "Tujuan / Alasan Perlawatan", "Keterangan", "Status"]);
+      sPerlawatan.getRange("A1:I1").setFontWeight("bold").setBackground("#eef2f6");
+      sPerlawatan.setFrozenRows(1);
+    }
+    
+    var id = "PL_" + new Date().getTime() + "_" + Math.floor(Math.random() * 1000);
+    var tglPengajuan = payload.tanggal || new Date().toISOString().split('T')[0];
+    var nama = payload.nama || "";
+    var wa = payload.wa || "";
+    var lokasi = payload.lokasi || "";
+    var rencanaTgl = payload.rencanaTgl || "";
+    var tujuan = payload.tujuan || "";
+    var keterangan = payload.keterangan || "";
+    var status = "Belum dijadwalkan";
+    
+    sPerlawatan.appendRow([id, tglPengajuan, nama, "'" + wa, lokasi, rencanaTgl, tujuan, keterangan, status]);
+    return ContentService.createTextOutput(JSON.stringify({success: true, id: id})).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // --- Aksi: Ambil Data Perlawatan (Admin) ---
+  if (action === "getPerlawatan") {
+    if (payload.password !== currentPassword) { 
+      return ContentService.createTextOutput(JSON.stringify({success: false, message: "Akses Ditolak"})).setMimeType(ContentService.MimeType.JSON); 
+    }
+    var sPerlawatan = ss.getSheetByName("Perlawatan");
+    var data = [];
+    if (sPerlawatan && sPerlawatan.getLastRow() > 1) {
+      var range = sPerlawatan.getDataRange();
+      var values = range.getValues();
+      for (var i = 1; i < values.length; i++) {
+        var row = values[i];
+        if (row[0]) {
+          var dateVal = row[1];
+          var dateString = "";
+          if (dateVal instanceof Date) {
+            dateString = Utilities.formatDate(dateVal, Session.getScriptTimeZone(), "yyyy-MM-dd");
+          } else if (dateVal) {
+            dateString = String(dateVal).split('T')[0];
+          }
+          
+          data.push({
+            id: row[0].toString(),
+            tanggalPengajuan: dateString,
+            nama: row[2] ? row[2].toString() : "",
+            wa: row[3] ? row[3].toString().replace(/'/g, '') : "",
+            lokasi: row[4] ? row[4].toString() : "",
+            rencanaTgl: row[5] ? row[5].toString() : "",
+            tujuan: row[6] ? row[6].toString() : "",
+            keterangan: row[7] ? row[7].toString() : "",
+            status: row[8] ? row[8].toString() : "Belum dijadwalkan"
+          });
+        }
+      }
+    }
+    data.reverse(); // Newest first
+    return ContentService.createTextOutput(JSON.stringify({success: true, data: data})).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  // --- Aksi: Update Status Perlawatan (Admin atau Public Transition) ---
+  if (action === "updatePerlawatanStatus") {
+    var targetId = payload.id;
+    var newStatus = payload.status;
+    var isPublicTransition = (newStatus === "Sudah dijadwalkan" && !payload.password);
+    
+    if (!isPublicTransition && payload.password !== currentPassword) { 
+      return ContentService.createTextOutput(JSON.stringify({success: false, message: "Akses Ditolak"})).setMimeType(ContentService.MimeType.JSON); 
+    }
+    
+    var sPerlawatan = ss.getSheetByName("Perlawatan");
+    if (!sPerlawatan) {
+      return ContentService.createTextOutput(JSON.stringify({success: false, message: "Sheet Perlawatan tidak ditemukan"})).setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    var values = sPerlawatan.getDataRange().getValues();
+    var foundRow = -1;
+    for (var i = 1; i < values.length; i++) {
+      if (values[i][0] && values[i][0].toString() === targetId) {
+        foundRow = i + 1; // 1-based index
+        break;
+      }
+    }
+    
+    if (foundRow > -1) {
+      if (isPublicTransition) {
+        var currentStatus = values[foundRow - 1][8] ? values[foundRow - 1][8].toString() : "";
+        if (currentStatus !== "Belum dijadwalkan") {
+          return ContentService.createTextOutput(JSON.stringify({success: false, message: "Status tidak dapat diubah secara publik"})).setMimeType(ContentService.MimeType.JSON);
+        }
+      }
+      sPerlawatan.getRange(foundRow, 9).setValue(newStatus); // Column 9 is "Status"
+      return ContentService.createTextOutput(JSON.stringify({success: true})).setMimeType(ContentService.MimeType.JSON);
+    } else {
+      return ContentService.createTextOutput(JSON.stringify({success: false, message: "Data perlawatan tidak ditemukan"})).setMimeType(ContentService.MimeType.JSON);
     }
   }
 
