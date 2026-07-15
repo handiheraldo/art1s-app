@@ -183,7 +183,12 @@ const Icon = ({ name, className }) => {
         Share: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></svg>,
         Shield: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>,
         Copy: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg>,
-        FileText: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></svg>
+        FileText: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" /><path d="M14 2v4a2 2 0 0 0 2 2h4" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></svg>,
+        Bookmark: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>,
+        BookmarkFilled: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>,
+        Backspace: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><line x1="18" y1="9" x2="12" y2="15"/><line x1="12" y1="9" x2="18" y2="15"/></svg>,
+        ArrowRight: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M5 12h14" /><polyline points="12 5 19 12 12 19" /></svg>,
+        Grid: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
     };
     return icons[name] || null;
 };
@@ -306,8 +311,6 @@ const Home = ({ setActiveTab, setJadwalSelectedDate, youtubeUrl, isLiveYoutube, 
             id: 'lagu_sion',
             label: 'Lagu Sion',
             icon: 'Music',
-            isExternal: true,
-            link: 'https://play.lagusion.org/',
             colorClass: {
                 bg: 'bg-orange-50',
                 icon: 'text-orange-600',
@@ -367,7 +370,7 @@ const Home = ({ setActiveTab, setJadwalSelectedDate, youtubeUrl, isLiveYoutube, 
             { id: 'belajar_28dasar', title: '28 Dasar Kepercayaan', desc: 'Doktrin gereja Masehi Advent Hari Ketujuh', icon: 'List' },
             { id: 'belajar_egw', title: 'Ellen G. White', desc: 'Mengenal tulisan roh nubuat', icon: 'BookOpen' },
             { id: 'sekolah_sabat', title: 'Sekolah Sabat', desc: 'Akses pelajaran harian Sekolah Sabat', icon: 'BookOpen', isExternal: true, link: 'https://sabbath-school.adventech.io/in' },
-            { id: 'lagu_sion', title: 'Lagu Sion', desc: 'Buku nyanyian Lagu Sion online', icon: 'Music', isExternal: true, link: 'https://play.lagusion.org/' }
+            { id: 'lagu_sion', title: 'Lagu Sion', desc: 'Buku nyanyian Lagu Sion online', icon: 'Music' }
         ];
 
         appPages.forEach(page => {
@@ -4159,7 +4162,6 @@ const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, ad
                     {adminTab === 'buku_tamu' && (
                         <BukuTamuAdmin adminToken={adminToken} />
                     )}
-
                     {adminTab === 'perlawatan' && (
                         <PerlawatanAdmin adminToken={adminToken} />
                     )}
@@ -4171,8 +4173,299 @@ const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, ad
 
 
 
+
+// --- COMPONENT: LAGU SION MINI-APP ---
+const LaguSion = ({ setActiveTab, initialSong, clearInitialSong, laguSionDb = [] }) => {
+    const [subTab, setSubTab] = React.useState('numpad'); // numpad, lyrics, index
+    const [songNo, setSongNo] = React.useState('');
+    const [selectedSong, setSelectedSong] = React.useState(null);
+    const [indexTab, setIndexTab] = React.useState('number'); // number, alphabet
+    const [db, setDb] = React.useState([]);
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [copied, setCopied] = React.useState(false);
+
+    // Load lyrics from public/lagu_sion.json if not passed from parent
+    React.useEffect(() => {
+        if (laguSionDb && laguSionDb.length > 0) {
+            setDb(laguSionDb);
+        } else {
+            setIsLoading(true);
+            fetch('/lagu_sion.json')
+                .then(r => r.json())
+                .then(data => {
+                    setDb(data);
+                    setIsLoading(false);
+                })
+                .catch(err => {
+                    console.error("Error loading Lagu Sion inside component:", err);
+                    setIsLoading(false);
+                });
+        }
+    }, [laguSionDb]);
+
+    // Handle initial song from global search
+    React.useEffect(() => {
+        if (initialSong) {
+            setSelectedSong(initialSong);
+            setSubTab('lyrics');
+            clearInitialSong();
+        }
+    }, [initialSong, clearInitialSong]);
+
+    // Numpad Key Press
+    const handleKeyPress = (val) => {
+        if (val === 'clear') {
+            setSongNo('');
+        } else if (val === 'backspace') {
+            setSongNo(prev => prev.slice(0, -1));
+        } else {
+            // Max 3 digits
+            if (songNo.length < 3) {
+                setSongNo(prev => prev + val);
+            }
+        }
+    };
+
+    // Go to lyrics
+    const handleGo = () => {
+        if (!songNo) return;
+        const num = parseInt(songNo, 10);
+        const song = db.find(s => s.number === num);
+        if (song) {
+            setSelectedSong(song);
+            setSubTab('lyrics');
+            setSongNo('');
+        } else {
+            alert(`Lagu nomor ${songNo} tidak ditemukan. Silakan masukkan nomor antara 1 dan 525.`);
+        }
+    };
+
+    // Navigate to Prev/Next song
+    const handlePrevNext = (direction) => {
+        if (!selectedSong) return;
+        let nextNum = selectedSong.number + direction;
+        if (nextNum < 1) nextNum = 525;
+        if (nextNum > 525) nextNum = 1;
+        const nextSong = db.find(s => s.number === nextNum);
+        if (nextSong) {
+            setSelectedSong(nextSong);
+        }
+    };
+
+    // Share song
+    const handleShare = () => {
+        if (!selectedSong) return;
+        const lyricsText = selectedSong.verses.map(v => `[${v.label}]\n${v.lines.join('\n')}`).join('\n\n');
+        const shareText = `Lagu Sion No. ${selectedSong.number} - ${selectedSong.title}\nKey/Time: ${selectedSong.keyTime}\n\n${lyricsText}`;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: `Lagu Sion No. ${selectedSong.number} - ${selectedSong.title}`,
+                text: shareText,
+            }).catch(err => console.log('Error sharing:', err));
+        } else {
+            navigator.clipboard.writeText(shareText).then(() => {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            });
+        }
+    };
+
+    // Sorted index list
+    const indexedSongs = React.useMemo(() => {
+        const list = [...db];
+        if (indexTab === 'alphabet') {
+            list.sort((a, b) => a.title.localeCompare(b.title));
+        } else {
+            list.sort((a, b) => a.number - b.number);
+        }
+        return list;
+    }, [db, indexTab]);
+
+    return (
+        <div className="animate-fade-in relative z-10 pb-32">
+            {isLoading && (
+                <div className="fixed inset-0 bg-white/80 flex flex-col items-center justify-center z-50">
+                    <div className="w-10 h-10 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mb-3"></div>
+                    <p className="text-xs font-bold text-navy-500 tracking-wider uppercase">Memuat Database Lagu...</p>
+                </div>
+            )}
+
+            {/* Subtab: Numpad */}
+            {subTab === 'numpad' && (
+                <div className="flex flex-col justify-end min-h-[calc(100vh-220px)] pb-2">
+                    <div className="max-w-md w-full mx-auto bg-sky-400 rounded-3xl overflow-hidden shadow-lg border border-sky-300/30 flex flex-col mt-auto">
+                        {/* Song Number display */}
+                        <div className="bg-navy-900 text-white text-5xl font-black tracking-widest py-8 text-center shrink-0">
+                            {songNo || '---'}
+                        </div>
+
+                        {/* Numpad Keypad Grid */}
+                        <div className="grid grid-cols-3 bg-sky-400 divide-x divide-y divide-sky-300/40 border-t border-b border-sky-300/40 text-white shrink-0 select-none">
+                            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
+                                <button key={num} onClick={() => handleKeyPress(num)} className="py-5 text-2xl font-bold hover:bg-sky-300/20 active:bg-sky-300/40 transition-colors cursor-pointer outline-none">
+                                    {num}
+                                </button>
+                            ))}
+                            <button onClick={() => handleKeyPress('clear')} className="py-5 text-sm font-bold uppercase tracking-wider hover:bg-sky-300/20 active:bg-sky-300/40 transition-colors cursor-pointer outline-none">
+                                Clear
+                            </button>
+                            <button onClick={() => handleKeyPress(0)} className="py-5 text-2xl font-bold hover:bg-sky-300/20 active:bg-sky-300/40 transition-colors cursor-pointer outline-none">
+                                0
+                            </button>
+                            <button onClick={() => handleKeyPress('backspace')} className="py-5 flex items-center justify-center hover:bg-sky-300/20 active:bg-sky-300/40 transition-colors cursor-pointer outline-none">
+                                <Icon name="Backspace" className="w-6 h-6" />
+                            </button>
+                        </div>
+
+                        {/* Go Button */}
+                        <button onClick={handleGo} className="w-full bg-navy-900 hover:bg-navy-800 text-white py-5 font-black text-lg tracking-widest uppercase transition-colors shrink-0 cursor-pointer outline-none">
+                            Go
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Subtab: Lyrics */}
+            {subTab === 'lyrics' && (
+                <div className="space-y-4 max-w-xl mx-auto">
+                    {selectedSong ? (
+                        <>
+                            {/* Navy Song navigation header */}
+                            <div className="bg-navy-900 text-white px-5 py-3 rounded-2xl flex items-center justify-between shadow-md">
+                                <span className="font-black text-lg text-gold-400">Lagu Sion No. {selectedSong.number}</span>
+                                <div className="flex items-center gap-1">
+                                    <button onClick={() => handlePrevNext(-1)} className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/10 active:bg-white/20 transition-colors">
+                                        <Icon name="ArrowLeft" className="w-5 h-5 stroke-2" />
+                                    </button>
+                                    <button onClick={() => handlePrevNext(1)} className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/10 active:bg-white/20 transition-colors">
+                                        <Icon name="ArrowRight" className="w-5 h-5 stroke-2" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Sky Blue Song Title block */}
+                            <div className="bg-sky-400 text-white px-5 py-4 rounded-2xl flex items-center justify-between shadow-md">
+                                <div className="flex-1 min-w-0 pr-4">
+                                    <h2 className="font-black text-xl leading-tight truncate">{selectedSong.title}</h2>
+                                    <p className="text-xs text-sky-100 font-medium mt-0.5 truncate">
+                                        {selectedSong.keyTime} {selectedSong.artist ? `| ${selectedSong.artist}` : ''}
+                                    </p>
+                                </div>
+                                <button onClick={handleShare} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/15 hover:bg-white/25 active:bg-white/35 transition-colors relative shrink-0">
+                                    <Icon name="Share" className="w-5 h-5" />
+                                    {copied && (
+                                        <span className="absolute -top-9 right-0 bg-navy-900 text-white text-[10px] px-2 py-1 rounded shadow-md whitespace-nowrap animate-fade-in">
+                                            Disalin!
+                                        </span>
+                                    )}
+                                </button>
+                            </div>
+
+                            {/* Lyrics sheet card */}
+                            <div className="bg-white rounded-3xl border border-navy-100/50 p-6 md:p-8 shadow-sm space-y-6 select-text">
+                                {selectedSong.verses.map((verse, idx) => {
+                                    const isCh = verse.type === 'chorus';
+                                    return (
+                                        <div key={idx} className={`space-y-2 ${isCh ? 'pl-4 border-l-4 border-sky-400 bg-sky-50/30 py-2 pr-2 rounded-r-lg' : ''}`}>
+                                            <div className={`text-xs font-black uppercase tracking-wider ${isCh ? 'text-sky-500' : 'text-navy-400'}`}>
+                                                {verse.label}
+                                            </div>
+                                            <div className={`text-base md:text-lg leading-relaxed font-medium ${isCh ? 'italic text-navy-800' : 'text-navy-900'}`}>
+                                                {verse.lines.map((line, lIdx) => (
+                                                    <p key={lIdx} className="mb-1">{line}</p>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </>
+                    ) : (
+                        <div className="bg-white rounded-3xl border border-navy-100/50 p-10 shadow-sm flex flex-col items-center justify-center text-center opacity-70">
+                            <Icon name="BookOpen" className="w-14 h-14 text-navy-300 mb-4 animate-pulse" />
+                            <h3 className="font-black text-navy-800 uppercase tracking-widest text-sm mb-2">Belum ada lirik aktif</h3>
+                            <p className="text-xs text-navy-500 max-w-xs leading-relaxed">Ketik nomor lagu di Numpad atau cari judul/lirik di kotak pencarian di atas.</p>
+                            <button onClick={() => setSubTab('numpad')} className="mt-5 px-5 py-2.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold rounded-full uppercase tracking-wider shadow-md transition-all">
+                                Buka Numpad
+                            </button>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {/* Subtab: Index (Daftar) */}
+            {subTab === 'index' && (
+                <div className="max-w-xl mx-auto space-y-4">
+                    <div className="bg-white rounded-2xl border border-navy-100/50 px-4 py-3 flex items-center justify-between shadow-sm">
+                        <span className="text-xs font-black text-navy-400 uppercase tracking-wide">Urutkan Daftar</span>
+                        <div className="flex bg-navy-100/60 p-0.5 rounded-lg">
+                            <button onClick={() => setIndexTab('number')} className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${indexTab === 'number' ? 'bg-white text-navy-900 shadow-sm' : 'text-navy-500 hover:text-navy-700'}`}>
+                                Nomor
+                            </button>
+                            <button onClick={() => setIndexTab('alphabet')} className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${indexTab === 'alphabet' ? 'bg-white text-navy-900 shadow-sm' : 'text-navy-500 hover:text-navy-700'}`}>
+                                Abjad
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-3xl border border-navy-100/50 overflow-hidden shadow-sm">
+                        {indexedSongs.map((song, idx) => (
+                            <button key={song.number} onClick={() => {
+                                setSelectedSong(song);
+                                setSubTab('lyrics');
+                            }} className={`w-full flex items-center p-4 text-left hover:bg-gold-50/50 transition-colors ${idx !== indexedSongs.length - 1 ? 'border-b border-navy-50' : ''}`}>
+                                <div className="w-10 h-10 rounded-xl bg-navy-50 flex items-center justify-center text-navy-600 mr-4 shrink-0 font-black text-sm">
+                                    {song.number}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="font-bold text-navy-800 truncate">{song.title}</div>
+                                    <div className="text-xs text-navy-500 truncate">{song.keyTime} {song.artist ? `| ${song.artist}` : ''}</div>
+                                </div>
+                                <Icon name="ChevronRight" className="w-4 h-4 text-navy-300 ml-2" />
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Bottom Tab Bar of Lagu Sion (Replacing global bottom nav) */}
+            <nav className="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-xl border-t border-navy-100/50 pb-safe z-50 shadow-[0_-8px_30px_rgb(11,26,48,0.04)]">
+                <div className="flex justify-around items-center max-w-lg mx-auto">
+                    {[
+                        { id: 'home', label: 'ART1S App', icon: 'Home' },
+                        { id: 'numpad', label: 'Numpad', icon: 'Grid' },
+                        { id: 'lyrics', label: 'Lirik', icon: 'BookOpen' },
+                        { id: 'index', label: 'Daftar', icon: 'List' }
+                    ].map(tab => {
+                        const isAppHome = tab.id === 'home';
+                        const isActive = isAppHome ? false : subTab === tab.id;
+                        return (
+                            <button key={tab.id} onClick={() => {
+                                if (isAppHome) {
+                                    setActiveTab('home');
+                                } else {
+                                    setSubTab(tab.id);
+                                }
+                            }} className={`relative flex flex-col items-center flex-1 pt-3 pb-2 transition-all duration-300 ${isActive ? 'text-sky-500 bg-gradient-to-b from-sky-500/10 via-sky-500/0 to-transparent' : 'text-navy-400 hover:text-navy-600'}`}>
+                                {isActive && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-1 bg-sky-500 rounded-b-full shadow-[0_2px_8px_rgba(56,189,248,0.4)]"></div>}
+                                {isAppHome ? (
+                                    <img src="./art1s-outline.svg" alt="ART1S" className="w-6 h-6 mb-1 object-contain opacity-70 hover:opacity-100 transition-opacity" />
+                                ) : (
+                                    <Icon name={tab.icon} className={`w-6 h-6 mb-1 transition-all duration-300 ${isActive ? 'stroke-[2.5px]' : 'stroke-[2px]'}`} />
+                                )}
+                                <span className={`text-[10px] font-bold tracking-wide transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-70'}`}>{tab.label}</span>
+                            </button>
+                        );
+                    })}
+                </div>
+            </nav>
+        </div>
+    );
+};
+
 // --- COMPONENT: SEARCH ---
-const Search = ({ setActiveTab, setJadwalSelectedDate, jadwalDB, rabuYMD, sabatYMD, tabs, dataPejabat }) => {
+const Search = ({ setActiveTab, setJadwalSelectedDate, jadwalDB, rabuYMD, sabatYMD, tabs, dataPejabat, laguSionDb = [], setSelectedLaguSionSong }) => {
     const [query, setQuery] = React.useState('');
 
     const today = new Date();
@@ -4193,7 +4486,7 @@ const Search = ({ setActiveTab, setJadwalSelectedDate, jadwalDB, rabuYMD, sabatY
         { id: 'belajar_28dasar', title: '28 Dasar Kepercayaan', desc: 'Doktrin gereja Masehi Advent Hari Ketujuh', icon: 'List' },
         { id: 'belajar_egw', title: 'Ellen G. White', desc: 'Mengenal tulisan roh nubuat', icon: 'BookOpen' },
         { id: 'sekolah_sabat', title: 'Sekolah Sabat', desc: 'Akses pelajaran harian Sekolah Sabat', icon: 'BookOpen', isExternal: true, link: 'https://sabbath-school.adventech.io/in' },
-        { id: 'lagu_sion', title: 'Lagu Sion', desc: 'Buku nyanyian Lagu Sion online', icon: 'Music', isExternal: true, link: 'https://play.lagusion.org/' }
+        { id: 'lagu_sion', title: 'Lagu Sion', desc: 'Buku nyanyian Lagu Sion online', icon: 'Music' }
     ];
 
     const filteredMenus = query.trim() ? appPages.filter(m => m.title.toLowerCase().includes(query.toLowerCase()) || m.desc.toLowerCase().includes(query.toLowerCase())) : [];
@@ -4202,9 +4495,40 @@ const Search = ({ setActiveTab, setJadwalSelectedDate, jadwalDB, rabuYMD, sabatY
     let futureJadwal = [];
     // Filter pejabat
     let foundPejabat = [];
+    // Filter Lagu Sion
+    let foundLaguSion = [];
 
     if (query.trim().length >= 2) {
         const qLower = query.toLowerCase();
+
+        // Lagu Sion Search
+        if (laguSionDb && laguSionDb.length > 0) {
+            laguSionDb.forEach(song => {
+                const numStr = song.number.toString();
+                const matchesNum = numStr === qLower;
+                const matchesTitle = song.title.toLowerCase().includes(qLower);
+                let matchesLyrics = false;
+                let matchedLine = '';
+                
+                for (const verse of song.verses) {
+                    for (const line of verse.lines) {
+                        if (line.toLowerCase().includes(qLower)) {
+                            matchesLyrics = true;
+                            matchedLine = line;
+                            break;
+                        }
+                    }
+                    if (matchesLyrics) break;
+                }
+                
+                if (matchesNum || matchesTitle || matchesLyrics) {
+                    foundLaguSion.push({
+                        song,
+                        matchedLine: matchesLyrics ? matchedLine : null
+                    });
+                }
+            });
+        }
 
         // Jadwal Search
         const allDatesInDB = Object.keys(jadwalDB || {});
@@ -4309,6 +4633,32 @@ const Search = ({ setActiveTab, setJadwalSelectedDate, jadwalDB, rabuYMD, sabatY
 
                     {query.trim().length >= 2 && (
                         <>
+                            {/* Lagu Sion */}
+                            {foundLaguSion.length > 0 && (
+                                <div>
+                                    <h3 className="text-xs font-black text-gold-600 uppercase tracking-widest mb-3 px-2 mt-4">Lagu Sion Edisi Baru</h3>
+                                    <div className="bg-white rounded-2xl border border-navy-100/60 overflow-hidden shadow-sm mb-4">
+                                        {foundLaguSion.slice(0, 15).map((item, idx) => (
+                                            <button key={idx} onClick={() => {
+                                                setSelectedLaguSionSong(item.song);
+                                                setActiveTab('lagu_sion');
+                                            }} className={`w-full flex items-center p-4 text-left hover:bg-gold-50/50 transition-colors ${idx !== foundLaguSion.slice(0, 15).length - 1 ? 'border-b border-navy-50' : ''}`}>
+                                                <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 mr-4 shrink-0 font-bold text-sm">
+                                                    {item.song.number}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="font-bold text-navy-800 truncate">{item.song.title}</div>
+                                                    <div className="text-xs text-navy-500 truncate">
+                                                        {item.matchedLine ? `"... ${item.matchedLine} ..."` : `Key: ${item.song.keyTime} | Composer: ${item.song.artist || 'Anonim'}`}
+                                                    </div>
+                                                </div>
+                                                <Icon name="ChevronRight" className="w-4 h-4 text-navy-300 ml-2" />
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Pejabat Jemaat */}
                             {foundPejabat.length > 0 && (
                                 <div>
@@ -4454,6 +4804,17 @@ const App = () => {
 
     // Token Admin (berisi password valid setelah login)
     const [adminToken, setAdminToken] = React.useState('');
+
+    // Lagu Sion Mini-App states
+    const [laguSionDb, setLaguSionDb] = React.useState([]);
+    const [laguSionInitialSong, setLaguSionInitialSong] = React.useState(null);
+
+    React.useEffect(() => {
+        fetch('/lagu_sion.json')
+            .then(r => r.json())
+            .then(data => setLaguSionDb(data))
+            .catch(err => console.error("Error loading global Lagu Sion DB:", err));
+    }, []);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -4633,7 +4994,8 @@ const App = () => {
             case 'form_acms': return <FormACMS setActiveTab={setActiveTab} dataPejabat={dataPejabat} />;
             case 'buku_tamu': return <BukuTamu setActiveTab={setActiveTab} />;
             case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} autoDetectYoutube={autoDetectYoutube} setAutoDetectYoutube={setAutoDetectYoutube} youtubeTitle={youtubeTitle} isLiveYoutube={isLiveYoutube} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} heroImageUrl={heroImageUrl} setHeroImageUrl={setHeroImageUrl} gdriveUrl={gdriveUrl} setGdriveUrl={setGdriveUrl} youtubeApiKey={youtubeApiKey} setYoutubeApiKey={setYoutubeApiKey} youtubeChannelId={youtubeChannelId} setYoutubeChannelId={setYoutubeChannelId} /> : <Home setActiveTab={setActiveTab} setJadwalSelectedDate={setJadwalSelectedDate} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} showPerpuluhan={showPerpuluhan} perpuluhanYMD={perpuluhanYMD} />;
-            case 'search': return <Search setActiveTab={setActiveTab} setJadwalSelectedDate={setJadwalSelectedDate} jadwalDB={jadwalDB} rabuYMD={rabuYMD} sabatYMD={sabatYMD} tabs={tabs} dataPejabat={dataPejabat} />;
+            case 'search': return <Search setActiveTab={setActiveTab} setJadwalSelectedDate={setJadwalSelectedDate} jadwalDB={jadwalDB} rabuYMD={rabuYMD} sabatYMD={sabatYMD} tabs={tabs} dataPejabat={dataPejabat} laguSionDb={laguSionDb} setSelectedLaguSionSong={setLaguSionInitialSong} />;
+            case 'lagu_sion': return <LaguSion setActiveTab={setActiveTab} initialSong={laguSionInitialSong} clearInitialSong={() => setLaguSionInitialSong(null)} laguSionDb={laguSionDb} />;
             default: return <Home setActiveTab={setActiveTab} setJadwalSelectedDate={setJadwalSelectedDate} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} showPerpuluhan={showPerpuluhan} perpuluhanYMD={perpuluhanYMD} />;
         }
     };
@@ -4649,10 +5011,10 @@ const App = () => {
 
             <header className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-navy-50 shadow-sm">
                 <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-3 gap-3">
-                    {(activeTab === 'home' || activeTab === 'search') ? (
+                    {(activeTab === 'home' || activeTab === 'search' || activeTab === 'lagu_sion') ? (
                         <div className="flex-1 flex items-center gap-2">
-                            {activeTab === 'search' && (
-                                <button onClick={() => window.history.back()} className="w-10 h-10 flex items-center justify-start shrink-0 text-navy-600 hover:text-gold-500 transition-all border border-transparent">
+                            {(activeTab === 'search' || activeTab === 'lagu_sion') && (
+                                <button onClick={() => setActiveTab('home')} className="w-10 h-10 flex items-center justify-start shrink-0 text-navy-600 hover:text-gold-500 transition-all border border-transparent">
                                     <Icon name="ArrowLeft" className="w-6 h-6" />
                                 </button>
                             )}
@@ -4675,7 +5037,7 @@ const App = () => {
                             </div>
                         </>
                     )}
-                    <div className={`flex justify-end ${!(activeTab === 'home' || activeTab === 'search') ? 'flex-1' : ''}`}>
+                    <div className={`flex justify-end ${!(activeTab === 'home' || activeTab === 'search' || activeTab === 'lagu_sion') ? 'flex-1' : ''}`}>
                         {isAdminLoggedIn ? (
                             <button onClick={handleLogout} className="w-10 h-10 bg-white border border-navy-100/60 rounded-full text-red-500 hover:text-red-700 hover:bg-red-50 transition flex items-center justify-center shrink-0 shadow-sm"><Icon name="LogOut" className="w-4 h-4" /></button>
                         ) : (
@@ -4691,7 +5053,8 @@ const App = () => {
                 {renderContent()}
             </main>
 
-            <nav className="fixed bottom-0 w-full bg-white/95 backdrop-blur-xl border-t border-navy-100/50 pb-safe z-50 shadow-[0_-8px_30px_rgb(11,26,48,0.04)]">
+            {activeTab !== 'lagu_sion' && (
+                <nav className="fixed bottom-0 w-full bg-white/95 backdrop-blur-xl border-t border-navy-100/50 pb-safe z-50 shadow-[0_-8px_30px_rgb(11,26,48,0.04)]">
                 <div className="flex justify-around items-center max-w-lg mx-auto">
                     {tabs.map(tab => {
                         const isActive = activeTab.startsWith(tab.id);
@@ -4711,9 +5074,10 @@ const App = () => {
                     })}
                 </div>
             </nav>
+            )}
 
             {/* Floating Action Button (Hubungi / WA) */}
-            {activeTab !== 'admin_dashboard' && activeTab !== 'hubungi' && (
+            {activeTab !== 'admin_dashboard' && activeTab !== 'hubungi' && activeTab !== 'lagu_sion' && (
                 <button
                     onClick={() => setActiveTab('hubungi')}
                     className="fixed bottom-28 right-6 md:right-8 z-40 bg-[#25D366] hover:bg-[#128C7E] text-white p-4 rounded-full shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 flex items-center justify-center animate-fade-in border border-green-400/50"
