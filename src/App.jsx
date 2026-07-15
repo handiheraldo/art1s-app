@@ -654,10 +654,54 @@ const SusunanIbadah = ({ setActiveTab, activeSabat, sabatYMD, isLoading }) => {
     );
 
     const susunanTabs = [
-        { id: 'ss', label: 'Sekolah Sabat', icon: 'BookOpen', activeColor: 'text-navy-900' },
-        { id: 'khotbah', label: 'Khotbah / Umum', icon: 'List', activeColor: 'text-navy-900' },
-        { id: 'diakon', label: 'Diakon & Diakones', icon: 'Users', activeColor: 'text-navy-900' },
-        { id: 'musik', label: 'Pelayanan Musik', icon: 'Music', activeColor: 'text-navy-900' }
+        { 
+            id: 'ss', 
+            label: 'Sekolah Sabat', 
+            icon: 'BookOpen',
+            colorClass: {
+                bg: 'bg-indigo-50',
+                icon: 'text-indigo-600',
+                hoverBg: 'group-hover:bg-indigo-100',
+                hoverIcon: 'group-hover:text-indigo-700',
+                hoverText: 'group-hover:text-indigo-800'
+            }
+        },
+        { 
+            id: 'khotbah', 
+            label: 'Khotbah / Umum', 
+            icon: 'List',
+            colorClass: {
+                bg: 'bg-blue-50',
+                icon: 'text-blue-600',
+                hoverBg: 'group-hover:bg-blue-100',
+                hoverIcon: 'group-hover:text-blue-700',
+                hoverText: 'group-hover:text-blue-800'
+            }
+        },
+        { 
+            id: 'diakon', 
+            label: 'Diakon & Diakones', 
+            icon: 'Users',
+            colorClass: {
+                bg: 'bg-emerald-50',
+                icon: 'text-emerald-600',
+                hoverBg: 'group-hover:bg-emerald-100',
+                hoverIcon: 'group-hover:text-emerald-700',
+                hoverText: 'group-hover:text-emerald-800'
+            }
+        },
+        { 
+            id: 'musik', 
+            label: 'Pelayanan Musik', 
+            icon: 'Music',
+            colorClass: {
+                bg: 'bg-rose-50',
+                icon: 'text-rose-600',
+                hoverBg: 'group-hover:bg-rose-100',
+                hoverIcon: 'group-hover:text-rose-700',
+                hoverText: 'group-hover:text-rose-800'
+            }
+        }
     ];
 
     return (
@@ -669,23 +713,30 @@ const SusunanIbadah = ({ setActiveTab, activeSabat, sabatYMD, isLoading }) => {
                 </div>
 
                 <div className="flex flex-col">
-                    {/* TABS SCROLLABLE */}
-                    <div className="flex flex-col overflow-hidden mb-2">
-                        <div className="flex items-center gap-2 pb-1 md:pb-2">
-                            <div className="bg-white/60 rounded-[1.25rem] flex-1 flex overflow-x-auto border border-navy-100/50 p-1.5 gap-2 hide-scrollbar scroll-smooth">
-                                {susunanTabs.map(tab => (
-                                    <button
-                                        key={tab.id}
-                                        onClick={() => setOpenSection(tab.id)}
-                                        className={`px-5 py-2.5 rounded-xl text-sm whitespace-nowrap transition-all duration-300 flex items-center font-bold shrink-0 ${openSection === tab.id ? 'bg-white shadow-sm border border-navy-100/50 text-navy-900 scale-100' : 'text-navy-400 hover:text-navy-700 hover:bg-navy-100/50 scale-95 origin-center'}`}
-                                    >
-                                        <Icon name={tab.icon} className={`w-[1.15rem] h-[1.15rem] mr-2 transition-colors ${openSection === tab.id ? 'text-gold-500' : 'text-navy-400'}`} />
-                                        {tab.label}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                        <p className="text-[10px] text-navy-400 italic text-center pb-3 md:hidden">scroll ke samping untuk lihat susunan yang lain &rarr;</p>
+                    {/* TABS GRID (BENTO BOX Style) */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-5 mb-6">
+                        {susunanTabs.map(tab => {
+                            const labelParts = tab.label.split(' ');
+                            const line1 = labelParts.length > 1 ? labelParts.slice(0, Math.ceil(labelParts.length / 2)).join(' ') : labelParts[0];
+                            const line2 = labelParts.length > 1 ? labelParts.slice(Math.ceil(labelParts.length / 2)).join(' ') : '';
+                            const cc = tab.colorClass;
+                            const isActive = openSection === tab.id;
+
+                            return (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setOpenSection(tab.id)}
+                                    className={`bg-white p-4 md:p-6 rounded-[1.25rem] shadow-sm flex flex-col items-center text-center justify-center cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border border-navy-100/60 group ${isActive ? 'border-navy-900 ring-2 ring-navy-900/10 scale-[1.02]' : ''}`}
+                                >
+                                    <div className={`w-12 h-12 md:w-16 md:h-16 rounded-[1rem] ${isActive ? 'bg-navy-900' : cc.bg} ${cc.hoverBg} transition-colors flex items-center justify-center mb-2.5 md:mb-3`}>
+                                        <Icon name={tab.icon} className={`w-6 h-6 md:w-8 md:h-8 ${isActive ? 'text-gold-400' : cc.icon} ${cc.hoverIcon} transition-colors`} />
+                                    </div>
+                                    <h3 className={`font-bold text-[11px] md:text-sm leading-tight text-navy-900 ${cc.hoverText} transition-colors`}>
+                                        {line1}{line2 && <><br />{line2}</>}
+                                    </h3>
+                                </button>
+                            );
+                        })}
                     </div>
 
                     {/* TAB CONTENT */}
@@ -1226,9 +1277,7 @@ const Live = ({ setActiveTab, activeRabu, activeSabat, rabuYMD, sabatYMD, youtub
                 </div>
             </div>
 
-            <div className="bg-white p-6 md:p-8 rounded-[1.5rem] shadow-sm border border-navy-100/60">
-                <SusunanIbadah activeSabat={activeSabat} sabatYMD={sabatYMD} isLoading={isLoading} />
-            </div>
+            <SusunanIbadah activeSabat={activeSabat} sabatYMD={sabatYMD} isLoading={isLoading} />
         </div>
     );
 };
