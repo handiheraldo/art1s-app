@@ -643,16 +643,84 @@ const Home = ({ setActiveTab, setJadwalSelectedDate, youtubeUrl, isLiveYoutube, 
     );
 };
 
-const SusunanIbadah = ({ setActiveTab, activeSabat, sabatYMD, isLoading }) => {
+const SusunanIbadah = ({ setActiveTab, activeSabat, sabatYMD, isLoading, laguSionDb, setLaguSionInitialSong }) => {
     const [openSection, setOpenSection] = React.useState('khotbah');
 
     const getOfficer = (arr, role) => arr?.find(p => p.tugas === role)?.nama || "-";
     const susunan = activeSabat.susunan || defaultSusunan;
 
+    // Helper: navigate to Lagu Sion page with a specific song number
+    const navigateToLaguSion = (lsNumber) => {
+        const num = parseInt(lsNumber, 10);
+        if (!num) return;
+        const song = (laguSionDb || []).find(s => s.number === num);
+        if (song) {
+            setLaguSionInitialSong(song);
+        } else {
+            // Even if not found in db, navigate and let LaguSion handle it
+            setLaguSionInitialSong({ number: num });
+        }
+        setActiveTab('lagu_sion');
+    };
+
+    // Helper: format lagu value for display
+    // Admin cukup input angka (misal "205"), otomatis tampil "LS 205 - Pandanglah Pada Yesus"
+    // Juga support format lama "LS 205" atau "LS 205 - Judul"
+    const formatLagu = (value) => {
+        if (!value || typeof value !== 'string') return value || "-";
+        const trimmed = value.trim();
+        if (!trimmed) return "-";
+
+        // Case 1: Hanya angka (admin input baru)
+        if (/^\d+$/.test(trimmed)) {
+            const num = parseInt(trimmed, 10);
+            const song = (laguSionDb || []).find(s => s.number === num);
+            return song ? `LS ${num} - ${song.title}` : `LS ${num}`;
+        }
+
+        // Case 2: Format "LS XXX" tanpa judul — tambahkan judul otomatis
+        const lsMatch = trimmed.match(/^LS\.?\s*(\d+)$/i);
+        if (lsMatch) {
+            const num = parseInt(lsMatch[1], 10);
+            const song = (laguSionDb || []).find(s => s.number === num);
+            return song ? `LS ${num} - ${song.title}` : `LS ${num}`;
+        }
+
+        // Case 3: Format lama "LS 205 - Judul" atau teks bebas — tampilkan apa adanya
+        return trimmed;
+    };
+
+    // Helper: render description text with clickable LS numbers
+    const renderDescWithLinks = (desc) => {
+        if (typeof desc !== 'string') return desc;
+        // Match patterns like "LS 205", "LS205", "LS. 205"
+        const splitRegex = /(LS\.?\s*\d+)/gi;
+        const parts = desc.split(splitRegex);
+        if (parts.length <= 1) return desc;
+        // Use a non-global regex for testing individual parts
+        const testRegex = /^LS\.?\s*(\d+)$/i;
+        return parts.map((part, i) => {
+            const match = part.match(testRegex);
+            if (match) {
+                return (
+                    <span
+                        key={i}
+                        onClick={(e) => { e.stopPropagation(); navigateToLaguSion(match[1]); }}
+                        className="text-blue-600 underline decoration-blue-300 underline-offset-2 cursor-pointer hover:text-blue-800 hover:decoration-blue-500 transition-colors"
+                        title={`Buka Lagu Sion No. ${match[1]}`}
+                    >
+                        {part}
+                    </span>
+                );
+            }
+            return <React.Fragment key={i}>{part}</React.Fragment>;
+        });
+    };
+
     const renderItem = (title, desc, isHighlight = false) => (
         <div className={`flex justify-between items-center py-3 px-4 border-b border-navy-50/50 last:border-0 transition-colors rounded-xl mx-2 my-1 ${isHighlight ? 'bg-gold-50 shadow-sm border-gold-100' : 'hover:bg-navy-50/30'}`}>
             <span className="text-sm text-navy-600 font-medium w-1/2 shrink-0">{title}</span>
-            <span className={`text-sm text-right w-1/2 break-words ${isHighlight ? 'font-bold text-navy-900' : 'font-bold text-navy-800'}`}>{desc}</span>
+            <span className={`text-sm text-right w-1/2 break-words ${isHighlight ? 'font-bold text-navy-900' : 'font-bold text-navy-800'}`}>{renderDescWithLinks(desc)}</span>
         </div>
     );
 
@@ -751,12 +819,12 @@ const SusunanIbadah = ({ setActiveTab, activeSabat, sabatYMD, isLoading }) => {
                                 <>
                                     {renderItem("Lagu Pengantar", "LS 205 - Pandanglah Pada Yesus (reff saja)")}
                                     {renderItem("Pemimpin Acara", getOfficer(activeSabat.sekolahSabat, "Pembawa Acara"))}
-                                    {renderItem("Lagu Buka", susunan.ssLaguBuka)}
+                                    {renderItem("Lagu Buka", formatLagu(susunan.ssLaguBuka))}
                                     {renderItem("Ayat Inti & Doa Buka", getOfficer(activeSabat.sekolahSabat, "Ayat Inti & Doa Buka"))}
                                     {renderItem("Berita Misi", getOfficer(activeSabat.sekolahSabat, "Berita Misi"))}
                                     {renderItem("Diskusi Sekolah Sabat", "Kelas Pemuda 1, Kelas Dewasa, Kelas Pemuda 2, Kelas Anak-anak")}
                                     {renderItem("Pelayanan Perorangan", getOfficer(activeSabat.sekolahSabat, "Pelayanan Perorangan"))}
-                                    {renderItem("Lagu Tutup", susunan.ssLaguTutup)}
+                                    {renderItem("Lagu Tutup", formatLagu(susunan.ssLaguTutup))}
                                     {renderItem("Doa Tutup", getOfficer(activeSabat.sekolahSabat, "Pelayanan Perorangan"))}
                                 </>
                             )}
@@ -773,7 +841,7 @@ const SusunanIbadah = ({ setActiveTab, activeSabat, sabatYMD, isLoading }) => {
                                     {renderItem("Lagu Sambutan", "LS 1 - Di Hadapan Hadirat-Mu")}
                                     {renderItem("Doa Buka", getOfficer(activeSabat.khotbah, "Khotbah"))}
                                     {renderItem("Ayat Bersahutan", getOfficer(activeSabat.khotbah, "Pendamping 1") + " - " + susunan.kAyatBersahutan)}
-                                    {renderItem("Lagu Buka", susunan.kLaguBuka)}
+                                    {renderItem("Lagu Buka", formatLagu(susunan.kLaguBuka))}
                                     {renderItem("Doa Syafaat", getOfficer(activeSabat.khotbah, "Pendamping 1"))}
                                     {susunan.kLaguPujian1_show && renderItem("Lagu Pujian", susunan.kLaguPujian1_judul, true)}
                                     {renderItem("Bacaan Persembahan", getOfficer(activeSabat.khotbah, "Pendamping 2"))}
@@ -785,7 +853,7 @@ const SusunanIbadah = ({ setActiveTab, activeSabat, sabatYMD, isLoading }) => {
                                     {renderItem("Ayat Inti", susunan.kAyatInti)}
                                     {renderItem("Lagu Tema", "Misi Kita")}
                                     {renderItem("Khotbah", getOfficer(activeSabat.khotbah, "Khotbah"), true)}
-                                    {renderItem("Lagu Tutup", susunan.kLaguTutup)}
+                                    {renderItem("Lagu Tutup", formatLagu(susunan.kLaguTutup))}
                                     {renderItem("Doa Berkat", "Pdt. David Indra Utomo")}
                                     {renderItem("Lagu Berkat", "LS 60 - Pada Akhir Kebaktian")}
                                     {renderItem("Pengumuman", "Dept. Komunikasi")}
@@ -1258,7 +1326,7 @@ const Jadwal = ({ jadwalDB, jadwalSelectedDate, setJadwalSelectedDate, showPerja
     );
 };
 
-const Live = ({ setActiveTab, activeRabu, activeSabat, rabuYMD, sabatYMD, youtubeUrl, isLiveYoutube, youtubeTitle, isLoading }) => {
+const Live = ({ setActiveTab, activeRabu, activeSabat, rabuYMD, sabatYMD, youtubeUrl, isLiveYoutube, youtubeTitle, isLoading, laguSionDb, setLaguSionInitialSong }) => {
     return (
         <div className="space-y-6 md:space-y-8 animate-fade-in">
             <div className="bg-navy-900 rounded-[1.5rem] overflow-hidden shadow-lg p-2.5">
@@ -1280,7 +1348,7 @@ const Live = ({ setActiveTab, activeRabu, activeSabat, rabuYMD, sabatYMD, youtub
                 </div>
             </div>
 
-            <SusunanIbadah activeSabat={activeSabat} sabatYMD={sabatYMD} isLoading={isLoading} />
+            <SusunanIbadah setActiveTab={setActiveTab} activeSabat={activeSabat} sabatYMD={sabatYMD} isLoading={isLoading} laguSionDb={laguSionDb} setLaguSionInitialSong={setLaguSionInitialSong} />
         </div>
     );
 };
@@ -3841,13 +3909,13 @@ const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, ad
                                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
                                                                         <div className="space-y-3 p-5 bg-white rounded-2xl border border-navy-100/60 shadow-sm h-fit">
                                                                             <h4 className="font-black text-sm text-navy-800 border-b border-navy-50 pb-2">Sekolah Sabat</h4>
-                                                                            <div><label className="text-[10px] font-bold uppercase tracking-widest text-navy-500 block mb-1">Lagu Buka</label><input type="text" value={editForm.ssLaguBuka || ''} onChange={(e) => handleEditFormChangeSusunan('ssLaguBuka', e.target.value)} placeholder="Contoh: LS 210" className="w-full p-2.5 border border-navy-200 rounded-xl text-sm font-bold text-navy-900 outline-none focus:border-gold-500 bg-navy-50/50 transition-colors" /></div>
-                                                                            <div><label className="text-[10px] font-bold uppercase tracking-widest text-navy-500 block mb-1">Lagu Tutup</label><input type="text" value={editForm.ssLaguTutup || ''} onChange={(e) => handleEditFormChangeSusunan('ssLaguTutup', e.target.value)} placeholder="Contoh: LS 251" className="w-full p-2.5 border border-navy-200 rounded-xl text-sm font-bold text-navy-900 outline-none focus:border-gold-500 bg-navy-50/50 transition-colors" /></div>
+                                                                            <div><label className="text-[10px] font-bold uppercase tracking-widest text-navy-500 block mb-1">Lagu Buka</label><input type="text" value={editForm.ssLaguBuka || ''} onChange={(e) => handleEditFormChangeSusunan('ssLaguBuka', e.target.value)} placeholder="Ketik nomor lagu, misal: 210" className="w-full p-2.5 border border-navy-200 rounded-xl text-sm font-bold text-navy-900 outline-none focus:border-gold-500 bg-navy-50/50 transition-colors" /></div>
+                                                                            <div><label className="text-[10px] font-bold uppercase tracking-widest text-navy-500 block mb-1">Lagu Tutup</label><input type="text" value={editForm.ssLaguTutup || ''} onChange={(e) => handleEditFormChangeSusunan('ssLaguTutup', e.target.value)} placeholder="Ketik nomor lagu, misal: 251" className="w-full p-2.5 border border-navy-200 rounded-xl text-sm font-bold text-navy-900 outline-none focus:border-gold-500 bg-navy-50/50 transition-colors" /></div>
                                                                         </div>
                                                                         <div className="space-y-3 p-5 bg-white rounded-xl border border-navy-100/60 shadow-sm">
                                                                             <h4 className="font-black text-sm text-gold-600 border-b border-navy-50 pb-2">Khotbah Umum</h4>
                                                                             <div><label className="text-[10px] font-bold uppercase tracking-widest text-navy-500 block mb-1">Ayat Bersahutan</label><input type="text" value={editForm.kAyatBersahutan || ''} onChange={(e) => handleEditFormChangeSusunan('kAyatBersahutan', e.target.value)} placeholder="Contoh: No. 12" className="w-full p-2.5 border border-navy-200 rounded-xl text-sm font-bold text-navy-900 outline-none focus:border-gold-500 bg-navy-50/50 transition-colors" /></div>
-                                                                            <div><label className="text-[10px] font-bold uppercase tracking-widest text-navy-500 block mb-1">Lagu Buka</label><input type="text" value={editForm.kLaguBuka || ''} onChange={(e) => handleEditFormChangeSusunan('kLaguBuka', e.target.value)} placeholder="Contoh: LS 15" className="w-full p-2.5 border border-navy-200 rounded-xl text-sm font-bold text-navy-900 outline-none focus:border-gold-500 bg-navy-50/50 transition-colors" /></div>
+                                                                            <div><label className="text-[10px] font-bold uppercase tracking-widest text-navy-500 block mb-1">Lagu Buka</label><input type="text" value={editForm.kLaguBuka || ''} onChange={(e) => handleEditFormChangeSusunan('kLaguBuka', e.target.value)} placeholder="Ketik nomor lagu, misal: 15" className="w-full p-2.5 border border-navy-200 rounded-xl text-sm font-bold text-navy-900 outline-none focus:border-gold-500 bg-navy-50/50 transition-colors" /></div>
 
                                                                             <div className="flex items-center space-x-3 border border-navy-100 p-3 rounded-xl bg-navy-50/30">
                                                                                 <input type="checkbox" checked={editForm.kLaguPujian1_show || false} onChange={(e) => handleEditFormChangeSusunan('kLaguPujian1_show', e.target.checked)} className="w-5 h-5 text-gold-500 rounded focus:ring-gold-500 accent-gold-500" />
@@ -3874,7 +3942,7 @@ const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, ad
                                                                             </div>
 
                                                                             <div><label className="text-[10px] font-bold uppercase tracking-widest text-navy-500 block mb-1">Ayat Inti</label><input type="text" value={editForm.kAyatInti || ''} onChange={(e) => handleEditFormChangeSusunan('kAyatInti', e.target.value)} placeholder="Contoh: Yohanes 3:16" className="w-full p-2.5 border border-navy-200 rounded-xl text-sm font-bold text-navy-900 outline-none focus:border-gold-500 bg-navy-50/50 transition-colors" /></div>
-                                                                            <div><label className="text-[10px] font-bold uppercase tracking-widest text-navy-500 block mb-1">Lagu Tutup</label><input type="text" value={editForm.kLaguTutup || ''} onChange={(e) => handleEditFormChangeSusunan('kLaguTutup', e.target.value)} placeholder="Contoh: LS 300" className="w-full p-2.5 border border-navy-200 rounded-xl text-sm font-bold text-navy-900 outline-none focus:border-gold-500 bg-navy-50/50 transition-colors" /></div>
+                                                                            <div><label className="text-[10px] font-bold uppercase tracking-widest text-navy-500 block mb-1">Lagu Tutup</label><input type="text" value={editForm.kLaguTutup || ''} onChange={(e) => handleEditFormChangeSusunan('kLaguTutup', e.target.value)} placeholder="Ketik nomor lagu, misal: 300" className="w-full p-2.5 border border-navy-200 rounded-xl text-sm font-bold text-navy-900 outline-none focus:border-gold-500 bg-navy-50/50 transition-colors" /></div>
                                                                         </div>
                                                                     </div>
                                                                     <div className="mt-5 flex justify-end space-x-3">
@@ -4982,7 +5050,7 @@ const App = () => {
             case 'belajar_alkitab': return <DetailAlkitab setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
             case 'belajar_28dasar': return <Detail28Dasar setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
             case 'belajar_egw': return <DetailEGW setActiveTab={setActiveTab} dataPejabat={dataPejabat} isLoading={isAppLoading} />;
-            case 'live': return <Live setActiveTab={setActiveTab} activeRabu={activeRabu} activeSabat={activeSabat} rabuYMD={rabuYMD} sabatYMD={sabatYMD} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} isLoading={isAppLoading} />;
+            case 'live': return <Live setActiveTab={setActiveTab} activeRabu={activeRabu} activeSabat={activeSabat} rabuYMD={rabuYMD} sabatYMD={sabatYMD} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} isLoading={isAppLoading} laguSionDb={laguSionDb} setLaguSionInitialSong={setLaguSionInitialSong} />;
             case 'jadwal': return <Jadwal jadwalDB={jadwalDB} jadwalSelectedDate={jadwalSelectedDate} setJadwalSelectedDate={setJadwalSelectedDate} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} activePerjamuan={activePerjamuan} isLoading={isAppLoading} gdriveUrl={gdriveUrl} />;
             case 'persembahan': return <Persembahan dataPejabat={dataPejabat} isLoading={isAppLoading} setActiveTab={setActiveTab} />;
 
