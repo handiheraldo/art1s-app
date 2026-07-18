@@ -360,7 +360,7 @@ const Home = ({ setActiveTab, setJadwalSelectedDate, youtubeUrl, isLiveYoutube, 
         const appPages = [
             { id: 'home', title: 'Beranda / Home', desc: 'Halaman utama aplikasi', icon: 'Home' },
             { id: 'jadwal', title: 'Jadwal Pelayanan', desc: 'Jadwal petugas ibadah lengkap', icon: 'Calendar' },
-            { id: 'live', title: 'Ibadah / Live Stream', desc: 'Susunan ibadah dan siaran langsung YouTube', icon: 'FileText' },
+            { id: 'live', title: 'Susunan Ibadah', desc: 'Susunan ibadah Sabat dan liturgi pelayanan', icon: 'FileText' },
             { id: 'persembahan', title: 'Persembahan & Perpuluhan', desc: 'Informasi donasi, QRIS, dan rekening', icon: 'Gift' },
             { id: 'keanggotaan', title: 'Layanan Anggota', desc: 'Informasi keanggotaan dan mutasi', icon: 'Users' },
             { id: 'member_baru', title: 'Member Baru', desc: 'Pendaftaran anggota baru', icon: 'Users' },
@@ -690,39 +690,43 @@ const SusunanIbadah = ({ setActiveTab, activeSabat, sabatYMD, isLoading, laguSio
         return trimmed;
     };
 
-    // Helper: render description text with clickable LS numbers
-    const renderDescWithLinks = (desc) => {
-        if (typeof desc !== 'string') return desc;
-        // Match patterns like "LS 205", "LS205", "LS. 205"
-        const splitRegex = /(LS\.?\s*\d+)/gi;
-        const parts = desc.split(splitRegex);
-        if (parts.length <= 1) return desc;
-        // Use a non-global regex for testing individual parts
-        const testRegex = /^LS\.?\s*(\d+)$/i;
-        return parts.map((part, i) => {
-            const match = part.match(testRegex);
-            if (match) {
-                return (
-                    <span
-                        key={i}
-                        onClick={(e) => { e.stopPropagation(); navigateToLaguSion(match[1]); }}
-                        className="text-blue-600 underline decoration-blue-300 underline-offset-2 cursor-pointer hover:text-blue-800 hover:decoration-blue-500 transition-colors"
-                        title={`Buka Lagu Sion No. ${match[1]}`}
-                    >
-                        {part}
-                    </span>
-                );
-            }
-            return <React.Fragment key={i}>{part}</React.Fragment>;
-        });
+    // Helper: extract LS number from a description string
+    const extractLsNumber = (desc) => {
+        if (typeof desc !== 'string') return null;
+        const match = desc.match(/LS\.?\s*(\d+)/i);
+        return match ? match[1] : null;
     };
 
-    const renderItem = (title, desc, isHighlight = false) => (
-        <div className={`flex justify-between items-center py-3 px-4 border-b border-navy-50/50 last:border-0 transition-colors rounded-xl mx-2 my-1 ${isHighlight ? 'bg-gold-50 shadow-sm border-gold-100' : 'hover:bg-navy-50/30'}`}>
-            <span className="text-sm text-navy-600 font-medium w-1/2 shrink-0">{title}</span>
-            <span className={`text-sm text-right w-1/2 break-words ${isHighlight ? 'font-bold text-navy-900' : 'font-bold text-navy-800'}`}>{renderDescWithLinks(desc)}</span>
-        </div>
-    );
+    const renderItem = (title, desc, isHighlight = false) => {
+        const lsNumber = extractLsNumber(desc);
+        const isLaguSionLink = !!lsNumber;
+
+        if (isLaguSionLink) {
+            return (
+                <div
+                    className={`flex items-center gap-3 py-3 px-4 border border-transparent rounded-xl mx-2 my-1 cursor-pointer group transition-all duration-200 hover:bg-blue-50/60 hover:border-blue-200/60 hover:shadow-sm active:scale-[0.985] ${isHighlight ? 'bg-gold-50/60 border-gold-100/50' : ''}`}
+                    onClick={() => navigateToLaguSion(lsNumber)}
+                    title={`Buka Lagu Sion No. ${lsNumber}`}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigateToLaguSion(lsNumber); } }}
+                >
+                    <span className="text-sm text-navy-600 font-medium shrink-0" style={{ minWidth: '40%' }}>{title}</span>
+                    <span className="flex items-center gap-2 ml-auto text-right">
+                        <span className={`text-sm break-words font-bold text-navy-800 group-hover:text-blue-700 transition-colors`}>{desc}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-navy-300 group-hover:text-blue-500 transition-colors shrink-0 opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all duration-200"><polyline points="9 18 15 12 9 6" /></svg>
+                    </span>
+                </div>
+            );
+        }
+
+        return (
+            <div className={`flex justify-between items-center py-3 px-4 border-b border-navy-50/50 last:border-0 transition-colors rounded-xl mx-2 my-1 ${isHighlight ? 'bg-gold-50 shadow-sm border-gold-100' : 'hover:bg-navy-50/30'}`}>
+                <span className="text-sm text-navy-600 font-medium w-1/2 shrink-0">{title}</span>
+                <span className={`text-sm text-right w-1/2 break-words ${isHighlight ? 'font-bold text-navy-900' : 'font-bold text-navy-800'}`}>{desc}</span>
+            </div>
+        );
+    };
 
     const susunanTabs = [
         { 
@@ -1329,25 +1333,6 @@ const Jadwal = ({ jadwalDB, jadwalSelectedDate, setJadwalSelectedDate, showPerja
 const Live = ({ setActiveTab, activeRabu, activeSabat, rabuYMD, sabatYMD, youtubeUrl, isLiveYoutube, youtubeTitle, isLoading, laguSionDb, setLaguSionInitialSong }) => {
     return (
         <div className="space-y-6 md:space-y-8 animate-fade-in">
-            <div className="bg-navy-900 rounded-[1.5rem] overflow-hidden shadow-lg p-2.5">
-                {isLoading ? (
-                    <div className="relative w-full rounded-xl bg-navy-800 animate-pulse overflow-hidden" style={{ paddingTop: '56.25%' }}></div>
-                ) : (
-                    <div className="relative w-full rounded-xl overflow-hidden" style={{ paddingTop: '56.25%' }}>
-                        <iframe className="absolute top-0 left-0 w-full h-full" src={youtubeUrl} title="YouTube Live Stream" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-                    </div>
-                )}
-                <div className="pt-4 pb-2 px-3 text-white flex flex-col items-center w-full gap-2 text-center">
-                    <div className={`font-bold text-xs tracking-widest flex items-center px-5 py-2.5 rounded-full border uppercase ${isLiveYoutube ? 'bg-red-500/20 border-red-500/30 text-red-400' : 'bg-gold-400/20 border-gold-400/30 text-gold-400'}`}>
-                        <span className={`w-2.5 h-2.5 rounded-full mr-2.5 ${isLiveYoutube ? 'bg-red-500 animate-pulse' : 'bg-gray-400'}`}></span>
-                        {isLiveYoutube ? '🔴 SEDANG LIVE STREAMING' : 'SIARAN ULANG / VIDEO TERBARU'}
-                    </div>
-                    {youtubeTitle && (
-                        <p className="text-navy-100 text-xs font-bold mt-1 px-4 max-w-lg leading-relaxed">{youtubeTitle}</p>
-                    )}
-                </div>
-            </div>
-
             <SusunanIbadah setActiveTab={setActiveTab} activeSabat={activeSabat} sabatYMD={sabatYMD} isLoading={isLoading} laguSionDb={laguSionDb} setLaguSionInitialSong={setLaguSionInitialSong} />
         </div>
     );
@@ -4543,7 +4528,7 @@ const Search = ({ setActiveTab, setJadwalSelectedDate, jadwalDB, rabuYMD, sabatY
     const appPages = [
         { id: 'home', title: 'Beranda / Home', desc: 'Halaman utama aplikasi', icon: 'Home' },
         { id: 'jadwal', title: 'Jadwal Pelayanan', desc: 'Jadwal petugas ibadah lengkap', icon: 'Calendar' },
-        { id: 'live', title: 'Ibadah / Live Stream', desc: 'Susunan ibadah dan siaran langsung YouTube', icon: 'FileText' },
+        { id: 'live', title: 'Susunan Ibadah', desc: 'Susunan ibadah Sabat dan liturgi pelayanan', icon: 'FileText' },
         { id: 'persembahan', title: 'Persembahan & Perpuluhan', desc: 'Informasi donasi, QRIS, dan rekening', icon: 'Gift' },
         { id: 'keanggotaan', title: 'Layanan Anggota', desc: 'Informasi keanggotaan dan mutasi', icon: 'Users' },
         { id: 'member_baru', title: 'Member Baru', desc: 'Pendaftaran anggota baru', icon: 'Users' },
