@@ -712,10 +712,7 @@ const SusunanIbadah = ({ setActiveTab, activeSabat, sabatYMD, isLoading, laguSio
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); navigateToLaguSion(lsNumber); } }}
                 >
                     <span className="text-sm text-navy-600 font-medium shrink-0" style={{ minWidth: '40%' }}>{title}</span>
-                    <span className="flex items-center gap-2 ml-auto text-right">
-                        <span className={`text-sm break-words font-bold text-navy-800 group-hover:text-blue-700 transition-colors`}>{desc}</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-navy-300 group-hover:text-blue-500 transition-colors shrink-0 opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0 transition-all duration-200"><polyline points="9 18 15 12 9 6" /></svg>
-                    </span>
+                    <span className="text-sm break-words font-bold text-navy-800 group-hover:text-blue-700 transition-colors ml-auto text-right">{desc}</span>
                 </div>
             );
         }
