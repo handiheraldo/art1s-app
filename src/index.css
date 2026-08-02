@@ -85,6 +85,23 @@
     animation: fadeIn 0.4s ease-out;
 }
 
+@keyframes pageEnter {
+    0% {
+        opacity: 0;
+        transform: translateY(14px) scale(0.992);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.animate-page-enter {
+    animation: pageEnter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    will-change: transform, opacity;
+}
+
 .welcome-box-gradient {
     background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 30%, #ffffff 60%, #dbeafe 100%);
 }
+

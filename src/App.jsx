@@ -320,9 +320,9 @@ const Home = ({ setActiveTab, setJadwalSelectedDate, youtubeUrl, isLiveYoutube, 
             }
         },
         {
-            id: 'buku_tamu',
-            label: 'Buku Tamu',
-            icon: 'Edit',
+            id: 'perlawatan',
+            label: 'Perlawatan',
+            icon: 'Users',
             colorClass: {
                 bg: 'bg-emerald-50',
                 icon: 'text-emerald-600',
@@ -365,6 +365,8 @@ const Home = ({ setActiveTab, setJadwalSelectedDate, youtubeUrl, isLiveYoutube, 
             { id: 'keanggotaan', title: 'Layanan Anggota', desc: 'Informasi keanggotaan dan mutasi', icon: 'Users' },
             { id: 'member_baru', title: 'Member Baru', desc: 'Pendaftaran anggota baru', icon: 'Users' },
             { id: 'form_acms', title: 'Pindah Masuk ACMS', desc: 'Isi formulir perpindahan ACMS', icon: 'BookOpen' },
+            { id: 'perlawatan', title: 'Perlawatan', desc: 'Permintaan perlawatan dari jemaat', icon: 'Users' },
+            { id: 'buku_tamu', title: 'Buku Tamu', desc: 'Isi data kunjungan tamu jemaat', icon: 'Edit' },
             { id: 'hubungi', title: 'Hubungi Kami', desc: 'Kontak gembala dan pejabat jemaat', icon: 'Phone' },
             { id: 'belajar_alkitab', title: 'Doktrin Alkitab', desc: 'Pelajari dasar-dasar Alkitab', icon: 'BookOpen' },
             { id: 'belajar_28dasar', title: '28 Dasar Kepercayaan', desc: 'Doktrin gereja Masehi Advent Hari Ketujuh', icon: 'List' },
@@ -1445,10 +1447,11 @@ const Keanggotaan = ({ setActiveTab }) => (
         <div className="bg-white p-6 md:p-8 rounded-[1.5rem] shadow-sm border border-navy-100/60">
             <h2 className="text-[1.3rem] font-black mb-4 text-navy-900 border-b pb-3 border-navy-50">Layanan Keanggotaan</h2>
             <p className="text-sm font-medium text-navy-600 mb-6">Pilih jenis permohonan keanggotaan yang sesuai dengan status Anda saat ini.</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
                 <button onClick={() => setActiveTab('member_baru')} className="w-full text-left p-5 rounded-[1.25rem] border border-navy-100/50 bg-navy-50/30 hover:bg-navy-50 transition-colors flex items-center justify-between h-full group shadow-sm"><div><h3 className="font-bold text-navy-900 group-hover:text-gold-600 transition-colors">Member Baru</h3><p className="text-xs font-medium text-navy-500 mt-1.5 leading-relaxed">Untuk yang belum pernah menjadi anggota GMAHK (Non-Adventist).</p></div><span className="text-gold-500 font-black text-xl ml-4 transform group-hover:translate-x-1 transition-transform">&rarr;</span></button>
                 <button onClick={() => setActiveTab('form_acms')} className="w-full text-left p-5 rounded-[1.25rem] border border-navy-100/50 bg-navy-50/30 hover:bg-navy-50 transition-colors flex items-center justify-between h-full group shadow-sm"><div><h3 className="font-bold text-navy-900 group-hover:text-gold-600 transition-colors">Pindah Masuk - ACMS</h3><p className="text-xs font-medium text-navy-500 mt-1.5 leading-relaxed">Untuk anggota GMAHK yang ingin pindah ke Tidar 1.</p></div><span className="text-gold-500 font-black text-xl ml-4 transform group-hover:translate-x-1 transition-transform">&rarr;</span></button>
                 <button onClick={() => setActiveTab('perlawatan')} className="w-full text-left p-5 rounded-[1.25rem] border border-navy-100/50 bg-navy-50/30 hover:bg-navy-50 transition-colors flex items-center justify-between h-full group shadow-sm"><div><h3 className="font-bold text-navy-900 group-hover:text-gold-600 transition-colors">Perlawatan</h3><p className="text-xs font-medium text-navy-500 mt-1.5 leading-relaxed">Permintaan perlawatan dari jemaat kepada pendeta atau officers gereja.</p></div><span className="text-gold-500 font-black text-xl ml-4 transform group-hover:translate-x-1 transition-transform">&rarr;</span></button>
+                <button onClick={() => setActiveTab('buku_tamu')} className="w-full text-left p-5 rounded-[1.25rem] border border-navy-100/50 bg-navy-50/30 hover:bg-navy-50 transition-colors flex items-center justify-between h-full group shadow-sm"><div><h3 className="font-bold text-navy-900 group-hover:text-gold-600 transition-colors">Buku Tamu</h3><p className="text-xs font-medium text-navy-500 mt-1.5 leading-relaxed">Pengisian data kehadiran dan kunjungan bagi tamu jemaat.</p></div><span className="text-gold-500 font-black text-xl ml-4 transform group-hover:translate-x-1 transition-transform">&rarr;</span></button>
             </div>
         </div>
         <div className="bg-white p-6 md:p-8 rounded-[1.5rem] shadow-sm border border-navy-100/60 pb-safe">
@@ -4816,7 +4819,7 @@ const App = () => {
                         let nextTab = 'home';
                         if (currentTab.startsWith('belajar_')) {
                             nextTab = 'belajar';
-                        } else if (currentTab === 'member_baru' || currentTab === 'pindah_masuk' || currentTab === 'form_acms' || currentTab === 'perlawatan') {
+                        } else if (currentTab === 'member_baru' || currentTab === 'pindah_masuk' || currentTab === 'form_acms' || currentTab === 'perlawatan' || currentTab === 'buku_tamu') {
                             nextTab = 'keanggotaan';
                         } else {
                             nextTab = 'home';
@@ -5099,31 +5102,75 @@ const App = () => {
 
 
 
-            <main className="flex-1 max-w-5xl mx-auto w-full p-4 md:p-8 pb-32 md:pb-32">
-                {renderContent()}
+            <main className="flex-1 max-w-5xl mx-auto w-full p-4 md:p-8 pb-32 md:pb-32 overflow-x-hidden">
+                <div key={activeTab} className="animate-page-enter">
+                    {renderContent()}
+                </div>
             </main>
 
             {activeTab !== 'lagu_sion' && (
                 <nav className="fixed bottom-0 w-full bg-white/95 backdrop-blur-xl border-t border-navy-100/50 pb-safe z-50 shadow-[0_-8px_30px_rgb(11,26,48,0.04)]">
-                <div className="flex justify-around items-center max-w-lg mx-auto">
-                    {tabs.map(tab => {
-                        const isActive = activeTab.startsWith(tab.id);
-                        return (
-                            <button key={tab.id} onClick={() => {
-                                if (activeTab === tab.id) {
-                                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                                } else {
-                                    setActiveTab(tab.id);
-                                }
-                            }} className={`relative flex flex-col items-center flex-1 pt-3 pb-2 transition-all duration-300 ${isActive ? 'text-navy-900 bg-gradient-to-b from-navy-900/15 via-navy-900/5 to-transparent' : 'text-navy-400 hover:text-navy-600 hover:bg-navy-50/50'}`}>
-                                {isActive && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-1 bg-navy-900 rounded-b-full shadow-[0_2px_8px_rgba(11,26,48,0.4)]"></div>}
-                                <Icon name={tab.icon} className={`w-6 h-6 mb-1 transition-all duration-300 ${isActive ? 'stroke-[2.5px]' : 'stroke-[2px]'}`} />
-                                <span className={`text-[10px] font-bold tracking-wide transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-70'}`}>{tab.label}</span>
-                            </button>
-                        );
-                    })}
-                </div>
-            </nav>
+                    <div className="relative flex justify-around items-center max-w-lg mx-auto">
+                        {/* Smooth Sliding Active Indicators */}
+                        {(() => {
+                            const activeIndex = tabs.findIndex(tab => activeTab.startsWith(tab.id));
+                            if (activeIndex === -1) return null;
+                            return (
+                                <>
+                                    {/* Top Line Indicator */}
+                                    <div 
+                                        className="absolute top-0 h-1 bg-navy-900 rounded-b-full shadow-[0_2px_8px_rgba(11,26,48,0.35)] transition-all duration-300 ease-[cubic-bezier(0.34,1.3,0.64,1)] z-20 pointer-events-none"
+                                        style={{
+                                            width: `${100 / tabs.length}%`,
+                                            transform: `translateX(${activeIndex * 100}%)`
+                                        }}
+                                    >
+                                        <div className="mx-auto w-[65%] h-full bg-navy-900 rounded-b-full" />
+                                    </div>
+                                    {/* Active Background Pill */}
+                                    <div 
+                                        className="absolute inset-y-1 rounded-2xl bg-gradient-to-b from-navy-900/15 via-navy-900/5 to-transparent transition-all duration-300 ease-[cubic-bezier(0.34,1.3,0.64,1)] pointer-events-none z-0"
+                                        style={{
+                                            width: `calc(${100 / tabs.length}% - 8px)`,
+                                            left: `calc(${activeIndex * (100 / tabs.length)}% + 4px)`
+                                        }}
+                                    />
+                                </>
+                            );
+                        })()}
+
+                        {tabs.map(tab => {
+                            const isActive = activeTab.startsWith(tab.id);
+                            return (
+                                <button 
+                                    key={tab.id} 
+                                    onClick={() => {
+                                        if (activeTab === tab.id) {
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        } else {
+                                            setActiveTab(tab.id);
+                                        }
+                                    }} 
+                                    className={`relative z-10 flex flex-col items-center flex-1 pt-3 pb-2 transition-all duration-300 select-none active:scale-95 ${
+                                        isActive ? 'text-navy-900' : 'text-navy-400 hover:text-navy-600 hover:bg-navy-50/40 rounded-2xl'
+                                    }`}
+                                >
+                                    <Icon 
+                                        name={tab.icon} 
+                                        className={`w-6 h-6 mb-1 transition-all duration-300 ${
+                                            isActive ? 'stroke-[2.5px] -translate-y-0.5 scale-110 text-navy-900' : 'stroke-[2px]'
+                                        }`} 
+                                    />
+                                    <span className={`text-[10px] tracking-wide transition-all duration-300 ${
+                                        isActive ? 'font-black opacity-100 scale-105 text-navy-900' : 'font-semibold opacity-70'
+                                    }`}>
+                                        {tab.label}
+                                    </span>
+                                </button>
+                            );
+                        })}
+                    </div>
+                </nav>
             )}
 
             {/* Floating Action Button (Hubungi / WA) */}
