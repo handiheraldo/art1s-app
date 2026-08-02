@@ -4228,8 +4228,7 @@ const AdminDashboard = ({ dataPejabat, setDataPejabat, jadwalDB, setJadwalDB, ad
 
 
 // --- COMPONENT: LAGU SION MINI-APP ---
-const LaguSion = ({ setActiveTab, initialSong, clearInitialSong, laguSionDb = [] }) => {
-    const [subTab, setSubTab] = React.useState('numpad'); // numpad, lyrics, index
+const LaguSion = ({ setActiveTab, initialSong, clearInitialSong, laguSionDb = [], subTab = 'numpad', setSubTab = () => {} }) => {
     const [songNo, setSongNo] = React.useState('');
     const [selectedSong, setSelectedSong] = React.useState(null);
     const [indexTab, setIndexTab] = React.useState('number'); // number, alphabet
@@ -4482,37 +4481,6 @@ const LaguSion = ({ setActiveTab, initialSong, clearInitialSong, laguSionDb = []
                 </div>
             )}
 
-            {/* Bottom Tab Bar of Lagu Sion (Replacing global bottom nav) */}
-            <nav className="fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-xl border-t border-navy-100/50 pb-safe z-50 shadow-[0_-8px_30px_rgb(11,26,48,0.04)]">
-                <div className="flex justify-around items-center max-w-lg mx-auto">
-                    {[
-                        { id: 'home', label: 'ART1S App', icon: 'Home' },
-                        { id: 'numpad', label: 'Numpad', icon: 'Grid' },
-                        { id: 'lyrics', label: 'Lirik', icon: 'BookOpen' },
-                        { id: 'index', label: 'Daftar', icon: 'List' }
-                    ].map(tab => {
-                        const isAppHome = tab.id === 'home';
-                        const isActive = isAppHome ? false : subTab === tab.id;
-                        return (
-                            <button key={tab.id} onClick={() => {
-                                if (isAppHome) {
-                                    setActiveTab('home');
-                                } else {
-                                    setSubTab(tab.id);
-                                }
-                            }} className={`relative flex flex-col items-center flex-1 pt-3 pb-2 transition-all duration-300 ${isActive ? 'text-sky-500 bg-gradient-to-b from-sky-500/10 via-sky-500/0 to-transparent' : 'text-navy-400 hover:text-navy-600'}`}>
-                                {isActive && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-1 bg-sky-500 rounded-b-full shadow-[0_2px_8px_rgba(56,189,248,0.4)]"></div>}
-                                {isAppHome ? (
-                                    <img src="./art1s-outline.svg" alt="ART1S" className="w-6 h-6 mb-1 object-contain opacity-70 hover:opacity-100 transition-opacity" />
-                                ) : (
-                                    <Icon name={tab.icon} className={`w-6 h-6 mb-1 transition-all duration-300 ${isActive ? 'stroke-[2.5px]' : 'stroke-[2px]'}`} />
-                                )}
-                                <span className={`text-[10px] font-bold tracking-wide transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-70'}`}>{tab.label}</span>
-                            </button>
-                        );
-                    })}
-                </div>
-            </nav>
         </div>
     );
 };
@@ -5010,6 +4978,7 @@ const App = () => {
     const [isAdminLoggedIn, setIsAdminLoggedIn] = React.useState(false);
     const [showLoginModal, setShowLoginModal] = React.useState(false);
     const [showIosPrompt, setShowIosPrompt] = React.useState(false);
+    const [laguSionSubTab, setLaguSionSubTab] = React.useState('numpad');
 
     React.useEffect(() => {
         const handler = () => setShowIosPrompt(true);
@@ -5048,7 +5017,7 @@ const App = () => {
             case 'buku_tamu': return <BukuTamu setActiveTab={setActiveTab} />;
             case 'admin_dashboard': return isAdminLoggedIn ? <AdminDashboard dataPejabat={dataPejabat} setDataPejabat={setDataPejabat} jadwalDB={jadwalDB} setJadwalDB={setJadwalDB} adminToken={adminToken} setAdminToken={setAdminToken} youtubeUrl={youtubeUrl} setYoutubeUrl={setYoutubeUrl} autoDetectYoutube={autoDetectYoutube} setAutoDetectYoutube={setAutoDetectYoutube} youtubeTitle={youtubeTitle} isLiveYoutube={isLiveYoutube} kategoriPejabat={kategoriPejabat} setKategoriPejabat={setKategoriPejabat} heroImageUrl={heroImageUrl} setHeroImageUrl={setHeroImageUrl} gdriveUrl={gdriveUrl} setGdriveUrl={setGdriveUrl} youtubeApiKey={youtubeApiKey} setYoutubeApiKey={setYoutubeApiKey} youtubeChannelId={youtubeChannelId} setYoutubeChannelId={setYoutubeChannelId} /> : <Home setActiveTab={setActiveTab} setJadwalSelectedDate={setJadwalSelectedDate} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} showPerpuluhan={showPerpuluhan} perpuluhanYMD={perpuluhanYMD} />;
             case 'search': return <Search setActiveTab={setActiveTab} setJadwalSelectedDate={setJadwalSelectedDate} jadwalDB={jadwalDB} rabuYMD={rabuYMD} sabatYMD={sabatYMD} tabs={tabs} dataPejabat={dataPejabat} laguSionDb={laguSionDb} setSelectedLaguSionSong={setLaguSionInitialSong} />;
-            case 'lagu_sion': return <LaguSion setActiveTab={setActiveTab} initialSong={laguSionInitialSong} clearInitialSong={() => setLaguSionInitialSong(null)} laguSionDb={laguSionDb} />;
+            case 'lagu_sion': return <LaguSion setActiveTab={setActiveTab} subTab={laguSionSubTab} setSubTab={setLaguSionSubTab} initialSong={laguSionInitialSong} clearInitialSong={() => setLaguSionInitialSong(null)} laguSionDb={laguSionDb} />;
             default: return <Home setActiveTab={setActiveTab} setJadwalSelectedDate={setJadwalSelectedDate} youtubeUrl={youtubeUrl} isLiveYoutube={isLiveYoutube} youtubeTitle={youtubeTitle} heroImageUrl={heroImageUrl} jadwalDB={jadwalDB} dataPejabat={dataPejabat} isLoading={isAppLoading} showPerjamuan={showPerjamuan} perjamuanYMD={perjamuanYMD} showPerpuluhan={showPerpuluhan} perpuluhanYMD={perpuluhanYMD} />;
         }
     };
@@ -5108,70 +5077,121 @@ const App = () => {
                 </div>
             </main>
 
-            {activeTab !== 'lagu_sion' && (
-                <nav className="fixed bottom-0 w-full bg-white/95 backdrop-blur-xl border-t border-navy-100/50 pb-safe z-50 shadow-[0_-8px_30px_rgb(11,26,48,0.04)]">
-                    <div className="relative flex justify-around items-center max-w-lg mx-auto">
-                        {/* Smooth Sliding Active Indicators */}
-                        {(() => {
-                            const activeIndex = tabs.findIndex(tab => activeTab.startsWith(tab.id));
-                            if (activeIndex === -1) return null;
-                            return (
-                                <>
-                                    {/* Top Line Indicator */}
-                                    <div 
-                                        className="absolute top-0 h-1 bg-navy-900 rounded-b-full shadow-[0_2px_8px_rgba(11,26,48,0.35)] transition-all duration-300 ease-[cubic-bezier(0.34,1.3,0.64,1)] z-20 pointer-events-none"
-                                        style={{
-                                            width: `${100 / tabs.length}%`,
-                                            transform: `translateX(${activeIndex * 100}%)`
-                                        }}
-                                    >
-                                        <div className="mx-auto w-[65%] h-full bg-navy-900 rounded-b-full" />
-                                    </div>
-                                    {/* Active Background Pill */}
-                                    <div 
-                                        className="absolute inset-y-1 rounded-2xl bg-gradient-to-b from-navy-900/15 via-navy-900/5 to-transparent transition-all duration-300 ease-[cubic-bezier(0.34,1.3,0.64,1)] pointer-events-none z-0"
-                                        style={{
-                                            width: `calc(${100 / tabs.length}% - 8px)`,
-                                            left: `calc(${activeIndex * (100 / tabs.length)}% + 4px)`
-                                        }}
-                                    />
-                                </>
-                            );
-                        })()}
+            <nav className={`fixed bottom-0 w-full backdrop-blur-xl pb-safe z-50 transition-all duration-300 ${
+                activeTab === 'lagu_sion' 
+                    ? 'bg-navy-900/95 border-t border-navy-800 shadow-[0_-8px_30px_rgba(11,26,48,0.4)]' 
+                    : 'bg-white/95 border-t border-navy-100/50 shadow-[0_-8px_30px_rgb(11,26,48,0.04)]'
+            }`}>
+                <div className="relative flex justify-around items-center max-w-lg mx-auto">
+                    {(() => {
+                        const currentNavTabs = activeTab === 'lagu_sion' ? [
+                            { id: 'home', label: 'Home', icon: 'Home' },
+                            { id: 'numpad', label: 'Numpad', icon: 'Grid' },
+                            { id: 'live', label: 'Ibadah', icon: 'FileText' },
+                            { id: 'lyrics', label: 'Lirik', icon: 'BookOpen' },
+                            { id: 'index', label: 'Daftar', icon: 'List' }
+                        ] : tabs;
 
-                        {tabs.map(tab => {
-                            const isActive = activeTab.startsWith(tab.id);
+                        const activeIndex = currentNavTabs.findIndex(tab => 
+                            activeTab === 'lagu_sion' 
+                                ? tab.id === laguSionSubTab 
+                                : activeTab.startsWith(tab.id)
+                        );
+
+                        if (activeIndex === -1) return null;
+                        return (
+                            <div 
+                                className="absolute inset-y-0 left-0 transition-transform duration-350 ease-[cubic-bezier(0.34,1.5,0.64,1)] pointer-events-none z-0 will-change-transform"
+                                style={{
+                                    width: `${100 / currentNavTabs.length}%`,
+                                    transform: `translateX(${activeIndex * 100}%)`
+                                }}
+                            >
+                                {/* Top Accent Line */}
+                                <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-10 h-1 rounded-b-full transition-all duration-300 ${
+                                    activeTab === 'lagu_sion' 
+                                        ? 'bg-gradient-to-r from-gold-400 via-gold-300 to-gold-400 shadow-[0_2px_10px_rgba(232,177,53,0.5)]' 
+                                        : 'bg-gradient-to-r from-navy-900 via-navy-800 to-navy-900 shadow-[0_2px_8px_rgba(11,26,48,0.35)]'
+                                }`} />
+                                {/* Active Background Pill */}
+                                <div className={`mx-1 my-1.5 h-[calc(100%-12px)] rounded-2xl shadow-sm transition-all duration-300 ${
+                                    activeTab === 'lagu_sion' 
+                                        ? 'bg-gradient-to-b from-gold-400/25 via-gold-400/10 to-transparent border border-gold-400/30' 
+                                        : 'bg-gradient-to-b from-navy-900/12 via-navy-900/5 to-transparent border border-navy-900/10'
+                                }`} />
+                            </div>
+                        );
+                    })()}
+
+                    {(() => {
+                        const currentNavTabs = activeTab === 'lagu_sion' ? [
+                            { id: 'home', label: 'Home', icon: 'Home' },
+                            { id: 'numpad', label: 'Numpad', icon: 'Grid' },
+                            { id: 'live', label: 'Ibadah', icon: 'FileText' },
+                            { id: 'lyrics', label: 'Lirik', icon: 'BookOpen' },
+                            { id: 'index', label: 'Daftar', icon: 'List' }
+                        ] : tabs;
+
+                        return currentNavTabs.map(tab => {
+                            const isActive = activeTab === 'lagu_sion' 
+                                ? laguSionSubTab === tab.id 
+                                : activeTab.startsWith(tab.id);
+
+                            const isLaguSion = activeTab === 'lagu_sion';
+
                             return (
                                 <button 
                                     key={tab.id} 
                                     onClick={() => {
-                                        if (activeTab === tab.id) {
-                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        if (activeTab === 'lagu_sion') {
+                                            if (tab.id === 'home') {
+                                                setActiveTab('home');
+                                            } else if (tab.id === 'live') {
+                                                setActiveTab('live');
+                                            } else {
+                                                if (laguSionSubTab === tab.id) {
+                                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                                } else {
+                                                    setLaguSionSubTab(tab.id);
+                                                }
+                                            }
                                         } else {
-                                            setActiveTab(tab.id);
+                                            if (activeTab === tab.id) {
+                                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                            } else {
+                                                setActiveTab(tab.id);
+                                            }
                                         }
                                     }} 
-                                    className={`relative z-10 flex flex-col items-center flex-1 pt-3 pb-2 transition-all duration-300 select-none active:scale-95 ${
-                                        isActive ? 'text-navy-900' : 'text-navy-400 hover:text-navy-600 hover:bg-navy-50/40 rounded-2xl'
+                                    className={`relative z-10 flex flex-col items-center flex-1 pt-2.5 pb-2 transition-all duration-200 select-none active:scale-90 ${
+                                        isActive 
+                                            ? isLaguSion ? 'text-gold-400' : 'text-navy-900' 
+                                            : isLaguSion ? 'text-gold-100/50 hover:text-gold-300' : 'text-navy-400 hover:text-navy-600'
                                     }`}
                                 >
                                     <Icon 
                                         name={tab.icon} 
-                                        className={`w-6 h-6 mb-1 transition-all duration-300 ${
-                                            isActive ? 'stroke-[2.5px] -translate-y-0.5 scale-110 text-navy-900' : 'stroke-[2px]'
+                                        className={`w-6 h-6 mb-1 transition-all duration-300 ease-[cubic-bezier(0.34,1.5,0.64,1)] ${
+                                            isActive 
+                                                ? isLaguSion 
+                                                    ? 'stroke-[2.5px] -translate-y-1 scale-110 text-gold-400 drop-shadow-[0_2px_8px_rgba(232,177,53,0.5)]' 
+                                                    : 'stroke-[2.5px] -translate-y-1 scale-110 text-navy-900 drop-shadow-xs' 
+                                                : 'stroke-[2px]'
                                         }`} 
                                     />
                                     <span className={`text-[10px] tracking-wide transition-all duration-300 ${
-                                        isActive ? 'font-black opacity-100 scale-105 text-navy-900' : 'font-semibold opacity-70'
+                                        isActive 
+                                            ? isLaguSion ? 'font-black opacity-100 scale-105 text-gold-400' : 'font-black opacity-100 scale-105 text-navy-900' 
+                                            : 'font-semibold opacity-70'
                                     }`}>
                                         {tab.label}
                                     </span>
                                 </button>
                             );
-                        })}
-                    </div>
-                </nav>
-            )}
+                        });
+                    })()}
+                </div>
+            </nav>
 
             {/* Floating Action Button (Hubungi / WA) */}
             {activeTab !== 'admin_dashboard' && activeTab !== 'hubungi' && activeTab !== 'lagu_sion' && (
